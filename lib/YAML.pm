@@ -1,5 +1,5 @@
 package YAML; 
-$VERSION = '0.37';
+$VERSION = '0.38';
 
 # This module implements a Loader and Dumper for the YAML serialization
 # language, VERSION 1.0 TRIAL2. (http://www.yaml.org/spec/)

@@ -5,7 +5,6 @@ use base 'Exporter';
 our @EXPORT = qw(plan number_of_tests test_load);
 use Test::More;
 use YAML;
-use Spiffy -XXX;
 use Data::Dumper;
 
 our $line;   # line number in source of first line of DATA
