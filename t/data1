@@ -1,0 +1,308 @@
+###
+[qw(red white pink)]
+***
+start_stream
+start_document
+start_sequence
+full_scalar red
+full_scalar white
+full_scalar pink
+end_sequence
+end_document
+end_stream
++++
+---
+- red
+- white
+- pink
+###
++{qw(red pink white stripes)}
+***
+start_stream
+start_document
+start_mapping
+full_scalar red
+full_scalar pink
+full_scalar white
+full_scalar stripes
+end_mapping
+end_document
+end_stream
++++
+---
+red: pink
+white: stripes
+###
+my $y = YAML::Node->new({});
+%$y = (
+    red => 'pink',
+    array => [123, 456],
+    white => 'stripes',
+);
+$y;
+***
+start_stream
+start_document
+start_mapping
+full_scalar red
+full_scalar pink
+full_scalar array
+start_sequence
+full_scalar 123
+full_scalar 456
+end_sequence
+full_scalar white
+full_scalar stripes
+end_mapping
+end_document
+end_stream
++++
+---
+red: pink
+array:
+- 123
+- 456
+white: stripes
+###
++{}
+***
+start_stream
+start_document
+start_mapping
+end_mapping
+end_document
+end_stream
++++
+--- {}
+###
+[]
+***
+start_stream
+start_document
+start_sequence
+end_sequence
+end_document
+end_stream
++++
+--- []
+###
+['tommy', [qw(beth sarah)], 'joshy']
+***
+start_stream
+start_document
+start_sequence
+full_scalar tommy
+start_sequence
+full_scalar beth
+full_scalar sarah
+end_sequence
+full_scalar joshy
+end_sequence
+end_document
+end_stream
++++
+---
+- tommy
+- - beth
+  - sarah
+- joshy
+###
+[[[[]]]]
+***
+start_stream
+start_document
+start_sequence
+start_sequence
+start_sequence
+start_sequence
+end_sequence
+end_sequence
+end_sequence
+end_sequence
+end_document
+end_stream
++++
+---
+- - - []
+###
+[{qw(one 1)}, {qw(two 2)}]
+***
+start_stream
+start_document
+start_sequence
+start_mapping
+full_scalar one
+full_scalar 1
+end_mapping
+start_mapping
+full_scalar two
+full_scalar 2
+end_mapping
+end_sequence
+end_document
+end_stream
++++
+---
+- one: 1
+- two: 2
+###
+$anchor = 'xxx';
+my $a = [1, 2];
+[$a, $a];
+***
+start_stream
+start_document
+start_sequence
+start_sequence xxx
+full_scalar 1
+full_scalar 2
+end_sequence
+anchor_alias xxx
+end_sequence
+end_document
+end_stream
++++
+---
+- &xxx
+  - 1
+  - 2
+- *xxx
+###
+$anchor = 'xxx';
+my $y = YAML::Node->new([]);
+ynode($y)->tag('xyz.com/cow');
+$y->[0] = { foo => [ 'bar', [ baz => 'jaz' ]]};
+push @$y, 1, 2;
++{howdy => [$y, $y]}
+***
+start_stream
+start_document
+start_mapping
+full_scalar howdy
+start_sequence
+start_sequence xxx xyz.com/cow
+start_mapping
+full_scalar foo
+start_sequence
+full_scalar bar
+start_sequence
+full_scalar baz
+full_scalar jaz
+end_sequence
+end_sequence
+end_mapping
+full_scalar 1
+full_scalar 2
+end_sequence
+anchor_alias xxx
+end_sequence
+end_mapping
+end_document
+end_stream
++++
+---
+howdy:
+- &xxx !xyz.com/cow
+  - foo:
+    - bar
+    - - baz
+      - jaz
+  - 1
+  - 2
+- *xxx
+###
++{'123: 456' => '123: 456'}
+***
+start_stream
+start_document
+start_mapping
+full_scalar 123:_456
+full_scalar 123:_456
+end_mapping
+end_document
+end_stream
++++
+---
+'123: 456': '123: 456'
+###
+use YAML::Node;
+my $y = YAML::Node->new({});
+$y->{foo} = "I love beef jerky\n  I LOVE IT!\n";
+$y->{bar} = "Give it to me now";
+$y;
+***
+start_stream
+start_document
+start_mapping
+full_scalar foo
+full_scalar I_love_beef_jerky\n__I_LOVE_IT!\n _ _ LITERAL
+full_scalar bar
+full_scalar Give_it_to_me_now _ _ DOUBLE
+end_mapping
+end_document
+end_stream
++++
+---
+foo: |
+  I love beef jerky
+    I LOVE IT!
+bar: "Give it to me now"
+###
+use YAML::Node;
+my $y = YAML::Node->new({});
+$y->{foo} = "I love beef jerky\n  I LOVE IT!\n";
+$y->{bar} = "Give it to me now";
+[$y, 'ok'];
+***
+start_stream
+start_document
+start_sequence
+start_mapping
+full_scalar foo
+full_scalar I_love_beef_jerky\n__I_LOVE_IT!\n _ _ LITERAL
+full_scalar bar
+full_scalar Give_it_to_me_now _ _ DOUBLE
+end_mapping
+full_scalar ok
+end_sequence
+end_document
+end_stream
++++
+---
+- foo: |
+    I love beef jerky
+      I LOVE IT!
+  bar: "Give it to me now"
+- ok
+###
+(+{qw(xxx xray yyy yaml)}, 42, [qw(xxx yyy zed)])
+***
+start_stream
+start_document
+start_mapping
+full_scalar xxx
+full_scalar xray
+full_scalar yyy
+full_scalar yaml
+end_mapping
+end_document
+start_document
+full_scalar 42
+end_document
+start_document
+start_sequence
+full_scalar xxx
+full_scalar yyy
+full_scalar zed
+end_sequence
+end_document
+end_stream
++++
+---
+xxx: xray
+yyy: yaml
+--- 42
+---
+- xxx
+- yyy
+- zed
