@@ -1,4 +1,4 @@
-#line 1 "inc/Module/Install/Makefile.pm - /usr/lang/perl/5.8.5/lib/site_perl/5.8.5/Module/Install/Makefile.pm"
+#line 1 "inc/Module/Install/Makefile.pm - /Users/ingy/lib/Module/Install/Makefile.pm"
 package Module::Install::Makefile;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 

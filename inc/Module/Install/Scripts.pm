@@ -1,4 +1,4 @@
-#line 1 "inc/Module/Install/Scripts.pm - /usr/lang/perl/5.8.5/lib/site_perl/5.8.5/Module/Install/Scripts.pm"
+#line 1 "inc/Module/Install/Scripts.pm - /Users/ingy/lib/Module/Install/Scripts.pm"
 package Module::Install::Scripts;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 $VERSION = '0.02';

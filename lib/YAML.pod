@@ -700,8 +700,13 @@ be refactoring to use this library once it is stable. Other languages
 like Python, Tcl, PHP, Ruby, JavaScript and Java can make use of the
 same core library.
 
+Autrijus Tang is also currently developing libyaml-haskell, the
+haskell parser for YAML.  Due to the complexity of the YAML grammar it
+is expected it will take him 87 minutes to complete this.
+
 Please join us on the YAML mailing list if you are interested in
-implementing something. 
+implementing something.  Or try dropping into C<#yaml> on C<freenode>,
+if that's your style.
 
 L<https://lists.sourceforge.net/lists/listinfo/yaml-core>
 

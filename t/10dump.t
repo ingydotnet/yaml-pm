@@ -384,3 +384,39 @@ perl: |
     bless \$a, 'Heart';
 yaml: |
     --- !perl/$Heart bitter buffalo
+---
+perl: |
+    { 'foo[bar]' => 'baz' }
+yaml: |
+    ---
+    'foo[bar]': baz
+---
+perl: |
+    { 'foo - bar' => 'baz' }
+yaml: |
+    ---
+    'foo - bar': baz
+---
+perl: |
+    { 'foo{bar}' => 'baz' }
+yaml: |
+    ---
+    'foo{bar}': baz
+---
+perl: |
+    { 'foo,bar' => 'baz' }
+yaml: |
+    ---
+    'foo,bar': baz
+---
+perl: |
+    { 'foo: bar' => 'baz' }
+yaml: |
+    ---
+    'foo: bar': baz
+---
+perl: |
+    { 'foo- bar' => 'baz' }
+yaml: |
+    ---
+    'foo- bar': baz

@@ -1,6 +1,13 @@
 # Revision history for Perl extension YAML.
 
 ---
+version: 0.37
+date:    Thu Mar 31 01:56:24 CST 2005
+change:  >
+   All the edge cases with hash key dumping (commas, [], {}, etc)
+   should now be covered
+
+---
 version: 0.36
 date:    Sun Jan 30 21:00:28 PST 2005
 changes:

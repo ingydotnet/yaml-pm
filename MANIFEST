@@ -29,6 +29,8 @@ t/20load.t
 t/21spec.t
 t/22slides.t
 t/30errors.t
+t/test1.t
+t/TestChunks.pm
 t/TestDumper.pm
 t/TestYAML.pm
 ysh

@@ -1,5 +1,5 @@
 package YAML; 
-$VERSION = '0.36';
+$VERSION = '0.37';
 
 # This module implements a Loader and Dumper for the YAML serialization
 # language, VERSION 1.0 TRIAL2. (http://www.yaml.org/spec/)
@@ -588,8 +588,10 @@ sub _emit_str {
 # Check whether or not a scalar should be emitted as an plain scalar.
 sub is_valid_plain {
     return 0 unless length $_[0];
+    # refer: parse_inline_simple()
     return 0 if $_[0] =~ /^[\s\{\[\~\`\'\"\!\@\#\%\&\*\^]/;
-    return 0 if $_[0] =~ /^[\-\?]\s/;
+    return 0 if $_[0] =~ /[\{\[\]\},]/;
+    return 0 if $_[0] =~ /[:\-\?]\s/;
     return 0 if $_[0] =~ /\s#/;
     return 0 if $_[0] =~ /\:(\s|$)/;
     return 0 if $_[0] =~ /\s$/;
@@ -625,7 +627,9 @@ sub _emit_double {
 
 # Single quoting is for single lined unescaped strings.
 sub _emit_single {
-    $o->{stream} .= "'$_[0]'";
+    my $item = shift;
+    $item =~ s{'}{''}g;
+    $o->{stream} .= "'$item'";
 }
 
 #==============================================================================
@@ -1150,7 +1154,7 @@ sub _parse_seq {
 # the top level of a sub parsing.
 sub _parse_inline {
     my ($top, $top_implicit, $top_explicit, $top_class) = (@_, '', '', '', '');
-    $o->{inline} =~ s/^\s*(.*)\s*$/$1/;
+    $o->{inline} =~ s/^\s*(.*)\s*$/$1/; # OUCH - mugwump
     my ($node, $anchor, $alias, $explicit, $implicit, $class) = ('') x 6;
     ($anchor, $alias, $explicit, $implicit, $class, $o->{inline}) = 
       _parse_qualifiers($o->{inline});
@@ -1292,7 +1296,7 @@ sub _parse_inline_single_quoted {
 # Parse the inline unquoted string and do implicit typing.
 sub _parse_inline_simple {
     my $value;
-    if ($o->{inline} =~ /^(|[^!@#%^&*].*?)(?=[,[\]{}]|: |- |:\s*$|$)/) {
+    if ($o->{inline} =~ /^(|[^!@#%^&*].*?)(?=[\[\]\{\},]|, |: |- |:\s*$|$)/) {
         $value = $1;
         substr($o->{inline}, 0, length($1)) = '';
     }

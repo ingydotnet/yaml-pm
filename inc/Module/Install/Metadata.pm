@@ -1,4 +1,4 @@
-#line 1 "inc/Module/Install/Metadata.pm - /usr/lang/perl/5.8.5/lib/site_perl/5.8.5/Module/Install/Metadata.pm"
+#line 1 "inc/Module/Install/Metadata.pm - /Users/ingy/lib/Module/Install/Metadata.pm"
 package Module::Install::Metadata;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 
