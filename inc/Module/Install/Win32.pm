@@ -1,7 +1,4 @@
-#line 1 "inc/Module/Install/Win32.pm - /usr/lang/perl/5.8.2/lib/site_perl/5.8.2/Module/Install/Win32.pm"
-# $File: //depot/cpan/Module-Install/lib/Module/Install/Win32.pm $ $Author: autrijus $
-# $Revision: #9 $ $Change: 1789 $ $DateTime: 2003/11/11 01:22:54 $ vim: expandtab shiftwidth=4
-
+#line 1 "inc/Module/Install/Win32.pm - /usr/lang/perl/5.8.5/lib/site_perl/5.8.5/Module/Install/Win32.pm"
 package Module::Install::Win32;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 

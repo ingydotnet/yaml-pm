@@ -1,10 +1,17 @@
 use inc::Module::Install;
 
 name('YAML');
-version_from('lib/YAML.pm');
+author('Brian Ingerson <ingy@cpan.org>');
+abstract("YAML Ain't Markup Language");
 license('perl');
+version_from('lib/YAML.pm');
 
-requires('perl' => '5.6.0');
-requires('Spiffy' => '0.10');
+requires(qw(
+    perl 5.5.3
+));
 
-&WriteAll;
+install_script('ysh');
+
+check_nmake();
+
+&WriteAll();

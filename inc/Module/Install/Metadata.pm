@@ -1,11 +1,8 @@
-#line 1 "inc/Module/Install/Metadata.pm - /usr/lang/perl/5.8.2/lib/site_perl/5.8.2/Module/Install/Metadata.pm"
-# $File: //depot/cpan/Module-Install/lib/Module/Install/Metadata.pm $ $Author: autrijus $
-# $Revision: #31 $ $Change: 1817 $ $DateTime: 2003/12/14 20:57:39 $ vim: expandtab shiftwidth=4
-
+#line 1 "inc/Module/Install/Metadata.pm - /usr/lang/perl/5.8.5/lib/site_perl/5.8.5/Module/Install/Metadata.pm"
 package Module::Install::Metadata;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 use strict 'vars';
 use vars qw($VERSION);
@@ -95,6 +92,12 @@ sub _dump {
         $name;
     } if $values{module_name};
 
+    if ($values{name} =~ /::/) {
+        my $name = $values{name};
+        $name =~ s/::/-/g;
+        die "Error in name(): '$values{name}' should be '$name'!\n";
+    }
+
     my $dump = '';
     foreach my $key (@scalar_keys) {
         $dump .= "$key: $values{$key}\n" if exists $values{$key};
@@ -155,7 +158,7 @@ sub write {
             while (<FH>) {
                 last META_NOT_OURS if /^generated_by: Module::Install\b/;
             }
-            return $self;
+            return $self if -s FH;
         }
     }
 
@@ -175,7 +178,10 @@ sub version_from {
 sub abstract_from {
     my ($self, $abstract_from) = @_;
     require ExtUtils::MM_Unix;
-    $self->abstract(ExtUtils::MM_Unix->parse_abstract($abstract_from));
+    $self->abstract(
+        bless( { DISTNAME => $self->name }, 'ExtUtils::MM_Unix')
+            ->parse_abstract($abstract_from)
+    );
 }
 
 1;

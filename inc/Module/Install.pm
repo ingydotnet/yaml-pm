@@ -1,28 +1,27 @@
-#line 1 "inc/Module/Install.pm - /usr/lang/perl/5.8.2/lib/site_perl/5.8.2/Module/Install.pm"
-# $File: //depot/cpan/Module-Install/lib/Module/Install.pm $ $Author: autrijus $
-# $Revision: #64 $ $Change: 1812 $ $DateTime: 2003/12/14 20:24:49 $ vim: expandtab shiftwidth=4
-
+#line 1 "inc/Module/Install.pm - /usr/lang/perl/5.8.5/lib/site_perl/5.8.5/Module/Install.pm"
 package Module::Install;
-$VERSION = '0.29';
+$VERSION = '0.36';
 
-die <<END unless defined $INC{'inc/Module/Install.pm'};
-Please invoke Module::Install with:
+die << "." unless $INC{join('/', inc => split(/::/, __PACKAGE__)).'.pm'};
+Please invoke ${\__PACKAGE__} with:
 
-    use inc::Module::Install;
+    use inc::${\__PACKAGE__};
 
 not:
 
-    use Module::Install;
+    use ${\__PACKAGE__};
 
-END
+.
 
 use strict 'vars';
+use Cwd ();
 use File::Find ();
 use File::Path ();
 
 @inc::Module::Install::ISA = 'Module::Install';
+*inc::Module::Install::VERSION = *VERSION;
 
-#line 128
+#line 129
 
 sub import {
     my $class = shift;
@@ -39,21 +38,33 @@ sub import {
     }
 
     *{caller(0) . "::AUTOLOAD"} = $self->autoload;
+
+    # Unregister loader and worker packages so subdirs can use them again
+    delete $INC{"$self->{file}"};
+    delete $INC{"$self->{path}.pm"};
 }
 
-#line 151
+#line 156
 
 sub autoload {
     my $self = shift;
     my $caller = caller;
-    sub {
-        ${"$caller\::AUTOLOAD"} =~ /([^:]+)$/ or die "Cannot autoload $caller";
+
+    my $cwd = Cwd::cwd();
+    my $sym = "$caller\::AUTOLOAD";
+
+    $sym->{$cwd} = sub {
+        my $pwd = Cwd::cwd();
+        if (my $code = $sym->{$pwd}) {
+            goto &$code unless $cwd eq $pwd; # delegate back to parent dirs
+        }
+        $$sym =~ /([^:]+)$/ or die "Cannot autoload $caller";
         unshift @_, ($self, $1);
         goto &{$self->can('call')} unless uc($1) eq $1;
     };
 }
 
-#line 168
+#line 181
 
 sub new {
     my ($class, %args) = @_;
@@ -78,7 +89,7 @@ sub new {
     bless(\%args, $class);
 }
 
-#line 197
+#line 210
 
 sub call {
     my $self   = shift;
@@ -89,7 +100,7 @@ sub call {
     goto &{$obj->can($method)};
 }
 
-#line 212
+#line 225
 
 sub load {
     my ($self, $method) = @_;
@@ -113,7 +124,7 @@ END
     $obj;
 }
 
-#line 242
+#line 255
 
 sub load_extensions {
     my ($self, $path, $top_obj) = @_;
@@ -127,12 +138,12 @@ sub load_extensions {
         next if $self->{pathnames}{$pkg};
 
         eval { require $file; 1 } or (warn($@), next);
-        $self->{pathnames}{$pkg} = $INC{$file};
+        $self->{pathnames}{$pkg} = delete $INC{$file};
         push @{$self->{extensions}}, $pkg->new( _top => $top_obj );
     }
 }
 
-#line 266
+#line 279
 
 sub find_extensions {
     my ($self, $path) = @_;
@@ -155,4 +166,4 @@ sub find_extensions {
 
 __END__
 
-#line 567
+#line 617

@@ -1,17 +1,12 @@
 package YAML::Node;
-@EXPORT = qw(ynode);
-use strict;
+
 use Exporter;
-use YAML::Base '-base';
-use YAML::Base; # XXX
-use YAML::Tag;
+@ISA = qw(Exporter);
+@EXPORT = qw(ynode);
+
+use strict;
+use YAML::Family;
 use Carp;
-
-spiffy_constructor 'new_node';
-
-attribute 'node';
-attribute 'kind';
-attribute 'tag';
 
 sub ynode {
     my $self;
@@ -24,33 +19,52 @@ sub ynode {
     else {
 	$self = tied($_[0]);
     }
-    return (ref($self) =~ /^yaml_(scalar|sequence|mapping)$/) 
-      ? $self 
-      : undef;
+    return (ref($self) =~ /^yaml_/) ? $self : undef;
 }
 
-my $kind_map = {
-    mapping => MAPPING,
-    sequence => SEQUENCE,
-    scalar => SCALAR,
-};
+sub info {
+    ($_[0] =~ qr{^(?:(.*)\=)?([^=]*)\(([^\(]*)\)$}o);
+}
+
 sub new {
-    my ($class, $node, $tag) = @_;
+    my ($class, $node, $family) = @_;
     my $self;
-    $self->{node} = $node;
-    my (undef, $type) = YAML::Base->get_info($node);
-    my $kind = (not defined $type) ? 'scalar' :
-               ($type eq 'ARRAY') ? 'sequence' :
-               ($type eq 'HASH') ? 'mapping' :
-               croak "Can't create YAML::Node from '$type'";
-    $self->{kind} = $kind_map->{$kind};
-    $self->{tag} = ($tag || '');
-    if ($kind eq 'scalar') {
+    $self->{NODE} = $node;
+    my (undef, $type) = info($node);
+    $self->{KIND} = (not defined $type) ? 'scalar' :
+                    ($type eq 'ARRAY') ? 'sequence' :
+		    ($type eq 'HASH') ? 'mapping' :
+		    croak "Can't create YAML::Node from '$type'";
+    family($self, ($family || ''));
+    if ($self->{KIND} eq 'scalar') {
 	yaml_scalar->new($self, $_[1]);
 	return \ $_[1];
     }
-    my $package = "yaml_$kind";    
+    my $package = "yaml_" . $self->{KIND};    
     $package->new($self)
+}
+
+sub node { $_->{NODE} }
+sub kind { $_->{KIND} }
+sub family {
+    my ($self, $value) = @_;
+    if (defined $value) {
+       	$self->{FAMILY} = YAML::Family->new($value);
+	return $self;
+    }
+    else {
+       return $self->{FAMILY};
+    }
+}
+sub keys {
+    my ($self, $value) = @_;
+    if (defined $value) {
+       	$self->{KEYS} = $value;
+	return $self;
+    }
+    else {
+       return $self->{KEYS};
+    }
 }
 
 #==============================================================================
@@ -65,17 +79,17 @@ sub new {
 sub TIESCALAR {
     my ($class, $self) = @_;
     bless $self, $class;
-    return $self;
+    $self
 }
 
 sub FETCH {
     my ($self) = @_;
-    return $self->node;
+    $self->{NODE}
 }
 
 sub STORE {
     my ($self, $value) = @_;
-    $self->{node} = $value;
+    $self->{NODE} = $value
 }
 
 #==============================================================================
@@ -86,75 +100,36 @@ sub new {
     my ($class, $self) = @_;
     my $new;
     tie @$new, $class, $self;
-    return $new;
+    $new
 }
 
 sub TIEARRAY {
     my ($class, $self) = @_;
-    return bless $self, $class;
+    bless $self, $class
 }
 
 sub FETCHSIZE {
     my ($self) = @_;
-    return scalar @{$self->node};
+    scalar @{$self->{NODE}};
 }
-
-# sub FETCHSIZE {
-#     my ($self, $count) = @_;
-#     return $#{$self->node} = $count;
-# }
 
 sub FETCH {
     my ($self, $index) = @_;
-    return $self->node->[$index]
+    $self->{NODE}[$index]
 }
 
 sub STORE {
     my ($self, $index, $value) = @_;
-    return $self->node->[$index] = $value;
+    $self->{NODE}[$index] = $value
 }
 
-sub PUSH {
-    my $self = shift;
-    return push @{$self->node}, @_;
+sub undone {
+    die "Not implemented yet"; # XXX
 }
 
-sub POP {
-    my $self = shift;
-    return pop @{$self->node};
-}
-
-sub SHIFT {
-    my $self = shift;
-    return shift @{$self->node};
-}
-
-sub UNSHIFT {
-    my $self = shift;
-    return unshift @{$self->node}, @_;
-}
-
-sub SPLICE {
-    my $self = shift;
-    my $offset = shift;
-    my $length = shift;
-    return splice(@{$self->node}, $offset, $length, @_);
-}
-
-sub EXISTS {
-    my ($self, $index) = @_;
-    return exists $self->node->[$index]
-}
-
-sub DELETE {
-    my ($self, $index) = @_;
-    return delete $self->node->[$index]
-}
-
-sub CLEAR {
-    my ($self) = @_;
-    return $self->node([]);
-}
+*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS = 
+*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS = 
+*undone; # XXX Must implement before release
 
 #==============================================================================
 package yaml_mapping;
@@ -162,49 +137,39 @@ package yaml_mapping;
 
 sub new {
     my ($class, $self) = @_;
-    @{$self->{keys}} = sort keys %{$self->{node}}; 
+    @{$self->{KEYS}} = sort keys %{$self->{NODE}}; 
     my $new;
     tie %$new, $class, $self;
-    return $new;
-}
-
-sub keys {
-    my $self = shift;
-    if (@_) {
-        $self->{keys} = (ref $_[0] eq 'ARRAY') ? $_[0] : [@_];
-    }
-    return wantarray 
-      ? @{$self->{keys}} 
-      : $self->{keys};
+    $new
 }
 
 sub TIEHASH {
     my ($class, $self) = @_;
-    return bless $self, $class;
+    bless $self, $class
 }
 
 sub FETCH {
     my ($self, $key) = @_;
-    if (exists $self->node->{$key}) {
-	return (grep {$_ eq $key} @{$self->keys}) 
-	       ? $self->node->{$key} : undef;
+    if (exists $self->{NODE}{$key}) {
+	return (grep {$_ eq $key} @{$self->{KEYS}}) 
+	       ? $self->{NODE}{$key} : undef;
     }
-    return $self->{hash}->{$key};
+    return $self->{HASH}{$key};
 }
 
 sub STORE {
     my ($self, $key, $value) = @_;
-    if (exists $self->{node}{$key}) {
-	$self->{node}{$key} = $value;
+    if (exists $self->{NODE}{$key}) {
+	$self->{NODE}{$key} = $value;
     }
-    elsif (exists $self->{hash}{$key}) {
-	$self->{hash}{$key} = $value;
+    elsif (exists $self->{HASH}{$key}) {
+	$self->{HASH}{$key} = $value;
     }
     else {
-	if (not grep {$_ eq $key} @{$self->{keys}}) {
-	    push(@{$self->{keys}}, $key);
+	if (not grep {$_ eq $key} @{$self->{KEYS}}) {
+	    push(@{$self->{KEYS}}, $key);
 	}
-	$self->{hash}{$key} = $value;
+	$self->{HASH}{$key} = $value;
     }
     $value
 }
@@ -212,15 +177,15 @@ sub STORE {
 sub DELETE {
     my ($self, $key) = @_;
     my $return;
-    if (exists $self->{node}{$key}) {
-	$return = $self->{node}{$key};
+    if (exists $self->{NODE}{$key}) {
+	$return = $self->{NODE}{$key};
     }
-    elsif (exists $self->{hash}{$key}) {
-	$return = delete $self->{node}{$key};
+    elsif (exists $self->{HASH}{$key}) {
+	$return = delete $self->{NODE}{$key};
     }
-    for (my $i = 0; $i < @{$self->{keys}}; $i++) {
-	if ($self->{keys}[$i] eq $key) {
-	    splice(@{$self->{keys}}, $i, 1);
+    for (my $i = 0; $i < @{$self->{KEYS}}; $i++) {
+	if ($self->{KEYS}[$i] eq $key) {
+	    splice(@{$self->{KEYS}}, $i, 1);
 	}
     }
     return $return;
@@ -228,24 +193,24 @@ sub DELETE {
 
 sub CLEAR {
     my ($self) = @_;
-    @{$self->{keys}} = ();
-    %{$self->{hash}} = ();
+    @{$self->{KEYS}} = ();
+    %{$self->{HASH}} = ();
 }
 
 sub FIRSTKEY {
     my ($self) = @_;
-    $self->{iter} = 0;
-    $self->{keys}[0]
+    $self->{ITER} = 0;
+    $self->{KEYS}[0]
 }
 
 sub NEXTKEY {
     my ($self) = @_;
-    $self->{keys}[++$self->{iter}]
+    $self->{KEYS}[++$self->{ITER}]
 }
 
 sub EXISTS {
     my ($self, $key) = @_;
-    exists $self->{node}{$key}
+    exists $self->{NODE}{$key}
 }
 
 1;
@@ -277,17 +242,17 @@ yields:
 
 A generic node in YAML is similar to a plain hash, array, or scalar node
 in Perl except that it must also keep track of its type. The type is a
-URI called the YAML tag.
+URI called the YAML type family.
 
 YAML::Node is a class for generating and manipulating these containers.
 A YAML node (or ynode) is a tied hash, array or scalar. In most ways it
 behaves just like the plain thing. But you can assign and retrieve and
-YAML tag URI to it. For the hash flavor, you can also assign the
+YAML type family URI to it. For the hash flavor, you can also assign the
 order that the keys will be retrieved in. By default a ynode will offer
 its keys in the same order that they were assigned.
 
 YAML::Node has a class method call new() that will return a ynode. You
-pass it a regular node and an optional tag. After that you can
+pass it a regular node and an optional type family. After that you can
 use it like a normal Perl node, but when you YAML::Dump it, the magical
 properties will be honored.
 
