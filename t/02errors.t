@@ -4,16 +4,16 @@ BEGIN {
 use YAML_Test;
 
 my @files;
-opendir DIR, "t/data/yaml";
+opendir DIR, "t/data/error";
 while (my $file = readdir(DIR)) {
     next if $file =~ /^\.{1,2}$/;
-    die "No comparison file t/data/dumper/$file found\n"
-      unless -f "t/data/dumper/$file";
+    die "No comparison file t/data/message/$file found\n"
+      unless -f "t/data/message/$file";
     push @files, $file;
 }
 
 print "1..", scalar @files, "\n";
 
 for my $file (@files) {
-    TestLoad($file);
+    TestError($file);
 }

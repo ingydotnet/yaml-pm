@@ -1,0 +1,106 @@
+---
+abstract: Bad Characters in Stream
+error: |
+ # Test msg_bad_chars
+ ---
+ - foo
+ # The next line contains an escape character
+ - bell -><CNTL-G><-
+message: |
+ YAML Load Error:
+   Invalid characters in stream. This parser only supports printable ASCII
+---
+abstract: No Last Newline in Stream
+error: |
+ # Test msg_no_newline
+ ---
+ - one
+ - two
+ - three
+message: |
+ YAML Load Error:
+   Stream does not end with newline character
+---
+abstract: Major Version Number
+error: |
+ # Test msg_bad_major_version
+ ---
+ - one
+ - two
+ --- #YAML:2.0
+ - foo
+ - bar
+message: |
+ YAML Load Error:
+   Can't parse a 2.0 document with a 1.0 parser
+ In YAML Stream line #5; Document #2.
+---
+abstract: Minor Version Number
+error: |
+ # Test msg_bad_minor_version
+ ---
+ - one
+ - two
+ --- #YAML:1.5
+ - foo
+ - bar
+message: |
+ YAML Load Warning:
+   Parsing a 1.5 document with a 1.0 parser
+ In YAML Stream line #5; Document #2.
+---
+abstract: Multiple Directives
+error: |
+ # Test msg_multiple_directives
+ --- #YAML:1.0 #YAML:1.0
+ - foo
+ --- #FOO:2 #FOO:3
+ - bar
+message: |
+ YAML Load Warning:
+   YAML directive used more than once
+ In YAML Stream line #2; Document #1.
+ YAML Load Warning:
+   FOO directive used more than once
+ In YAML Stream line #4; Document #2.
+---
+abstract: Text After Indicator
+error: |
+ # Test msg_text_after_indicator
+ ---
+ - \
+  This is OK.
+ - \ But this is not
+ - This is OK
+message: |
+ YAML Load Error:
+   No text allowed after indicator
+ In YAML Stream line #5; Document #1.
+---
+abstract: Top Level Inline
+error: |
+ # Test msg_top_level_inline
+ --- \
+    This is fine
+ --- |
+  So
+   is 
+    this
+ --- This won't work
+message: |
+ YAML Load Error:
+   Can't define a top level inline scalar
+ In YAML Stream line #8; Document #3.
+---
+abstract: No Anchor for Alias
+error: |
+ # Test msg_no_anchor
+ ---
+ - &moo foo
+ - bar
+ - *star
+ - &star far
+message: |
+ YAML Load Error:
+   No anchor for alias '*star'
+ In YAML Stream line #5; Document #1.

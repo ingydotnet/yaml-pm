@@ -1,9 +1,0 @@
-use YAML;
-
-my $map = { 
-	   name => 'Brian Ingerson',
-	   rank => 'JAPH',
-	   'serial number' => 8675309,
-	  };
-
-print YAML::Store($map);

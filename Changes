@@ -1,5 +1,59 @@
 Revision history for Perl extension YAML.
 
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Detect implicit scalars more correctly
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Refactor test suite
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Proofed documentation
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Fix ysh doc. Document flags in the pod.
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Move test code out of YAML.pm and into testlib
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Change directives to use #
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Parse regexes
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Change !perl/ syntax
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Emit regexes
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- support 'ysh -v' and 'ysh -V' and 'ysh -h'
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Support blessed globs
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Make ysh installable
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Parse CODE leaves
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Support blessed scalars
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Test warnings as well as errors
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Use B::Deparse to serialize code
+
+0.26  Wed Jan  9 21:13:45 PST 2002
+	- Change 'implicit' to 'simple'
+
+0.25  Wed Dec 19 02:34:38 PST 2001
+	- Initial module shipped to CPAN
+
 0.01  Mon Oct 15 19:18:49 2001
 	- original version; created by h2xs 1.19
 

@@ -1,6 +1,6 @@
 =head1 NAME
 
-YAML - Yet Another Markup Language
+YAML - YAML Ain't Markup Language (tm)
 
 =head1 SYNOPSIS
 
@@ -11,6 +11,7 @@ YAML - Yet Another Markup Language
     name: ingy
     age: old
     weight: heavy
+    # I should comment that I also like pink, but don't tell anybody.
     favorite colors:
      - red
      - white
@@ -20,9 +21,12 @@ YAML - Yet Another Markup Language
     - oren
     - ingy
     --- \
-    YAML should really stand for "YAML Ain't a Markup Language". That's
-    because it's really a data serialization language. But "YAML" is
-    just so catchy and fun to say. Try it. "YAML, YAML, YAML!!!"
+    You probably think YAML stands for "Yet Another Markup Language". It
+    ain't! YAML is really a data serialization language. But if you want
+    to think of it as a markup, that's OK with me. A lot of people try
+    to use XML as a serialization format.
+    
+    "YAML" is catchy and fun to say. Try it. "YAML, YAML, YAML!!!"
     --END
     
     print Store($string, $arrayref, $hashref); 
@@ -33,14 +37,14 @@ YAML - Yet Another Markup Language
 =head1 DESCRIPTION
 
 The YAML.pm module implements a YAML Loader and Dumper based on the YAML
-1.0 specification. (http://www.yaml.org/spec/index.html)
+1.0 specification. L<http://www.yaml.org/spec/>
 
 YAML is a generic data serialization language that is optimized for
 human readability. It can be used to express the data structures of most
-modern programming languages. (including Perl!!!)
+modern programming languages. (Including Perl!!!)
 
 For information on the YAML syntax, please refer to the YAML
-specification at http://www.yaml.org/cce-19.html.
+specification at L<http://www.yaml.org/spec/>.
 
 =head1 WHY YAML IS COOL
 
@@ -61,7 +65,7 @@ configuration files. All almost all programs need configuration files,
 so why invent a new syntax for each one. And why subject users to the
 complexities of XML or native Perl code.
 
-=item YAML is multilingual
+=item YAML is multilingual.
 
 Yes, YAML supports Unicode. But I'm actually referring to programming
 languages. YAML was designed to meet the serialization needs of Perl,
@@ -88,6 +92,10 @@ not 100% perfect (no serializer is or can be perfect), it fares as well
 as the popular current modules: Data::Dumper, Storable, XML::Dumper and
 Data::Denter.
 
+YAML.pm also has the ability to handle code (subroutine) references and
+typeglobs. (Still experimental) These features are not found in Perl's
+other serialization modules.
+
 =item YAML is extensible.
 
 YAML has been designed to be flexible enough to solve it's own problems.
@@ -96,6 +104,11 @@ array and scalar. By default, these map to their Perl equivalents. But
 each YAML node also supports a type (or "transfer method") which can
 cause that node to be interpreted in a completely different manner.
 That's how YAML can support oddball structures like Perl's typeglob.
+
+=item YAML.pm plays well with others.
+
+YAML has been designed to interact well with other Perl Modules like POE,
+Date::ICal and Time::Object. (date support coming soon)
 
 =back
 
@@ -119,12 +132,12 @@ To prevent YAML.pm from exporting functions, say:
 Turn Perl data into YAML. This function works very much like
 Data::Dumper::Dumper(). It takes a list of Perl data strucures and
 dumps them into a serialized form. It returns a string containing the
-YAML stream. The stuctures can references or plain scalars.
+YAML stream. The structures can references or plain scalars.
 
 =item Load(string containing a YAML stream)
 
 Turn YAML into Perl data. This is the opposite of Data::Dumper; kind
-of like the eval() function. It parse a string containing a valid
+of like the eval() function. It parses a string containing a valid
 YAML stream into a list of Perl data structures. In list context YAML
 will return a stucture for each YAML document in the stream. 
 
@@ -136,7 +149,11 @@ will return a stucture for each YAML document in the stream.
 
 =item StoreFile(filepath, list)
 
-=item LoadFile(filepath, list)
+Writes the YAML stream to a file instead of just returning a string.
+
+=item LoadFile(filepath)
+
+Reads the YAML stream from a file instead of a string.
 
 =item Dumper()
 
@@ -206,7 +223,7 @@ Imports freeze() and thaw().
 =head2 Class Methods
 
 YAML can also be used in an object oriented manner. At this point it
-offers no real advantage. This may change.
+offers no real advantage. 
 
 =over 4
 
@@ -255,7 +272,7 @@ Default is '---'.
 
 This is the MIME like string that separates YAML documents in a stream.
 It must start with two dashes, and then be followed by one or more
-non-whitespace characters.
+non-whitespace characters. ( '---' is the canonical form. )
 
 =item UseHeader
 
@@ -263,8 +280,8 @@ Default is 1. (true)
 
 This tells YAML.pm whether use a separator string for a Store operation.
 
-NOTE: It is illegal to not begin a YAML stream with a separator if there
-are more than one documents in the YAML stream.
+NOTE: It is currently illegal to not begin a YAML stream with a
+      separator if there are more than one documents in the YAML stream.
 
 =item UseVersion
 
@@ -282,6 +299,38 @@ The canonical form is:
 Default is 1. (true)
 
 Tells YAML.pm whether or not to sort hash keys when storing a document.
+
+=item PerlCode
+
+Setting the PerlCode option is a shortcut to set both the StoreCode and
+LoadCode options at once. Setting PerlCode to '1' tells YAML.pm to dump
+Perl code references as Perl (using B::Deparse) and to load them back
+into memory using eval(). The reason this has to be an option is that
+using eval() to parse untrusted code is, well, untrustworthy. Safe
+deserialization is one of the core goals of YAML.
+
+=item StoreCode
+
+Determines if and how YAML.pm should serialize Perl code references. By
+default YAML.pm will store code references as dummy placeholders (much
+like Data::Dumper). If StoreCode is set to '1' or 'deparse', code
+references will be dumped as actual Perl code.
+
+StoreCode can also be set to a subroutine reference so that you can
+write your own serializing routine. YAML.pm passes you the code ref. You
+pass back the serialization (as a string) and a format indicator. The
+format indicator is a simple string like: 'deparse' or 'bytecode'.
+
+=item LoadCode
+
+LoadCode is the opposite of StoreCode. It tells YAML if and how to
+deserialize code references. When set to '1' or 'deparse' it will use
+C<eval()>. Since this is potentially risky, only use this option if you
+know where your YAML has been.
+
+LoadCode can also be set to a subroutine reference so that you can write
+your own deserializing routine. YAML.pm passes the serialization (as a
+string) and a format indicator. You pass back the code reference.
 
 =back
 
@@ -307,7 +356,7 @@ Glob or Python's tuple, or Ruby's Bigint.
 
 A YAML stream is the full sequence of bytes that a YAML parser would
 read or a YAML emitter would write. A stream may contain one or more YAML
-documents separated by YAML separators.
+documents separated by YAML headers.
 
     ---
     a: map
@@ -334,6 +383,25 @@ A YAML node is the representation of a particular data stucture. Nodes
 may contain other nodes. (In Perl terms, nodes are like scalars.
 Strings, arrayrefs and hashrefs. But this refers to the serialized
 format, not the in-memory structure.)
+
+=item transfer method
+
+This is similar to a type. It indicates how a particular YAML node
+serialization should be transferred into or out of memory. For instance
+a Foo::Bar object would use the transfer 'perl/map:Foo::Bar':
+
+    - !perl/map:Foo::Bar
+     foo: 42
+     bar: stool
+
+A transfer method can be used to 'cast' a YAML node to a different type
+of Perl Structure. For instance, the following represents a perl
+B<array> with 43 entries:
+
+    sparse array: !seq
+     1: one
+     2: two
+     42: forty two
 
 =item collection
 
@@ -370,16 +438,19 @@ YAML has six styles for representing scalars. This is important because
 varying data will have varying formatting requirements to retain the
 optimum human readability.
 
-=item implicit scalar
+=item simple scalar
 
-This is a single line of unquoted text. All implicit scalars are
-automatic candidates for "implicit transferring". This means that unless
-they match a set of predetermined YAML regex patterns, they will raise a
-parser exception. The typical uses for this are simple alpha strings,
-integers, real numbers, dates, times and currency.
+This is a single line of unquoted text. All simple scalars are automatic
+candidates for "implicit transferring". This means that their B<type> is
+determined automatically by examination. Unless they match a set of
+predetermined YAML regex patterns, they will raise a parser exception.
+The typical uses for this are simple alpha strings, integers, real
+numbers, dates, times and currency.
 
     - a simple string
     - -42
+    - 3.1415
+    - 12:34
     - 123 this is an error
 
 =item single quoted scalar
@@ -435,10 +506,37 @@ line folding.
           1  Foo Fighters  $19.95 $19.95
           2  Bar Belles    $29.95 $59.90
 
+=item parser
+
+A YAML processor has for stages: parse, load, dump, emit. 
+
+A parser parses a YAML stream. YAML.pm's Load() function contains a
+parser.
+
+=item loader
+
+The other half of the Load() function is a loader. This takes the
+information from the parser and loads it into a Perl data structure.
+
+=item dumper
+
+The Store() function consists of a dumper and an emitter. The dumper
+walks through each Perl data structure and gives info to the emitter.
+
+=item emitter
+
+The emitter takes info from the dumper and turns it into a YAML stream. 
+
+NOTE: In YAML.pm the parser/loader and the dumper/emitter code are
+      currently very closely tied together. When libyaml is written (in
+      C) there will be a definite separation. libyaml will contain a
+      parser and emitter, and YAML.pm (and YAML.py etc) will supply the
+      loader and dumper.
+
 =back
 
 For more information please refer to the immensely helpful YAML
-specification available at http://www.yaml.org/spec/index.html
+specification available at L<http://www.yaml.org/spec/>.
 
 =head1 ysh - The YAML Shell
 
@@ -447,38 +545,66 @@ ysh provides a simple, interactive way to play with YAML. If you type in
 Perl code, it displays the result in YAML. If you type in YAML it turns
 it into Perl code.
 
-To run ysh, cd into the distribution directory and type:
+To run ysh, (assuming you installed it along with YAML.pm) simply type:
 
-    perl ysh
+    ysh [options]
 
-If you find a bug in YAML, please try to recreate it in 'ysh'. If
-you start ysh with -l, logging will be appended to the file
-./ysh.log. If you start ysh with the -L flag, the log will be reset
-before logging begins.
+C<ysh> has a few handy command line options:
 
-    perl ysh -l
-    perl ysh -L
+=over 4
 
-When you have successfully reproduced the bug, please mail the LOG file
-to the author (ingy@cpan.org).
+=item -r
 
-NOTE: The ysh script does not get installed into your path by 'make
-      install'. If you want ysh to be in, say, /usr/local/bin, you
-      should move it there yourself. You'll also need to change the
-      '#!' line to point to your perl binary, if you're using Unix.
+Test round-tripping. When you enter Perl code, ysh will Store it, Load
+it and Store it again. If the two Stores don't match, it will bark.
+
+=item -R
+
+Same as -r except that it also prints a confirmation when the data
+B<does> round-trip.
+
+=item -c
+
+Sets $YAML::PerlCode to '1' automatically. This allows you to dump Perl
+code references.
+
+=item -l
+
+Turns on logging. Will write the log to './ysh.log'. Concatenates to the
+log file if the file already exists.
+
+=item -L
+
+Same as -l, but overwrites the log file if it exists.
+
+=item -v
+
+Print the versions for ysh and YAML.pm and exit.
+
+=item -V 
+
+Same as -v, but prints the version of perl and YAML related
+modules as well.
+
+=item -h
+
+Print a help screen and exit.
+
+=back
 
 =head1 BUGS & DEFICIENCIES
+
+If you find a bug in YAML, please try to recreate it in the YAML Shell
+(ysh) with logging turned on. When you have successfully reproduced the
+bug, please mail the LOG file to the author (ingy@cpan.org).
 
 WARNING: This is *ALPHA* code. It is brand spanking new. It probably has
 lots of bugs and speling mistakes.
 
-If you find a bug in YAML, please try the reproduce it with the YAML
-Shell (ysh) with logging turned on. (See the YAML Shell section above)
-
 BIGGER WARNING: This is *TRIAL1* of the YAML 1.0 specification. The YAML
 syntax may change before it is finalized. Based on past experience, it
 probably will change. The authors of this spec have worked for the past
-six months putting together YAML 1.0, and we have flipped it on it's
+seven months putting together YAML 1.0, and we have flipped it on it's
 syntactical head almost every week. We're a fickle lot, we are. So use
 this at your own risk!!!
 
@@ -516,13 +642,27 @@ strings be unicode, but this early implementation just uses ASCII.
 
 =item Structured Keys
 
-Python, Java and perhaps others support using any data type as the key
-to a hash. YAML also supports this. Perl5 only uses strings as hash
-keys. YAML.pm doesn't have any support for these structured keys yet.
+Python, Java and perhaps others support using any data type as the
+key to a hash. YAML also supports this. Perl5 only uses strings as
+hash keys.
 
-Yet? Why would a Perl5 module need to support these? Because if YAML.pm
-gets a YAML document from YAML.py it must be able to return it with the
-Python data intact.
+YAML.pm can currently parse structured keys, but their meaning gets lost
+when they are loaded into a Perl hash. Consider this example using the
+YAML Shell:
+
+    ysh > ---
+    yaml> ?
+    yaml>  foo: bar
+    yaml> : baz
+    yaml> ...
+    $VAR1 = {
+              'HASH(0x1f1d20)' => 'baz'
+            };
+    ysh >
+
+YAML.pm will need to be fixed to preserve these keys somehow. Why?
+Because if YAML.pm gets a YAML document from YAML.py it must be able to
+return it with the Python data intact.
 
 =item Tuples and Others
 
@@ -541,14 +681,17 @@ can still make intuitive use of the structure.
 
 As far as I know, other Perl serialization modules are not capable of
 serializing and deserializing typeglobs, subroutines (code refs),
-regexes and tied data structures. YAML may be able to do this at least
-to some degree of success. No attempt has been made for this alpha
-implementation.
+regexes and tied data structures. This release adds preliminary support
+for serializing code refs. (Using B::Deparse and eval()). It also adds
+Load support (to the existing Store support) for globs.
 
-NOTE: I went ahead and added preliminary glob support for Store only.
-      Example? For a dump of Perl's global guts, try:
+NOTE: For a (huge) dump of Perl's global guts, try:
 
-    perl -MYAML -e 'print Store \%main::'
+    perl -MYAML -e '$YAML::PerlCode=1; print Store \%main::'
+
+To limit this to a single namespace try:
+
+    perl -MCGI -MYAML -e '$YAML::PerlCode=1; print Store \%CGI::'
 
 =item Speed
 
@@ -564,16 +707,18 @@ core library.
 Please join us on the YAML mailing list if you are interested in
 implementing something. 
 
-https://lists.sourceforge.net/lists/listinfo/yaml-core
+L<https://lists.sourceforge.net/lists/listinfo/yaml-core>
 
 =back
 
 =head1 RESOURCES
 
-http://www.yaml.org is the official YAML website.
+L<http://www.yaml.org> is the official YAML website.
+
+L<http://www.yaml.org/spec/> is the YAML 1.0 specification.
 
 YAML has been registered as a Source Forge project.
-(http://www.sourceforge.net) Currently we are only using the mailing
+(L<http://www.sourceforge.net>) Currently we are only using the mailing
 list facilities there.
 
 =head1 IMPLEMENTATIONS
@@ -597,6 +742,10 @@ implementation.
      name: Oren Ben-Kiki
      project: Java Loader/Dumper
      email: orenbk@richfx.com
+    -
+     name: Jon Prettyman
+     project: libyaml
+     email: jon@prettyman.org
     -
      name: Paul Prescod
      project: YAML Antagonist/Anarchist
@@ -632,15 +781,19 @@ implementation.
 
 =head1 AUTHOR
 
-Brian Ingerson <INGY@cpan.org>
+Brian Ingerson <INGY@cpan.org> is resonsible for YAML.pm.
+
+The YAML language is the result of a ton of collaboration between Oren
+Ben-Kiki, Clark Evans and Brian Ingerson. Several others have added help
+along the way.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2001. Brian Ingerson. All rights reserved.
+Copyright (c) 2001, 2002. Brian Ingerson. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-See http://www.perl.com/perl/misc/Artistic.html
+See L<http://www.perl.com/perl/misc/Artistic.html>
 
 =cut
