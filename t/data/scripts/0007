@@ -1,0 +1,26 @@
+use YAML;
+
+$a = {a => 'map'};
+$b = ['a', 'sequence'];
+$c = 'plain scalar';
+$d = "escaped\nscalar";
+$e = <<END;
+This
+ is
+  a
+   block.
+    It's
+    kinda
+   like
+  a
+ here
+document.
+END
+$f = <<END;
+A
+ chomped
+  block.
+END
+chomp($f);
+
+print YAML::Store($a, $b, $c, $d, $e, $f);

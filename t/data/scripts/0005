@@ -1,0 +1,10 @@
+use YAML;
+
+my $obj = { 
+	   color => 'blue',
+	   shape => 'round',
+	   size => 'big',
+	  };
+bless $obj, 'Foo::Bar';
+
+print YAML::Store($obj);

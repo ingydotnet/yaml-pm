@@ -1,0 +1,13 @@
+use YAML;
+
+my $list = [qw(red
+	       yellow
+	       green
+	       blue
+	       orange
+	       violet
+	       brown
+	      )
+	   ];
+
+print YAML::Store($list);

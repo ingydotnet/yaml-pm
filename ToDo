@@ -1,0 +1,49 @@
++ Add support for emitting !ref
++ Add support for parsing !ref
++ Finish implicit typing
++ Support map_to_seq for sparse arrays
++ Parse anchors and aliases
++ Support inline collections
++ Parse anchors in inline collections
++ Clear anchor dictionaries between documents
++ Honor the force implicit flag '!'
++ Unescape quoted strings
++ Change unescape routine
++ Support freeze/thaw for POE.pm
++ Change !ref to !ptr
++ Fix circular anchor parsing bug.
++ Dump all scalar types for keys (multi-line keys)
++ Fix 3 parameter open bug
++ Parse non-implicit keys correctly
++ Replace object syntax with functional syntax
++ Separator followed by nothing generates unwanted warnings
++ Unescaping is busted
++ Next line scalars don't parse when they start with whitespace
++ Remove trailing blanks from implicits, one line values etc.
++ Fix bugs with denter-poe and PRD example programs
++ Reformat doc using Text::Autoformat
++ Line counting is wrong in error messages
++ Create subs for messages
++ Move lexical hashes into the state object
++ add _parse_str_to_int
++ Emit '!' for top level implicits
++ Support !org.yaml|foo
++ Fix GLOB reference quandry
++ support !Perl|%Class
+  + drop !!Class
++ Get implementor approvals
+  + Get Neil's email address
++ Resolve edge cases in next line scalars
++ Add implementor comments to YAML.pm
++ Finish documentation
+
+= Fix bug: Store Load Store($a = \$a); # see what Data::Denter does
+
+- Add tests for code folding
+= Rearrange subroutines and inline appropriately
+- Add Clark's samples to the test suite
+- Finish the test suite
+
+x Use Text::Wrap variant for folding
+x emit '- ' and ': '
+x Support collapsed sequence items
