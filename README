@@ -1,0 +1,108 @@
+# The YAML.pm README
+
+--- #YAML:1.0
+YAML.pm version: 0.35
+YAML Stands For: YAML Ain't Markup Language
+this: is valid YAML
+YAML website: http://www.yaml.org
+to install YAML.pm:
+  - perl Makefile.PL
+  - make
+  - make test
+  - make install
+YAML.pm author: [Brian Ingerson, ingy@cpan.org]
+YAML people:
+    founders: &founders
+        - Clark Evans
+        - Oren Ben-Kiki
+        - Brian Ingerson
+    implementors:
+        - *founders
+        - Ryan "Bend thy knee" King 
+        - Neil Watkiss
+        - Rolf Veen
+        - Why the Lucky Stiff
+        - Steve Howell
+    pundits:
+        - Paul Prescod           
+
+usage: |
+
+    use YAML;
+    print Dump(\@ARGV, \%INC, *main::);
+
+? >
+  If you don't believe this is valid YAML, 
+  simply try the following command from this
+  directory after installing YAML.pm and
+  the accompanying program: 'ysh'
+: ysh < README
+
+# Note the YAML document embedded in the YAML document!
+YAML cheat sheet: |
+    --- #YAML:1.0
+    # NOTE: This is slightly out-of-date with the current spec.
+    #       Check http://www.yaml.org/spec/ for the latest info.
+    # Ingy's NOTE: YAML.pm does not support every single feature of YAML yet.
+    Branch:
+        '- ' : Nested series entry indicator.
+        ': ' : Key / value separator.
+        '? ' : Nested key indicator.
+        '[]' : Surround in-line series branch.
+        '{}' : Surround in-line keyed branch.
+        ', ' : Separate in-line branch entries.
+
+    Leaf:
+        '|' : Nested block value indicator.
+        '>' : Nested folded value indicator.
+        '-' : Nested value escaping indicator.
+        "'" : Surround in-line unescaped value ('' is used for escaped ').
+        '"' : Surround in-line escaped value (see escape codes below).
+
+    Alias:
+        '&' : Anchor property.
+        '*' : Alias indicator.
+
+    Type:
+        '!'  : Transfer method indicator.
+        '!!' : Transfer method with private type family.
+        '^'  : Establish/use public type family prefix.
+        '|'  : Separate public type family from format.
+
+    Document:
+        '#'  : Directive indicator.
+        '---': Separator prefix 
+
+    Misc:
+        '#'  : Throwaway comment indicator.
+        '//' : Note (preserved comment) map key.
+        '='  : Default value map key.
+
+    Collections:
+         !map : Hash table, dictionary, mapping
+         !seq : List, array, tuple, vector, sequence
+
+    Implicit Scalars:
+        ~          : Null (no value).
+        +          : Boolean true
+        -          : Boolean false
+        foo bar    : String
+        2002-12-31 : Date (Gregorian)
+        23:59:59   : Time of day
+        2002-12-31 23:59:59Z      : Timestamp (UTC)
+        2002-12-31 18:59:59-05:00 : Timestamp (EST)
+        [ 1234, 0x4D2, 02333 ]    : [ Decimal int, Hexadecimal int, Octal int ]
+        [ 12.34, 123.4e-1 ]       : [ Fixed float, Exponential float ]
+
+    Explicit Scalars:
+        ? !binary >
+            R0lG...BADS=
+        : Binary value (base64)
+
+    Escape codes:
+     Numeric   : { "\xXX": 8-bit, "\uXXXX": 16-bit, "\UXXXXXXXX": 32-bit }
+     Protective: { "\\": '\', "\"": '"' }
+     C: { "\a": BEL, "\b": BS, "\f": FF, "\n": LF, 
+          "\r": CR, "\t": TAB, "\v": VTAB }
+     Additional: { "\e": ESC, "\z": NUL, "\ ": NBSP, 
+                   "\N": NEL, "\L": LS, "\P": PS }

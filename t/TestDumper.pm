@@ -1,5 +1,5 @@
-# This version of Data::Dumper has been rigged to look like the YAML
-# module for testing the real YAML.pm.
+# This version of Data::Dumper has been rigged for testing YAML loads.
+# It uses the pure Perl code and always sorts hash keys
 #
 # It was taken from the 5.6.1 distribution, and thus inherits the 
 # bugs of that version.
@@ -13,7 +13,7 @@
 #
 
 #package Data::Dumper;
-package Yumper;
+package TestDumper;
 
 $VERSION = '2.102';
 
@@ -28,7 +28,7 @@ use Carp;
 
 @ISA = qw(Exporter);
 # @EXPORT = qw(Dumper);
-@EXPORT = qw(Yumper);
+@EXPORT = qw(TestDump);
 # @EXPORT_OK = qw(DumperX);
 
 # XSLoader::load 'Data::Dumper';
@@ -153,17 +153,17 @@ sub Names {
 
 sub DESTROY {}
 
-sub Yump {
+sub Dump {
 #    return &Dumpxs
 #	unless $Data::Dumper::Useqq || (ref($_[0]) && $_[0]->{useqq});
-    return &Yumpperl;
+    return &Dumpperl;
 }
 
 #
 # dump the refs in the current dumper object.
 # expects same args as new() if called via package name.
 #
-sub Yumpperl {
+sub Dumpperl {
   my($s) = shift;
   my(@out, $val, $name);
   my($i) = 0;
@@ -450,11 +450,12 @@ sub _dump {
 #
 # non-OO style of earlier version
 #
-sub Yumper {
+#sub Dumper {
+sub TestDump {
 #  return Data::Dumper->Dump([@_]);
-  return Yumper->Yump([@_]);
+  return TestDumper->Dump([@_]);
 }
-*Store = \&Yumper;
+*Store = \&Dumper;
 
 # compat stub
 #sub DumperX {

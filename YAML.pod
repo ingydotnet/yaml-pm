@@ -5,32 +5,35 @@ YAML - YAML Ain't Markup Language (tm)
 =head1 SYNOPSIS
 
     use YAML;
-
-    my ($hashref, $arrayref, $string) = Load(<<'--END');
+    
+    # Load a YAML stream of 3 YAML documents into Perl data structures.
+    my ($hashref, $arrayref, $string) = Load(<<'...');
     ---
     name: ingy
     age: old
     weight: heavy
     # I should comment that I also like pink, but don't tell anybody.
     favorite colors:
-     - red
-     - white
-     - blue
+        - red
+        - white
+        - blue
     ---
-    - clark
-    - oren
-    - ingy
-    --- ]
+    - Clark Evans
+    - Oren Ben-Kiki
+    - Brian Ingerson
+    --- >
     You probably think YAML stands for "Yet Another Markup Language". It
     ain't! YAML is really a data serialization language. But if you want
     to think of it as a markup, that's OK with me. A lot of people try
     to use XML as a serialization format.
     
     "YAML" is catchy and fun to say. Try it. "YAML, YAML, YAML!!!"
-    --END
+    ...
     
-    print Store($string, $arrayref, $hashref); 
+    # Dump the Perl data structures back into YAML.
+    print Dump($string, $arrayref, $hashref); 
     
+    # YAML::Dump is used the same way you'd use Data::Dumper::Dumper
     use Data::Dumper;
     print Dumper($string, $arrayref, $hashref); 
 
@@ -44,7 +47,7 @@ human readability. It can be used to express the data structures of most
 modern programming languages. (Including Perl!!!)
 
 For information on the YAML syntax, please refer to the YAML
-specification at L<http://www.yaml.org/spec/>.
+specification.
 
 =head1 WHY YAML IS COOL
 
@@ -60,19 +63,20 @@ formatting for different types of data.
 
 =item YAML is editable.
 
-YAML was designed from the ground up to be the ultimate syntax for
-configuration files. All almost all programs need configuration files,
-so why invent a new syntax for each one. And why subject users to the
-complexities of XML or native Perl code.
+YAML was designed from the ground up to be an excellent syntax for
+configuration files. Almost all programs need configuration files, so
+why invent a new syntax for each one? And why subject users to the
+complexities of XML or native Perl code?
 
 =item YAML is multilingual.
 
 Yes, YAML supports Unicode. But I'm actually referring to programming
 languages. YAML was designed to meet the serialization needs of Perl,
-Python, Tcl, PHP, Java. It was also designed to be interoperable between
-those languages. That means any YAML serialization produced by Perl can
-be processed by Python, and be guaranteed to return the data structure
-intact. (Even if it contained Perl specific structures like GLOBs)
+Python, Ruby, Tcl, PHP and Java. It was also designed to be
+interoperable between those languages. That means any YAML serialization
+produced by Perl can be processed by Python, and be guaranteed to return
+the data structure intact. (Even if it contained Perl specific
+structures like GLOBs)
 
 =item YAML is taint safe.
 
@@ -98,17 +102,18 @@ other serialization modules.
 
 =item YAML is extensible.
 
-YAML has been designed to be flexible enough to solve it's own problems.
-The markup itself has 3 basic construct which resemble Perl's hash,
-array and scalar. By default, these map to their Perl equivalents. But
-each YAML node also supports a type (or "transfer method") which can
-cause that node to be interpreted in a completely different manner.
-That's how YAML can support oddball structures like Perl's typeglob.
+The YAML language has been designed to be flexible enough to solve it's
+own problems. The markup itself has 3 basic construct which resemble
+Perl's hash, array and scalar. By default, these map to their Perl
+equivalents. But each YAML node also supports a type (or "transfer
+method") which can cause that node to be interpreted in a completely
+different manner. That's how YAML can support oddball structures like
+Perl's typeglob.
 
 =item YAML.pm plays well with others.
 
-YAML has been designed to interact well with other Perl Modules like POE,
-Date::ICal and Time::Object. (date support coming soon)
+YAML has been designed to interact well with other Perl Modules like POE
+and Time::Object. (date support coming soon)
 
 =back
 
@@ -127,19 +132,28 @@ To prevent YAML.pm from exporting functions, say:
 
 =over 4
 
-=item Store(list of Perl data structures)
+=item Dump(list-of-Perl-data-structures)
 
 Turn Perl data into YAML. This function works very much like
 Data::Dumper::Dumper(). It takes a list of Perl data strucures and
 dumps them into a serialized form. It returns a string containing the
-YAML stream. The structures can references or plain scalars.
+YAML stream. The structures can be references or plain scalars.
 
-=item Load(string containing a YAML stream)
+=item Load(string-containing-a-YAML-stream)
 
-Turn YAML into Perl data. This is the opposite of Data::Dumper; kind
-of like the eval() function. It parses a string containing a valid
-YAML stream into a list of Perl data structures. In list context YAML
-will return a stucture for each YAML document in the stream. 
+Turn YAML into Perl data. This is the opposite of Dump. Just like
+Storable's thaw() function or the eval() function in relation to
+Data::Dumper. It parses a string containing a valid YAML stream into a
+list of Perl data structures. 
+
+=item Store()
+
+This function is deprecated, and now refered to as Dump. It is still available
+for the time being, but will generate a warning if you are using -w. You
+B<are> using -w, aren't you? :)
+
+The reason for this deprecation is that the YAML spec talks about programs
+called Loaders and Dumpers. "Storers" is too hard to say, I guess...
 
 =back
 
@@ -147,7 +161,7 @@ will return a stucture for each YAML document in the stream.
 
 =over 4
 
-=item StoreFile(filepath, list)
+=item DumpFile(filepath, list)
 
 Writes the YAML stream to a file instead of just returning a string.
 
@@ -155,37 +169,64 @@ Writes the YAML stream to a file instead of just returning a string.
 
 Reads the YAML stream from a file instead of a string.
 
+=item Bless(perl-node, [yaml-node | class-name])
+
+Associate a normal Perl node, with a yaml node. A yaml node is an object
+tied to the YAML::Node class. The second argument is either a yaml node
+that you've already created or a class (package) name that supports a
+yaml_dump() function. A yaml_dump() function should take a perl node and
+return a yaml node. If no second argument is provided, Bless will create a
+yaml node. This node is not returned, but can be retrieved with the Blessed()
+function.
+
+Here's an example of how to use Bless. Say you have a hash containing three
+keys, but you only want to dump two of them. Furthermore the keys must be
+dumped in a certain order. Here's how you do that:
+
+    use YAML qw(Dump Bless);
+    $hash = {apple => 'good', banana => 'bad', cauliflower => 'ugly'};
+    print Dump $hash;
+    Bless($hash)->keys(['banana', 'apple']);
+    print Dump $hash;
+
+produces:
+
+    --- #YAML:1.0
+    apple: good
+    banana: bad
+    cauliflower: ugly
+    --- #YAML:1.0
+    banana: bad
+    apple: good
+
+Bless returns the tied part of a yaml-node, so that you can call the
+YAML::Node methods. This is the same thing that YAML::Node::ynode()
+returns. So another way to do the above example is:
+
+    use YAML qw(:all);
+    use YAML::Node;
+    $hash = {apple => 'good', banana => 'bad', cauliflower => 'ugly'};
+    print Dump $hash;
+    Bless($hash);
+    $ynode = ynode(Blessed($hash));
+    $ynode->keys(['banana', 'apple']);
+    print Dump $hash;
+
+=item Blessed(perl-node)
+
+Returns the yaml node that a particular perl node is associated with
+(see above). Returns undef if the node is not (YAML) blessed.
+
 =item Dumper()
 
-Alias to Store(). For Data::Dumper fans.
+Alias to Dump(). For Data::Dumper fans.
 
-=item Eval()
+=item freeze() and thaw()
 
-Alias to Load(). For Data::Dumper fans.
+Aliases to Dump() and Load(). For Storable fans.
 
-=item Indent()
-
-Alias to Store(). For Data::Denter fans.
-
-=item Undent()
-
-Alias to Load(). For Data::Denter fans.
-
-=item Denter()
-
-Alias to Store(). For Data::Denter fans.
-
-=item freeze()
-
-Alias to Store(). For Storable fans.
-
-This will also allow YAML.pm to be plugged directly into POE.pm.
-
-=item thaw()
-
-Alias to Load(). For Storable fans.
-
-This will also allow YAML.pm to be plugged directly into POE.pm.
+This will also allow YAML.pm to be plugged directly into modules like POE.pm,
+that use the freeze/thaw API for internal serialization.
 
 =back
 
@@ -200,19 +241,11 @@ using the following syntax:
 
 =item all
 
-Imports Store(), Load(), StoreFile() and LoadFile().
+Imports Dump(), Load(), Store(), DumpFile(), LoadFile(), Bless() and Blessed().
 
 =item POE
 
 Imports freeze() and thaw().
-
-=item Dumper
-
-Imports Dumper() and Eval().
-
-=item Denter
-
-Imports Denter(), Indent() and Undent().
 
 =item Storable
 
@@ -223,19 +256,18 @@ Imports freeze() and thaw().
 =head2 Class Methods
 
 YAML can also be used in an object oriented manner. At this point it
-offers no real advantage. 
+offers no real advantage. This interface will be improved in a later
+release.
 
 =over 4
 
 =item new()
 
-New returns a new YAML object. Options may be passed in as
-key/value pairs. For example:
+New returns a new YAML object. For example:
 
-    my $y = YAML->new(Separator => '--foo',
-                      SortKeys => 0,
-                     );
-    $y->store($foo, $bar);
+    my $y = YAML->new;
+    $y->Indent(4);
+    $y->dump($foo, $bar);
 
 =back
 
@@ -243,9 +275,9 @@ key/value pairs. For example:
 
 =over 4
 
-=item store()
+=item dump()
 
-OO version of Store().
+OO version of Dump().
 
 =item load()
 
@@ -258,9 +290,9 @@ OO version of Load().
 YAML options are set using a group of global variables in the YAML
 namespace. This is similar to how Data::Dumper works.
 
-For example, to change the separator string, do something like:
+For example, to change the indentation width, do something like:
 
-    $YAML::Separator = '--<$>';
+    local $YAML::Indent = 3;
 
 The current options are:
 
@@ -268,30 +300,20 @@ The current options are:
 
 =item Indent
 
-This is the number of characters to use for each indentation level when
-doing a Store(). The default is 1.
+This is the number of space characters to use for each indentation level
+when doing a Dump(). The default is 2.
 
-By the way, YAML can use any number of characters for indentation at
-any level. So if you are editing YAML by hand feel free to do it anyway that
+By the way, YAML can use any number of characters for indentation at any
+level. So if you are editing YAML by hand feel free to do it anyway that
 looks pleasing to you; just be consistent for a given level.
-
-=item Separator
-
-Default is '---'.
-
-This is the MIME like string that separates YAML documents in a stream.
-It must start with two dashes, and then be followed by one or more
-non-whitespace characters. ( '---' is the canonical form. )
 
 =item UseHeader
 
 Default is 1. (true)
 
-This tells YAML.pm whether use a separator string for a Store operation.
-
-NOTE: 
-It is currently illegal to not begin a YAML stream with a separator if
-there are more than one documents in the YAML stream.
+This tells YAML.pm whether to use a separator string for a Dump
+operation. This only applies to the first document in a stream.
+Subsequent documents must have a YAML header by definition.
 
 =item UseVersion
 
@@ -308,32 +330,44 @@ The canonical form is:
 
 Default is 1. (true)
 
-Tells YAML.pm whether or not to sort hash keys when storing a document.
+Tells YAML.pm whether or not to sort hash keys when storing a document. 
+
+YAML::Node objects can have their own sort order, which is usually what
+you want. To override the YAML::Node order and sort the keys anyway, set
+SortKeys to 2.
+
+=item AnchorPrefix
+
+Default is ''.
+
+Anchor names are normally numeric. YAML.pm simply starts with '1' and
+increases by one for each new anchor. This option allows you to specify a
+string to be prepended to each anchor number.
 
 =item UseCode
 
-Setting the UseCode option is a shortcut to set both the StoreCode and
+Setting the UseCode option is a shortcut to set both the DumpCode and
 LoadCode options at once. Setting UseCode to '1' tells YAML.pm to dump
 Perl code references as Perl (using B::Deparse) and to load them back
 into memory using eval(). The reason this has to be an option is that
 using eval() to parse untrusted code is, well, untrustworthy. Safe
 deserialization is one of the core goals of YAML.
 
-=item StoreCode
+=item DumpCode
 
 Determines if and how YAML.pm should serialize Perl code references. By
-default YAML.pm will store code references as dummy placeholders (much
-like Data::Dumper). If StoreCode is set to '1' or 'deparse', code
+default YAML.pm will dump code references as dummy placeholders (much
+like Data::Dumper). If DumpCode is set to '1' or 'deparse', code
 references will be dumped as actual Perl code.
 
-StoreCode can also be set to a subroutine reference so that you can
+DumpCode can also be set to a subroutine reference so that you can
 write your own serializing routine. YAML.pm passes you the code ref. You
 pass back the serialization (as a string) and a format indicator. The
 format indicator is a simple string like: 'deparse' or 'bytecode'.
 
 =item LoadCode
 
-LoadCode is the opposite of StoreCode. It tells YAML if and how to
+LoadCode is the opposite of DumpCode. It tells YAML if and how to
 deserialize code references. When set to '1' or 'deparse' it will use
 C<eval()>. Since this is potentially risky, only use this option if you
 know where your YAML has been.
@@ -344,14 +378,60 @@ string) and a format indicator. You pass back the code reference.
 
 =item UseBlock
 
-YAML.pm uses heuristics to guess which scalar style is best for a
-given node. Sometimes you'll want all multiline scalars to use the
-'block' style. If so, set this option to 1.
+YAML.pm uses heuristics to guess which scalar style is best for a given
+node. Sometimes you'll want all multiline scalars to use the 'block'
+style. If so, set this option to 1.
+
+NOTE: YAML's block style is akin to Perl's here-document. 
+
+=item ForceBlock
+
+Force every possible scalar to be block formatted. NOTE: Escape characters
+cannot be formatted in a block scalar.
 
 =item UseFold
 
-If you want to force YAML to use the 'folded' style for all multiline scalars,
-then set $UseFold to 1.
+If you want to force YAML to use the 'folded' style for all multiline
+scalars, then set $UseFold to 1.
+
+NOTE: YAML's folded style is akin to the way HTML folds text,
+      except smarter.
+
+=item UseAliases
+
+YAML has an alias mechanism such that any given structure in memory gets
+serialized once. Any other references to that structure are serialized
+only as alias markers. This is how YAML can serialize duplicate and
+recursive structures.
+
+Sometimes, when you KNOW that your data is nonrecursive in nature, you
+may want to serialize such that every node is expressed in full. (ie as
+a copy of the original). Setting $YAML::UseAliases to 0 will allow you
+to do this. This also may result in faster processing because the lookup
+overhead is by bypassed.
+
+THIS OPTION CAN BE DANGEROUS. *If* your data is recursive, this option
+*will* cause Dump() to run in an endless loop, chewing up your computers
+memory. You have been warned.
+
+=item CompressSeries
+
+Default is 1.
+
+Compresses the formatting of arrays of hashes:
+
+    -
+      foo: bar
+    - 
+      bar: foo
+
+becomes:
+
+    - foo: bar
+    - bar: foo
+
+Since this output is usually more desirable, this option is turned on by
+default.
 
 =back
 
@@ -365,7 +445,7 @@ Perl and Python, it is a language in it's own right, not merely just a
 representation of Perl structures.
 
 YAML has three constructs that are conspicuously similar to Perl's hash,
-array, and scalar. They are called map, sequence, and scalar
+array, and scalar. They are called mapping, sequence, and string
 respectively. By default, they do what you would expect. But each
 instance may have an explicit or implicit type that makes it behave
 differently. In this manner, YAML can be extended to represent Perl's
@@ -380,7 +460,7 @@ read or a YAML emitter would write. A stream may contain one or more YAML
 documents separated by YAML headers.
 
     ---
-    a: map
+    a: mapping
     foo: bar
     ---
     - a
@@ -392,11 +472,11 @@ A YAML document is an independent data structure representation within a
 stream. It is a top level node.
 
     --- YAML:1.0
-    This: top level map
+    This: top level mapping
     is:
-     - a
-     - YAML
-     - document
+        - a
+        - YAML
+        - document
 
 =item node
 
@@ -409,34 +489,25 @@ format, not the in-memory structure.)
 
 This is similar to a type. It indicates how a particular YAML node
 serialization should be transferred into or out of memory. For instance
-a Foo::Bar object would use the transfer 'perl/map:Foo::Bar':
+a Foo::Bar object would use the transfer 'perl/Foo::Bar':
 
-    - !perl/map:Foo::Bar
-     foo: 42
-     bar: stool
-
-A transfer method can be used to 'cast' a YAML node to a different type
-of Perl Structure. For instance, the following represents a perl
-B<array> with 43 entries:
-
-    sparse array: !seq
-     1: one
-     2: two
-     42: forty two
+    - !perl/Foo::Bar
+        foo: 42
+        bar: stool
 
 =item collection
 
-A collection is a YAML data grouping. YAML has two types of collections:
-maps and sequences. (Similar to hashes and arrays)
+A collection is the generic term for a YAML data grouping. YAML has two
+types of collections: mappings and sequences. (Similar to hashes and arrays)
 
-=item map
+=item mapping
 
-A map is a YAML collection defined by key/value pairs. By default YAML
-maps are loaded into Perl hashes.
+A mapping is a YAML collection defined by key/value pairs. By default YAML
+mappings are loaded into Perl hashes.
 
-    a map:
-     foo: bar
-     two: times two is 4
+    a mapping:
+        foo: bar
+        two: times two is 4
 
 =item sequence
 
@@ -444,9 +515,9 @@ A sequence is a YAML collection defined by an ordered list of elements. By
 default YAML sequences are loaded into Perl arrays.
 
     a sequence:
-     - one bourbon
-     - one scotch
-     - one beer
+        - one bourbon
+        - one scotch
+        - one beer
 
 =item scalar
 
@@ -455,7 +526,7 @@ are loaded into Perl scalars.
 
     a scalar key: a scalar value
 
-YAML has six styles for representing scalars. This is important because
+YAML has many styles for representing scalars. This is important because
 varying data will have varying formatting requirements to retain the
 optimum human readability.
 
@@ -486,7 +557,7 @@ no implicit transfer. It must be used on a single line.
 This is similar to Perl's use of double quotes. Character escaping can
 be used. There is no implicit transfer and it must still be single line.
 
-    - "This scalar\nhas two lines"
+    - "This scalar\nhas two lines, and a bell -->\a"
 
 =item folded scalar
 
@@ -494,7 +565,7 @@ This is a multiline scalar which begins on the next line. It is
 indicated by a single closing brace. It is unescaped like the single
 quoted scalar. Line folding is also performed.
 
-    - ] 
+    - > 
      This is a multiline scalar which begins on
      the next line. It is indicated by a single
      carat. It is unescaped like the single
@@ -513,22 +584,9 @@ ending marker is required. The data is verbatim. No line folding.
           1  Foo Fighters  $19.95 $19.95
           2  Bar Belles    $29.95 $59.90
 
-=item escaped scalar
-
-Either the folded or block styles of multiline scalars can support
-backslash style escapes. This is accomplished by appending a backslash
-to the indicator.
-
-    - ]\ 
-     This is a multiline scalar which begins
-     on the next line.\nIt is indicated by
-     an added backslash.\nIt is escaped like
-     the double quoted scalar and subject to
-     line folding.
-
 =item parser
 
-A YAML processor has for stages: parse, load, dump, emit. 
+A YAML processor has four stages: parse, load, dump, emit. 
 
 A parser parses a YAML stream. YAML.pm's Load() function contains a
 parser.
@@ -540,7 +598,7 @@ information from the parser and loads it into a Perl data structure.
 
 =item dumper
 
-The Store() function consists of a dumper and an emitter. The dumper
+The Dump() function consists of a dumper and an emitter. The dumper
 walks through each Perl data structure and gives info to the emitter.
 
 =item emitter
@@ -577,21 +635,14 @@ If you find a bug in YAML, please try to recreate it in the YAML Shell
 with logging turned on ('ysh -L'). When you have successfully reproduced
 the bug, please mail the LOG file to the author (ingy@cpan.org).
 
-WARNING: This is *ALPHA* code. It is brand spanking new. It probably has
-lots of bugs and speling mistakes.
+WARNING: This is *ALPHA* code. 
 
 BIGGER WARNING: This is *TRIAL1* of the YAML 1.0 specification. The YAML
 syntax may change before it is finalized. Based on past experience, it
-probably will change. The authors of this spec have worked for the past
-seven months putting together YAML 1.0, and we have flipped it on it's
+probably will change. The authors of this spec have worked for over a
+year putting together YAML 1.0, and we have flipped it on it's
 syntactical head almost every week. We're a fickle lot, we are. So use
 this at your own risk!!!
-
-(OK, don't get too scared. We *are* pretty happy with the state of
-things right now. And we *have* agreed to freeze this TRIAL1 for the
-next couple of months to get user feedback. At the end of the trial
-period, the syntax may end up changing slightly, but the spirit should
-remain the same.)
 
 =over 4
 
@@ -610,7 +661,7 @@ ask them to test your serialization module. Even though it is of almost
 no real world value. So please don't report this bug unless you have a
 pure Perl patch to fix it for me.
 
-By the way, similar non-leaf structures Store and Load just fine:
+By the way, similar non-leaf structures Dump and Load just fine:
 
     $foo->[0] = $foo;
 
@@ -647,45 +698,31 @@ YAML.pm will need to be fixed to preserve these keys somehow. Why?
 Because if YAML.pm gets a YAML document from YAML.py it must be able to
 return it with the Python data intact.
 
-=item Tuples and Others
-
-YAML.pm will also support other non-Perl data structures like Python's
-tuples. In this case, and many others, Perl will still be able to make
-partial use of the foreign critters, because YAML.pm will attempt to map
-them into something close. Since a Python tuple is close to a Perl
-array, that's what YAML.pm will map it into. It will then either tie or
-bless the array into the special class 'org.yaml.tuple', so it can keep
-track of what the structure originally was. In this way, a Perl program
-can still make intuitive use of the structure.
-
-'org.yaml.tuple' and other special types have not yet been implemented.
-
-=item Globs, Subroutines, Regexes and Tied Data
+=item Globs, Subroutines, Regexes and File Handles
 
 As far as I know, other Perl serialization modules are not capable of
 serializing and deserializing typeglobs, subroutines (code refs),
-regexes and tied data structures. This release adds preliminary support
-for serializing code refs. (Using B::Deparse and eval()). It also adds
-Load support (to the existing Store support) for globs.
+regexes and file handles. YAML.pm has dumping capabilities for all of these.
+Loading them may produce wild results. Take care.
 
 NOTE: For a (huge) dump of Perl's global guts, try:
 
-    perl -MYAML -e '$YAML::UseCode=1; print Store \%main::'
+    perl -MYAML -e '$YAML::UseCode=1; print Dump \%main::'
 
 To limit this to a single namespace try:
 
-    perl -MCGI -MYAML -e '$YAML::UseCode=1; print Store \%CGI::'
+    perl -MCGI -MYAML -e '$YAML::UseCode=1; print Dump \%CGI::'
 
 =item Speed
 
 This is a pure Perl implementation that has been optimized for
-programmer readability, not for computational speed. The hope is that
-others will be able to quickly convert this module into other languages
-like Python, Tcl, PHP, Ruby, JavaScript and Java.
+programmer readability, not for computational speed. 
 
-Eventually there will be a core library, libyaml, written in C. Most
-implementations, including this one, should be migrated to use that
-core library.
+Neil Watkiss and Clark Evans are currently developing libyaml, the
+official C implementation of the YAML parser and emitter. YAML.pm will
+be refactoring to use this library once it is stable. Other languages
+like Python, Tcl, PHP, Ruby, JavaScript and Java can make use of the
+same core library.
 
 Please join us on the YAML mailing list if you are interested in
 implementing something. 
@@ -694,21 +731,24 @@ L<https://lists.sourceforge.net/lists/listinfo/yaml-core>
 
 =item Streaming Access
 
-This module Stores and Loads in one operation. There is no interface
+This module Dumps and Loads in one operation. There is no interface
 for parsing or emitting a YAML stream one node at a time. It's all
 or nothing.
 
-A serial interface will probably be supported by an entirely different
-module or set of modules. Something like YAML::Serial, or YAML::Parser
-and YAML::Emitter.
+An upcoming release will have support for incremental parsing.
+Incremental dumping is harder. Stay tuned.
 
 =back
 
 =head1 RESOURCES
 
+Please read L<YAML::Node> for advanced YAML features.
+
 L<http://www.yaml.org> is the official YAML website.
 
 L<http://www.yaml.org/spec/> is the YAML 1.0 specification.
+
+L<http://wiki.yaml.org/spec/> is the official YAML wiki.
 
 YAML has been registered as a Source Forge project.
 (L<http://www.sourceforge.net>) Currently we are only using the mailing
@@ -724,25 +764,35 @@ Please contact them if you are also interested in writing an
 implementation.
 
     ---
-    - name:    ingy
-      project: YAML.pm
-      email:   ingy@ttul.org
+    - name:    Neil Watkiss
+      project: 
+        - libyaml
+        - YAML mode for the vim editor
+      email:   nwatkiss@ttul.org
 
+    - name:    Brian Ingerson
+      project: YAML.pm, libyaml Perl binding
+      email:   ingy@ttul.org
+    
     - name:    Clark Evans
-      project: libyaml
+      project: libyaml, Python binding
       email:   cce@clarkevans.com
 
     - name:    Oren Ben-Kiki
       project: Java Loader/Dumper
       email:   orenbk@richfx.com
 
-    - name:    Jon Prettyman
-      project: libyaml
-      email:   jon@prettyman.org
-
     - name:    Paul Prescod
       project: YAML Antagonist/Anarchist
       email:   paul@prescod.net
+
+    - name:    Ryan King
+      project: YAML test specialist
+      email:   rking@panoptic.com
+
+    - name:    Steve Howell
+      project: Python and Ruby implementations
+      email:   showell@zipcon.net
 
     - name:    Patrick Leboutillier
       project: Java Loader/Dumper
@@ -751,10 +801,6 @@ implementation.
     - name:    Shane Caraveo
       project: PHP Loader/Dumper
       email:   shanec@activestate.com
-
-    - name:    Neil Kandalgoankar
-      project: Python Loader/Dumper
-      email:   neil_j_k@yahoo.com
 
     - name:    Brian Quinlan
       project: Python Loader/Dumper
@@ -768,10 +814,6 @@ implementation.
       project: JavaScript Loader/Dumper
       email:   claes@contiller.se
 
-    - name:    Neil Watkiss
-      project: YAML mode for the vim editor
-      email:   nwatkiss@ttul.org
-
 =head1 AUTHOR
 
 Brian Ingerson <INGY@cpan.org> is resonsible for YAML.pm.
@@ -779,6 +821,13 @@ Brian Ingerson <INGY@cpan.org> is resonsible for YAML.pm.
 The YAML language is the result of a ton of collaboration between Oren
 Ben-Kiki, Clark Evans and Brian Ingerson. Several others have added help
 along the way.
+
+Neil Watkiss is pioneering libyaml. Bless that boy!
+
+Ryan King offered much help on the 0.35 release. The XP advocate
+extraordinaire, help me refactor my entire test suite into its
+current form. Regression tests are extremely important to the success
+of this project.
 
 =head1 COPYRIGHT
 

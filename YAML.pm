@@ -1,62 +1,76 @@
 package YAML; 
-$VERSION = '0.30';
+$VERSION = '0.35';
 
 # This module implements a Loader and Dumper for the YAML serialization
-# language, VERSION 1.0 TRIAL1. (http://www.yaml.org/spec/)
+# language, VERSION 1.0 TRIAL2. (http://www.yaml.org/spec/)
 
 require Exporter;
 @ISA = qw(Exporter);
-# Basic interface is Load & Store
-@EXPORT = qw(Load Store);
+# Basic interface is Load & Dump
+# Phasing out Store in favor of Dump XXX
+# Leave it in for now. XXX
+@EXPORT = qw(Load Dump Store);
 # Provide a bunch of aliases for TMTOWTDI's sake
-@EXPORT_OK = qw(
-                LoadFile StoreFile
+@EXPORT_OK = qw(LoadFile DumpFile
                 Dumper Eval 
-                Indent Undent Denter
                 freeze thaw
-	       );
-# Compatibility modes	       
-%EXPORT_TAGS = (
-                all => [qw(Load Store LoadFile StoreFile)],
-                Dumper => [qw(Dumper Eval)],
-                Denter => [qw(Indent Undent Denter)],
+                VALUE COMMENT
+                Bless Blessed
+               );
+# Export groups
+%EXPORT_TAGS = (all => [qw(Load Dump Store LoadFile DumpFile Bless Blessed)],
+                constants => [qw(VALUE COMMENT)],
                 Storable => [qw(freeze thaw)],
                 POE => [qw(freeze thaw)],
                );
 
 use strict;
-use overload;
+use YAML::Node;
+use YAML::Transfer;
 use Carp;
+
+sub PRINT { print STDERR @_, "\n" } # XXX
+sub DUMP { use Data::Dumper(); print STDERR Data::Dumper::Dumper(@_) } # XXX
 
 # Context constants
 use constant LEAF => 1;
 use constant COLLECTION => 2;
 use constant KEY => 3;
 use constant BLESSED => 4;
+use constant FROMARRAY => 5;
+use constant VALUE => "\x07YAML\x07VALUE\x07";
+use constant COMMENT => "\x07YAML\x07COMMENT\x07";
 
 # These are the user changable options
-$YAML::Indent = 1;
-$YAML::Separator = '---';
-$YAML::UseHeader = 1;
-$YAML::UseVersion = 1;
-$YAML::SortKeys = 1;
-$YAML::FirstAnchor = 'id001';
-$YAML::ExplicitTypes = 0;
-$YAML::WidthType = 'absolute';
-$YAML::MaxWidth = 0;
-$YAML::BestWidth = 80;
-$YAML::UseCode = '';
-$YAML::StoreCode = '';
-$YAML::LoadCode = '';
-$YAML::UseBlock = 0;
-$YAML::UseFold = 0;
+{
+    no strict 'vars'; 
+    $Indent = 2 unless defined $Indent;
+    $UseHeader = 1 unless defined $UseHeader;
+    $UseVersion = 1 unless defined $UseVersion;
+    $SortKeys = 1 unless defined $SortKeys;
+    $AnchorPrefix = '' unless defined $AnchorPrefix;
+    $UseCode = 0 unless defined $UseCode;
+    $DumpCode = '' unless defined $DumpCode;
+    $LoadCode = '' unless defined $LoadCode;
+    $ForceBlock = 0 unless defined $ForceBlock;
+    $UseBlock = 0 unless defined $UseBlock;
+    $UseFold = 0 unless defined $UseFold;
+    $CompressSeries = 1 unless defined $CompressSeries;
+    $InlineSeries = 0 unless defined $InlineSeries;
+    $UseAliases = 1 unless defined $UseAliases;
+    $Purity = 0 unless defined $Purity;
+    $DateClass = '' unless defined $DateClass;
+}
 
 # Common YAML character sets
 my $WORD_CHAR = '[A-Za-z-]';
 my $ESCAPE_CHAR = '[\\x00-\\x08\\x0b-\\x0d\\x0e-\\x1f]';
 my $INDICATOR_CHAR = '[#-:?*&!|\\\\^@%]';
+my $FOLD_CHAR = '>';
+my $BLOCK_CHAR = '|';    
+my $BLOCK_CHAR_RX = "\\$BLOCK_CHAR";    
 
-# $o is the YAML object. It contains the complete state of the YAML.pm 
+# $o is the YAML object. It contains the complete state of the YAML.pm
 # process. This is set at the file scope level so that I can avoid using
 # OO syntax or passing the object around in function calls.
 #
@@ -70,57 +84,107 @@ my $o;
 sub new {
     my $class = shift;
     my $o = {
- 	     stream => '',
-	     level => -1,
-	     anchor => $YAML::FirstAnchor,
-	     width => $YAML::Indent,
-	     Separator => $YAML::Separator,
-	     UseHeader => $YAML::UseHeader,
-	     UseVersion => $YAML::UseVersion,
-	     SortKeys => $YAML::SortKeys,
-	     ExplicitTypes => $YAML::ExplicitTypes,
-	     WidthType => $YAML::WidthType,
-	     MaxWidth => $YAML::MaxWidth,
-	     BestWidth => $YAML::BestWidth,
-	     StoreCode => $YAML::StoreCode,
-	     LoadCode => $YAML::LoadCode,
-	     UseBlock => $YAML::UseBlock,
-	     UseFold => $YAML::UseFold,
-	    };
+             stream => '',
+             level => 0,
+             anchor => 1,
+             Indent => $YAML::Indent,
+             UseHeader => $YAML::UseHeader,
+             UseVersion => $YAML::UseVersion,
+             SortKeys => $YAML::SortKeys,
+             AnchorPrefix => $YAML::AnchorPrefix,
+             DumpCode => $YAML::DumpCode,
+             LoadCode => $YAML::LoadCode,
+             ForceBlock => $YAML::ForceBlock,
+             UseBlock => $YAML::UseBlock,
+             UseFold => $YAML::UseFold,
+             CompressSeries => $YAML::CompressSeries,
+             InlineSeries => $YAML::InlineSeries,
+             UseAliases => $YAML::UseAliases,
+             Purity => $YAML::Purity,
+             DateClass => $YAML::DateClass,
+            };
     bless $o, $class;
-    while (my ($option, $value) = splice(@_, 0, 2)) {
-	$o->{$option} = $value;
-    }
-    set_default($o, 'StoreCode', $YAML::UseCode);
+    set_default($o, 'DumpCode', $YAML::UseCode);
     set_default($o, 'LoadCode', $YAML::UseCode);
     return $o if is_valid($o);
+}
+
+my $global = {}; # A global lookup
+sub Bless { YAML::bless($global, @_) }
+sub Blessed { YAML::blessed($global, @_) }
+
+sub blessed {
+    my ($o, $ref) = @_;
+    $ref = \$_[0] unless ref $ref;
+    my (undef, undef, $node_id) = YAML::Node::info($ref);
+    $o->{blessed}{$node_id};
+}
+    
+sub bless {
+    my ($o, $ref, $blessing) = @_;
+    my $ynode;
+    $ref = \$_[0] unless ref $ref;
+    my (undef, undef, $node_id) = YAML::Node::info($ref);
+    if (not defined $blessing) {
+        $ynode = YAML::Node->new($ref);
+    }
+    elsif (ref $blessing) {
+        croak unless ynode($blessing);
+        $ynode = $blessing;
+    }
+    else {
+        no strict 'refs';
+        my $transfer = $blessing . "::yaml_dump";
+        croak unless defined &{$transfer};
+        $ynode = &{$transfer}($ref);
+        croak unless ynode($ynode);
+    }
+    $o->{blessed}{$node_id} = $ynode;
+    my $object = ynode($ynode) or croak;
+    return $object;
+}
+
+sub stream {
+    my ($o, $stream) = @_;
+    if (not defined $stream) {
+        return $o->{$stream};
+    }
+    elsif (ref($stream) eq 'CODE') {
+        $o->{stream_fetch} = $stream;
+        $o->{stream_eos} = 0;
+    }
+    elsif ($stream eq '') {
+        $o->{stream} = '';
+    }
+    else {
+        $o->{stream} .= $stream;
+    }
 }
 
 sub set_default {
     my ($o, $option, $default) = (@_);
     return if length $o->{$option};
     if (length $default) {
-	$o->{$option} = $default;
+        $o->{$option} = $default;
     }
     else {
-	$o->{$option} = -1;
+        $o->{$option} = -1;
     }
 }
 
 sub is_valid { 
     my ($o) = (@_);
-    croak msg_invalid_separator() unless $o->{Separator} =~ /--$WORD_CHAR+/;
-    croak msg_invalid_indent($o->{width}) 
-      unless ($o->{width} =~ /^(\d+)$/) and $1 > 0;
+    croak YAML_DUMP_ERR_INVALID_INDENT($o->{Indent}) 
+      unless ($o->{Indent} =~ /^(\d+)$/) and $1 > 0;
     # NOTE: Add more tests...
     return 1;
 }
 
 #==============================================================================
-# Save the contents of a Store operation to a file. If the file exists
+# Save the contents of a Dump operation to a file. If the file exists
 # and has data, and a concatenation was requested, then verify the
 # existing header.
-sub StoreFile {
+sub DumpFile {
     my $filename = shift;
     local $/ = "\n"; # reset special to "sane"
     my $mode = '>';
@@ -129,55 +193,52 @@ sub StoreFile {
     }
     if ($mode eq '>>' && -f $filename && -s $filename) {
         open MYYAML, "< $filename" 
-            or croak msg_file_input($filename, $!);
+            or croak YAML_LOAD_ERR_FILE_INPUT($filename, $!);
         my $line = <MYYAML>;
         close MYYAML;
-        unless ($line =~ /^(--\S+)/ and
-                $YAML::Separator eq $1
-               ) {
-            croak msg_file_concatenate($filename);
-        }
+        croak YAML_DUMP_ERR_FILE_CONCATENATE($filename)
+          unless $line =~ /^---(\s|$)/;
     }
     open MYYAML, "$mode $filename"
-        or croak msg_file_output($filename, $!);
-    print MYYAML YAML::Store(@_);
+      or croak YAML_DUMP_ERR_FILE_OUTPUT($filename, $!);
+    print MYYAML YAML::Dump(@_);
     close MYYAML;
 }
     
 # Serialize a list of elements
-sub Store {
+sub Dump {
     $o = YAML->new();
-    return store(@_);
+    $o->dump(@_);
 }
 
-# Aliases for Store
-*Indent = \&Store;    # alias for Data::Denter users
-*Denter = \&Store;    # alias for Data::Denter users
-*Dumper = \&Store;    # alias for Data::Dumper users
-*freeze = \&Store;    # alias for Storable or POE users
-
-# OO version of Store. YAML->new->store($foo); 
-sub store {
-    # local $| = 1; # set buffering to "hot" (for testing)
-    local $/ = "\n"; # reset special to "sane"
-    _emit(@_);
-    return $o->{stream};
+sub Store {
+    warn YAML_DUMP_WARN_STORE() if $^W;
+    goto &Dump;
 }
 
-# Top level emit function. Take the list of elements and emit them in
-# order into a single string (aka YAML Stream).
-sub _emit {
-    $o->{documents} = @_;
+# Aliases for Dump
+*freeze = *freeze = \&Dump;    # alias for Storable or POE users
+
+# OO version of Dump. YAML->new->dump($foo); 
+sub dump {
+    $o = shift; 
+    # local $| = 1; # set buffering to "hot" (for testing) XXX
+    local $/ = "\n"; # reset special to "sane" XXX (danger) fix for callbacks
+    $o->{stream} = '';
     $o->{document} = 0;
     for my $document (@_) {
-        $o->{node_ids} = [];
-        $o->{id2anchor} = {};
-        $o->{id2offset} = {};
         $o->{document}++;
+        $o->{transferred} = {};
+        $o->{id_refcnt} = {};
+        $o->{id_anchor} = {};
+        $o->{anchor} = 1;
+        $o->{level} = 0;
+        $o->{offset}[0] = 0 - $o->{Indent};
+        _prewalk($document);
         _emit_header($document);
-        $o->{level} = -1;
         _emit_node($document);
     }
+    return $o->{stream};
 }
 
 # Every YAML document in the stream must begin with a YAML header, unless
@@ -187,344 +248,345 @@ sub _emit_header {
     if (not $o->{UseHeader} and 
         $o->{document} == 1
        ) {
-	croak msg_no_header() unless ref($node) =~ /^(HASH|ARRAY)$/;
-	croak msg_no_header() if ref($node) eq 'HASH' and 
-	                         keys(%$node) == 0;
-	croak msg_no_header() if ref($node) eq 'ARRAY' and 
-	                         @$node == 0;
-	$o->{headless} = 1;
+        croak YAML_DUMP_ERR_NO_HEADER() unless ref($node) =~ /^(HASH|ARRAY)$/;
+        croak YAML_DUMP_ERR_NO_HEADER() if ref($node) eq 'HASH' and 
+                                           keys(%$node) == 0;
+        croak YAML_DUMP_ERR_NO_HEADER() if ref($node) eq 'ARRAY' and 
+                                           @$node == 0;
+        # XXX Also croak if aliased, blessed, or ynode
+        $o->{headless} = 1;
         return;
     }
-    $o->{stream} .= $o->{Separator};
+    $o->{stream} .= '---';
     if ($o->{UseVersion}) {
-	$o->{stream} .= " #YAML:1.0";
+        $o->{stream} .= " #YAML:1.0";
+    }
+}
+
+# Walk the tree to be dumped and keep track of its reference counts.
+# This function is where the Dumper does all its work. All transfers
+# happen here.
+sub _prewalk {
+    my $value;
+    my ($class, $type, $node_id) = YAML::Node::info(\$_[0]);
+    # Handle typeglobs
+    if ($type eq 'GLOB') {
+        $value = $o->{transferred}{$node_id} = 
+          YAML::Transfer::glob::yaml_dump($_[0]);
+        return _prewalk($value);
+    }
+    # Handle regexps
+    if (ref($_[0]) eq 'Regexp') {  
+        $o->{transferred}{$node_id} = YAML::Transfer::regexp::yaml_dump($_[0]);
+        return;
+    }
+    # Handle Purity for scalars. XXX can't find a use case yet. Might be YAGNI.
+    if (not ref $_[0]) {
+        $o->{id_refcnt}{$node_id}++ if $o->{Purity};
+        return;
+    }
+    # Make a copy of original
+    $value = $_[0];
+    ($class, $type, $node_id) = YAML::Node::info($value);
+    # Look for things already transferred.
+    if ($o->{transferred}{$node_id}) {
+        (undef, undef, $node_id) = (ref $o->{transferred}{$node_id})
+          ? YAML::Node::info($o->{transferred}{$node_id})
+          : YAML::Node::info(\ $o->{transferred}{$node_id});
+        $o->{id_refcnt}{$node_id}++;
+        return;
+    }
+    # Handle code refs
+    if ($type eq 'CODE') {
+        $o->{transferred}{$node_id} = 'crufty tracking reference placeholder';
+        YAML::Transfer::code::yaml_dump($o->{DumpCode},
+                                        $_[0], 
+                                        $o->{transferred}{$node_id});
+        ($class, $type, $node_id) = 
+          YAML::Node::info(\ $o->{transferred}{$node_id});
+        $o->{id_refcnt}{$node_id}++;
+        return;
+    }
+    # Handle blessed things
+    elsif (defined $class) {
+        no strict 'refs';
+        if ($class eq $o->{DateClass}) {
+            $value = eval "&${class}::yaml_dump(\$value)";
+        }
+        elsif (defined &{$class . "::yaml_dump"}) {
+            $value = eval "&${class}::yaml_dump(\$value)";
+        }
+        elsif ($type eq 'SCALAR') {
+            $o->{transferred}{$node_id} = 'tracking reference placeholder';
+            YAML::Transfer::blessed::yaml_dump
+              ($_[0], $o->{transferred}{$node_id});
+            ($class, $type, $node_id) =
+              YAML::Node::info(\ $o->{transferred}{$node_id});
+            $o->{id_refcnt}{$node_id}++;
+            return;
+        }
+        else {
+            $value = YAML::Transfer::blessed::yaml_dump($value);
+        }
+        $o->{transferred}{$node_id} = $value;
+        (undef, $type, $node_id) = YAML::Node::info($value);
+    }
+    # Handle YAML Blessed things
+    if (defined $global->{blessed}{$node_id}) {
+        $value = $global->{blessed}{$node_id};
+        $o->{transferred}{$node_id} = $value;
+        ($class, $type, $node_id) = YAML::Node::info($value);
+        return _prewalk($value);
+    }
+    # Handle hard refs
+    if ($type eq 'REF' or $type eq 'SCALAR') {
+        $value = YAML::Transfer::ref::yaml_dump($value);
+        $o->{transferred}{$node_id} = $value;
+        (undef, $type, $node_id) = YAML::Node::info($value);
+    }
+    # Handle ref-to-glob's
+    elsif ($type eq 'GLOB') {
+        my $ref_ynode = $o->{transferred}{$node_id} =
+          YAML::Transfer::ref::yaml_dump($value);
+
+        my $glob_ynode = $ref_ynode->{&VALUE} = 
+          YAML::Transfer::glob::yaml_dump($$value);
+
+        (undef, undef, $node_id) = YAML::Node::info($glob_ynode);
+        $o->{transferred}{$node_id} = $glob_ynode;
+        return _prewalk($glob_ynode);
+    }
+      
+    # Increment ref count for node
+    return if ++($o->{id_refcnt}{$node_id}) > 1;
+
+    # Continue walking
+    if ($type eq 'HASH') {
+        _prewalk($value->{$_}) for keys %{$value};
+    }
+    elsif ($type eq 'ARRAY') {
+        _prewalk($_) for @{$value};
     }
 }
 
 # Every data element and sub data element is a node. Everything emitted
 # goes through this function.
 sub _emit_node {
-    my ($value) = @_;
-    my ($class, $type, $node_id) = ('') x 3;
-
-    # The following (big) section of code is just to deal with the
-    # weirdnesses of typeglobs and regexps and scalar refs. The general
-    # purpose is to find the type, the id, and potentially the class of
-    # each node.
-    ($class, $type, $node_id) = 
-      (overload::StrVal(\$value) =~ /^(?:(.*)\=)?([^=]*)\(([^\(]*)\)$/);
-#    Ask Gisle why this is:
-#    if (ref(\$value) eq 'GLOB') {     # works !!!!!
-#    if ($type eq 'GLOB') {            # busted !!!!!
-    if (ref(\$value) eq 'GLOB' or $type eq 'GLOB') {
-        $value = bless [ $value ], 'TYPEGLOB';
-        ($class, $type, $node_id) =
-          (overload::StrVal($value) =~ /^(?:(.*)\=)?([^=]*)\(([^\(]*)\)$/);
-        $type = 'TYPEGLOB';  
-	$class = '';
-# And why this?
-# $node_id = ''; # !!!!! This causes deep recursion !!!!!
-    } 
-    elsif (not ref $value) {
-        return _emit_str($value);
+    my ($type, $node_id);
+    my $ref = ref($_[0]);
+    if ($ref and $ref ne 'Regexp') {
+        (undef, $type, $node_id) = YAML::Node::info($_[0]);
     }
     else {
-        ($class, $type, $node_id) = 
-          (overload::StrVal($value) =~ /^(?:(.*)\=)?([^=]*)\(([^\(]*)\)$/);
-        if ($type eq 'GLOB') {
-            if ($class) {
-                $value = bless [ $$value ], 'TYPEGLOB';
-                $type = 'TYPEGLOB';
-		($_, $_, $node_id) = 
-		  (overload::StrVal(\$value) =~ 
-		    /^(?:(.*)\=)?([^=]*)\(([^\(]*)\)$/);
-            }
-            else {
-                $type = 'REF';
-            }
+        $type = $ref || 'SCALAR';
+        (undef, undef, $node_id) = YAML::Node::info(\$_[0]);
+    }
+
+    my ($ynode, $family) = ('') x 2;
+    my ($value, $context) = (@_, 0); # XXX don't copy scalars
+    if (defined $o->{transferred}{$node_id}) {
+        $value = $o->{transferred}{$node_id};
+        $ynode = ynode($value);
+        if (ref $value) {
+            $family = defined $ynode ? $ynode->family->short : '';
+            (undef, $type, $node_id) = YAML::Node::info($value);
         }
-        elsif (ref($value) eq 'Regexp' &&
-               $type eq 'SCALAR'
-              ) {
-            $type = 'Regexp';
+        else {
+            $family = ynode($o->{transferred}{$node_id})->family->short;
+            $type = 'SCALAR';
+            (undef, undef, $node_id) = 
+              YAML::Node::info(\ $o->{transferred}{$node_id});
+        }
+    }
+    elsif ($ynode = ynode($value)) {
+        $family = $ynode->family->short;
+    }
+
+    if ($o->{UseAliases}) {
+        $o->{id_refcnt}{$node_id} ||= 0;
+        if ($o->{id_refcnt}{$node_id} > 1) {
+            if (defined $o->{id_anchor}{$node_id}) {
+                $o->{stream} .= ' *' . $o->{id_anchor}{$node_id} . "\n";
+                return;
+            }
+            my $anchor = $o->{AnchorPrefix} . $o->{anchor}++;
+            $o->{stream} .= ' &' . $anchor;
+            $o->{id_anchor}{$node_id} = $anchor;
         }
     }
 
-    # This block handles saving the node id and the stream offset, in
-    # order to support YAML's alias feature.
-    if (defined $o->{id2offset}{$node_id}) {
-        if (not defined $o->{id2anchor}{$node_id}) {
-            my $found = 0;
-            my $anchor = $o->{anchor}++;
-            for my $id (@{$o->{node_ids}}) {
-                if ($found) {
-                    $o->{id2offset}{$id} += length($anchor) + 2;
-                }
-                if ($id eq $node_id) {
-                    substr($o->{stream}, $o->{id2offset}{$id}, 0, " &$anchor");
-                    $o->{id2anchor}{$id} = $anchor;
-                    $found = 1;
-                }
-            }
-        }
-        $o->{stream} .= ' *' . $o->{id2anchor}{$node_id} . "\n";
-        return;
-    }
-    elsif ($node_id) {
-        push @{$o->{node_ids}}, $node_id;
-        $o->{id2offset}{$node_id} = length($o->{stream});
-    }
-
-    # Now that the hard stuff is done, simply call the correct emit
-    # handler.
-    return _emit_map($value, $class)     if $type eq 'HASH';
-    return _emit_seq($value, $class)     if $type eq 'ARRAY';
-    return _emit_scalar($$value, $class) if $type eq 'SCALAR' && $class;
-    return _emit_ptr($value)             if $type eq 'SCALAR';
-    return _emit_ptr($value)             if $type eq 'REF';
-    return _emit_code($value, $class)    if $type eq 'CODE';
-    return _emit_glob($value, $class)    if $type eq 'TYPEGLOB';
-    return _emit_regexp($value)          if $type eq 'Regexp';
-    warn msg_bad_node_type($type) if $^W;
+    return _emit_scalar($value, $family) if $type eq 'SCALAR' and $family;
+    return _emit_str($value) if $type eq 'SCALAR';
+    return _emit_mapping($value, $family, $node_id, $context) if $type eq 'HASH';
+    return _emit_sequence($value, $family) if $type eq 'ARRAY';
+    warn YAML_DUMP_WARN_BAD_NODE_TYPE($type) if $^W;
     return _emit_str("$value");
 }
 
-# A YAML map is akin to a Perl hash. 
-sub _emit_map {
-    my ($value, $class) = @_;
-    if ($class) {
-        $o->{stream} .= " !perl/hash:$class";
-    }
-    elsif ($o->{ExplicitTypes}) {
-        $o->{stream} .= " !map";
-    }
-    
-    my $empty_hash = not(eval 'keys %$value');
-    if ($@) {
-	warn msg_keys_error($@) if $^W;
-	$empty_hash = 1;
-    }
-    if ($empty_hash) {
-        $o->{stream} .= $class ? "\n" : " {}\n"; 
-        return;
-    }
+# A YAML mapping is akin to a Perl hash. 
+sub _emit_mapping {
+    my ($value, $family, $node_id, $context) = @_;
+    $o->{stream} .= " !$family" if $family;
+
+    # Sometimes 'keys' fails. Like on a bad tie implementation.
+    my $empty_hash = not(eval {keys %$value});
+    warn YAML_EMIT_WARN_KEYS($@) if $^W and $@;
+    return ($o->{stream} .= " {}\n") if $empty_hash;
         
-    $o->{stream} .= "\n" unless $o->{headless} && not($o->{headless} = 0);
+    # If CompressSeries is on (default) and legal is this context, then
+    # use it and make the indent level be 2 for this node.
+    if ($context == FROMARRAY and $o->{CompressSeries} and
+        not (defined $o->{id_anchor}{$node_id} or $family or $empty_hash)
+       ) {
+        $o->{stream} .= ' ';
+        $o->{offset}[$o->{level}+1] = $o->{offset}[$o->{level}] + 2;
+    }
+    else {
+        $context = 0;
+        $o->{stream} .= "\n" unless $o->{headless} && not($o->{headless} = 0);
+        $o->{offset}[$o->{level}+1] = $o->{offset}[$o->{level}] + $o->{Indent};
+    }
 
     $o->{level}++;
-    for my $key ($o->{SortKeys} ? (sort keys %$value) : (keys %$value)) {
-        _emit_key($key);
+    my @keys;
+    if ($o->{SortKeys} == 1) {
+        if (ynode($value)) {
+            @keys = keys %$value;
+        }
+        else {
+            @keys = sort keys %$value;
+        }
+    }
+    elsif ($o->{SortKeys} == 2) {
+        @keys = sort keys %$value;
+    }
+    # XXX This is hackish but sometimes handy. Not sure whether to leave it in.
+    elsif (ref($o->{SortKeys}) eq 'ARRAY') {
+        my $i = 1;
+        my %order = map { ($_, $i++) } @{$o->{SortKeys}};
+        @keys = sort {
+            (defined $order{$a} and defined $order{$b})
+              ? ($order{$a} <=> $order{$b})
+              : ($a cmp $b);
+        } keys %$value;
+    }
+    else {
+        @keys = keys %$value;
+    }
+    # Force the YAML::VALUE ('=') key to sort last.
+    if (exists $value->{&VALUE}) {
+        for (my $i = 0; $i < @keys; $i++) {
+            if ($keys[$i] eq &VALUE) {
+                splice(@keys, $i, 1);
+                push @keys, &VALUE;
+                last;
+            }
+        }
+    }
+
+    for my $key (@keys) {
+        _emit_key($key, $context);
+        $context = 0;
         $o->{stream} .= ':';
         _emit_node($value->{$key});
     }
     $o->{level}--;
 }
 
-# A YAML sequence is akin to a Perl array.
-sub _emit_seq {
-    my ($value, $class) = @_;
-    if ($class) {
-        $o->{stream} .= " !perl/array:$class";
-    }
-    elsif ($o->{ExplicitTypes}) {
-        $o->{stream} .= " !seq";
-    }
+# A YAML series is akin to a Perl array.
+sub _emit_sequence {
+    my ($value, $family) = @_;
+    $o->{stream} .= " !$family" if $family;
 
-    if (@$value == 0) {
-        $o->{stream} .= $class ? "\n" : " []\n"; 
-        return;
-    }
+    return ($o->{stream} .= " []\n") if @$value == 0;
         
     $o->{stream} .= "\n" unless $o->{headless} && not($o->{headless} = 0);
 
+    # XXX Really crufty feature. Better implemented by ynodes.
+    if ($o->{InlineSeries} and
+        @$value <= $o->{InlineSeries} and
+        not (scalar grep {ref or /\n/} @$value)
+       ) {
+        $o->{stream} =~ s/\n\Z/ /;
+        $o->{stream} .= '[';
+        for (my $i = 0; $i < @$value; $i++) {
+            _emit_str($value->[$i], KEY);
+            last if $i == $#{$value};
+            $o->{stream} .= ', ';
+        }
+        $o->{stream} .= "]\n";
+        return;
+    }
+
+    $o->{offset}[$o->{level} + 1] = $o->{offset}[$o->{level}] + $o->{Indent};
     $o->{level}++;
     for my $val (@$value) {
-        $o->{stream} .= ' ' x ($o->{level} * $o->{width});
+        $o->{stream} .= ' ' x $o->{offset}[$o->{level}];
         $o->{stream} .= '-';
-        _emit_node($val);
+        _emit_node($val, FROMARRAY);
     }
     $o->{level}--;
 }
 
-# Emit a map key
+# Emit a mapping key
 sub _emit_key {
-    my ($value) = @_;
-    $o->{stream} .= ' ' x ($o->{level} * $o->{width});
+    my ($value, $context) = @_;
+    $o->{stream} .= ' ' x $o->{offset}[$o->{level}]
+      unless $context == FROMARRAY;
     _emit_str($value, KEY);
 }
 
 # Emit a blessed SCALAR
 sub _emit_scalar {
-    my ($value, $class) = @_;
-    $o->{stream} .= " !perl/\$$class";
+    my ($value, $family) = @_;
+    $o->{stream} .= " !$family";
     _emit_str($value, BLESSED);
 }
 
-# A YAML pointer is akin to a Perl reference
-sub _emit_ptr {
-    my ($value) = @_;
-    $o->{level}++;
-    $o->{stream} .= " !ptr\n" . (' ' x ($o->{level} * $o->{width})) . "=:";
-    _emit_node($$value);
-    $o->{level}--;
-}
-
-# Try to serialize a code reference. Only do it if the user has the option
-# turned on. Use B::deparse or a user routine.
-sub _emit_code {
-    my ($node, $class) = @_;
-    $o->{level}++;
-    if ($o->{StoreCode} eq 'deparse' or
-        $o->{StoreCode} eq 1
-       ) {
-        eval "use B::Deparse";
-        $o->{stream} .= " !perl/code";
-        $o->{stream} .= ":$class" if $class;
-        $o->{stream} .= ";deparse" if $o->{StoreCode} eq 'deparse'; 
-        $o->{stream} .= " "; 
-        my $deparse = B::Deparse->new();
-        my $code;
-        eval {
-            local $^W = 0;
-            $code = $deparse->coderef2text($node);
-        };
-        if ($@) {
-            warn msg_deparse_failed() if $^W;
-            $code = qq[{\n    "YAML deparse failed";\n}];
-        }
-        _emit_block("sub $code\n");
-    }
-    elsif (ref $o->{StoreCode} eq 'CODE') {
-        my $o2 = $o; # Preserve state during callback
-        my ($serial, $format) = (&$o->{StoreCode}, '', '');
-        $o = $o2;
-        $o->{stream} .= " !perl/code"; 
-        $o->{stream} .= ":$class" if $class;
-        $o->{stream} .= ";$format" if $format;
-        if ($serial) {
-            _emit_str($serial);
-        }
-    }
-    elsif ($o->{StoreCode} eq 'dummy' or
-           $o->{StoreCode} eq '-1') {
-        warn msg_emit_dummy() if $^W and $o->{StoreCode} eq '-1';
-        $o->{stream} .= " !perl/code"; 
-        $o->{stream} .= ":$class" if $class;
-        $o->{stream} .= ";dummy"; 
-    }
-    elsif ($o->{StoreCode} eq '0') {
-        _emit_simple(undef);
-    }
-    else {
-        croak msg_storecode($o->{StoreCode});
-    }
-    $o->{stream} .= "\n"; 
-        
-    $o->{level}--;
-}    
-        
-# The "glob" is a Perl specific data structure. It uses the YAML map
-# with the following predefined keys: Symbol, HASH, ARRAY, SCALAR,
-# CODE, IO.
-sub _emit_glob {
-    my ($node, $class) = @_;
-    my $glob = $node->[0];
-    my $symbol = '';
-    if ($glob =~ /^\*(.*)$/) {
-        $symbol = $1;
-    }
-    else {
-        croak msg_bad_glob($glob); 
-    }
-    $o->{stream} .= " !perl/glob";
-    $o->{stream} .= ":$class" if $class;
-    $o->{stream} .= "\n";
-    $o->{level}++;
-    #$o->{stream} .= (' ' x ($o->{level} * $o->{width})) . "Symbol:";
-    #_emit_node($symbol);
-    for my $type (qw(PACKAGE NAME SCALAR ARRAY HASH CODE IO)) {
-        my $value = *{$glob}{$type};
-        $value = $$value if $type eq 'SCALAR';
-        if (defined $value) {
-            $o->{stream} .= (' ' x ($o->{level} * $o->{width})) . "$type:";
-            if (tied $value) {
-                $o->{stream} .= " tied\n";
-            }
-            elsif ($type ne 'IO') {
-                _emit_node($value);
-            }
-            else {
-                $o->{stream} .= " defined\n";
-            }
-        }
-    }
-    $o->{level}--;
-}
-
-# This emits a regular expression. Don't know how to do blessed ones yet.
-sub _emit_regexp {
-    my ($node) = @_;
-    my ($regexp, $modifiers);
-    if ("$node" =~ /^\(\?(\w*)(?:\-\w+)?\:(.*)\)$/) {
-        $regexp = $2;
-        $modifiers = $1 || '';
-    }
-    else {
-        croak msg_bad_regexp($node);
-    }
-    $o->{stream} .= " !perl/regexp\n";
-    $o->{level}++;
-    $o->{stream} .= (' ' x ($o->{level} * $o->{width})) . "REGEXP:";
-    _emit_str($regexp);
-    if ($modifiers) {
-        $o->{stream} .= (' ' x ($o->{level} * $o->{width})) . "MODIFIERS:";
-        _emit_str($modifiers);
-    }
-    $o->{level}--;
-}
-
-# Emit a string value. YAML has six styles. This routine attempts to
+# Emit a string value. YAML has many scalar styles. This routine attempts to
 # guess the best style for the text.
 sub _emit_str {
-    my ($value, $type) = (@_, 0);
-    my $level = $o->{level};
+    my $type = $_[1] || 0;
 
     # Use heuristics to find the best scalar emission style.
+    $o->{offset}[$o->{level} + 1] = $o->{offset}[$o->{level}] + $o->{Indent};
     $o->{level}++;
 
-    if (defined $value and
-        $value =~ /\n.+/        # more than one line
+    if (defined $_[0] and
+        $_[0] !~ /$ESCAPE_CHAR/ and
+        (length($_[0]) > 50 or $_[0] =~ /\n\s/ or
+         ($o->{ForceBlock} and $type != KEY)
+        ) 
        ) {
         $o->{stream} .= ($type == KEY) ? '? ' : ' ';
-	if (not $o->{UseFold} and
-  	    (defined $value &&
-             (($value =~ /\n[ \t]/ &&  # space at start of any line but first
-               $value !~ /$ESCAPE_CHAR/
-  	      ) or
-  	      $o->{UseBlock}
-  	   ))) {  
-             _emit_block($value);
-        }
-        else {
-            if (is_valid_implicit($value) &&
+        if (($o->{UseFold} and not $o->{ForceBlock}) or
+            ($_[0] =~ /^\S[^\n]{76}/m)
+           ) {  
+            if (is_valid_implicit($_[0]) && # XXX Check implicit check
                 $type != BLESSED
                ) {
                 $o->{stream} .= '! ';
             }
-            _emit_plain($value);
+            _emit_nested($FOLD_CHAR, $_[0]);
+        }
+        else {
+            _emit_nested($BLOCK_CHAR, $_[0]);
         }
         $o->{stream} .= "\n";
     }
     else {
         $o->{stream} .= ' ' if $type != KEY;
-        if (is_valid_implicit($value)) {
-            _emit_simple($value);
+        if (defined $_[0] && $_[0] eq VALUE) {
+            $o->{stream} .= '=';
         }
-        elsif ($value =~ /$ESCAPE_CHAR|\n|\'/) {
-            _emit_double($value);
+        elsif (is_valid_implicit($_[0])) {
+            _emit_simple($_[0]);
+        }
+        elsif ($_[0] =~ /$ESCAPE_CHAR|\n|\'/) {
+            _emit_double($_[0]);
         }
         else {
-            _emit_single($value);
+            _emit_single($_[0]);
         }
         $o->{stream} .= "\n" if $type != KEY;
     }
@@ -537,77 +599,47 @@ sub _emit_str {
 # Check whether or not a scalar should be emitted as an simple scalar.
 sub is_valid_implicit {
     return 1 if not defined $_[0];
-    return 0 if $_[0] =~ /(^\s|\:( |$)|\s$)/;
-    if ($_[0] =~ /^[a-zA-Z]/) {
-        return 0 if $_[0] =~ /\:( |$)/;
-        return 1;
-    }
-    if ($_[0] =~ /^([+-]?\d+)$/) {                    # !int
-        return 1 if length($1) <= 10;   # TODO: check integer range
-    }
-    if ($_[0] =~ /^[+-]?(\d*)(?:\.(\d*))?([Ee][+-]?\d+)?$/) {     # !real
-        return 1 if length($3) ? length($1) : length($1) + length($2);
-    }
-    if ($_[0] =~ /^\d\d\:\d\d$/) {
-	return 1;
-    }	
-    if ($_[0] =~ /^\d\d\d\d\-\d\d\-\d\d$/) {
-	return 1;
-    }	
+    return 1 if $_[0] =~ /^(-?\d+)$/;                 # !int
+    return 1 if $_[0] =~ /^-?\d+\.\d+$/;              # !float
+    return 1 if $_[0] =~ /^-?\d+e[+-]\d+$/;           # !float
+    # XXX - Detect date objects someday (or not)
+    return 0 if $_[0] =~ /$ESCAPE_CHAR/;
+    return 0 if $_[0] =~ /(^\s|\:( |$)|\#( |$)|\s$)/;
+    return 1 if $_[0] =~ /^\w/;                       # !str
     return 0;
 }
 
-# A block is akin to a Perl here-document.
-sub _emit_block {
-    my ($value) = @_;
-    $o->{stream} .= '|';
-    my $chomped = not ($value =~ s/\n\Z//);
+# A nested scalar is either block or folded 
+sub _emit_nested {
+    my ($indicator, $value) = @_;
+    $o->{stream} .= $indicator;
+    $value =~ /(\n*)\Z/;
+    my $chomp = length $1 ? (length $1 > 1) ? '+' : '' : '-';
     $value = '~' if not defined $value;
-    if ($value =~ /$ESCAPE_CHAR/) {
-        $value = escape($value);
-        $o->{stream} .= '\\';
+    $o->{stream} .= $chomp;
+    $o->{stream} .= $o->{Indent} if $value =~ /^\s/;
+    if ($indicator eq $FOLD_CHAR) {
+        $value = fold($value);
+        chop $value unless $chomp eq '+';
     }
-    $o->{stream} .= '-' if $chomped;
-    $o->{stream} .= $YAML::Indent if $value =~ /^\s/;
     $o->{stream} .= indent($value);
-}
-
-# Plain means normal flowing text. Can be more than one line. Gets
-# folded for readability.
-sub _emit_plain {
-    my ($value) = @_;
-    $o->{stream} .= ']';
-    $value = '~' if not defined $value;
-    if ($value =~ /$ESCAPE_CHAR/) {
-        $value = escape($value);
-        $o->{stream} .= '\\';
-    }
-    $o->{stream} .= $YAML::Indent if $value =~ /^\s/;
-    $o->{stream} .= indent(fold($value));
 }
 
 # Simple means that the scalar is unquoted. It is analyzed for its type
 # implicitly using regexes.
 sub _emit_simple {
-    my ($value) = @_;
-    if (not defined $value) {
-        $o->{stream} .= '~';
-    }
-    else {
-        $o->{stream} .= $value;
-    }
+    $o->{stream} .= defined $_[0] ? $_[0] : '~';
 }
 
 # Double quoting is for single lined escaped strings.
 sub _emit_double {
-    my ($value) = @_;
-    $o->{stream} .= '"' . escape($value) . '"';
+    (my $escaped = escape($_[0])) =~ s/"/\\"/g;
+    $o->{stream} .= qq{"$escaped"};
 }
 
 # Single quoting is for single lined unescaped strings.
 sub _emit_single {
-    my ($value) = @_;
-    $o->{stream} .= "'$value'";
+    $o->{stream} .= "'$_[0]'";
 }
 
 #==============================================================================
@@ -615,7 +647,7 @@ sub _emit_single {
 sub LoadFile {
     my $filename = shift;
     local $/ = "\n"; # reset special to "sane"
-    open MYYAML, $filename or croak msg_file_input($filename, $!);
+    open MYYAML, $filename or croak YAML_LOAD_ERR_FILE_INPUT($filename, $!);
     my $yaml = join '', <MYYAML>;
     close MYYAML;
     return Load($yaml);
@@ -623,16 +655,16 @@ sub LoadFile {
 
 # Deserialize a YAML stream into a list of data elements
 sub Load {
-    croak usage_load() unless @_ == 1;
+    croak YAML_LOAD_USAGE() unless @_ == 1;
     $o = YAML->new;
     $o->{stream} = defined $_[0] ? $_[0] : '';
     return load();
 }
 
 # Aliases for Load
-*Undent = \&Load;
-*Eval = \&Load;
-*thaw = \&Load;
+*Undent = *Undent = \&Load;
+*Eval = *Eval = \&Load;
+*thaw = *thaw = \&Load;
 
 # OO version of Load
 sub load {
@@ -648,9 +680,11 @@ sub _parse {
     $o->{stream} =~ s|\015\012|\012|g;
     $o->{stream} =~ s|\015|\012|g;
     $o->{line} = 0;
-    croak msg_bad_chars() if $o->{stream} =~ /$ESCAPE_CHAR/;
-    croak msg_no_newline() if length($o->{stream}) and 
-                              $o->{stream} !~ s/(.)\n\Z/$1/s;
+    croak YAML_PARSE_ERR_BAD_CHARS() 
+      if $o->{stream} =~ /$ESCAPE_CHAR/;
+    croak YAML_PARSE_ERR_NO_FINAL_NEWLINE() 
+      if length($o->{stream}) and 
+         $o->{stream} !~ s/(.)\n\Z/$1/s;
     @{$o->{lines}} = split /\x0a/, $o->{stream}, -1;
     $o->{line} = 1;
     # Throw away any comments or blanks before the header (or start of
@@ -658,20 +692,14 @@ sub _parse {
     _parse_throwaway_comments();
     $o->{document} = 0;
     $o->{documents} = [];
-    $o->{separator} = '';
-    # Add an "assumed" header if there is on header and the stream is
+    # Add an "assumed" header if there is no header and the stream is
     # not empty (after initial throwaways).
     if (not $o->{eos}) {
-        if ($o->{lines}[0] =~ /^(--\S+)/) {
-            $o->{separator} = $1;
-        }
-        else {
+        if ($o->{lines}[0] !~ /^---(\s|$)/) {
             unshift @{$o->{lines}}, '--- #YAML:1.0';
-	    $o->{line}--;
-            $o->{separator} = '---';
+            $o->{line}--;
         }
     }
-    my $separator = $o->{separator};
 
     # Main Loop. Parse out all the top level nodes and return them.
     while (not $o->{eos}) {
@@ -681,15 +709,15 @@ sub _parse {
         $o->{level} = 0;
         $o->{offset}[0] = -1;
 
-        if ($o->{lines}[0] =~ /^\Q$separator\E\s*(.*)$/) {
+        if ($o->{lines}[0] =~ /^---\s*(.*)$/) {
             my @words = split /\s+/, $1;
             %directives = ();
             while (@words && $words[0] =~ /^#(\w+):(\S.*)$/) {
                 my ($key, $value) = ($1, $2);
                 shift(@words);
                 if (defined $directives{$key}) {
-                    warn msg_multiple_directives($key, $o->{document}) 
-                      if $^W;
+                    warn YAML_PARSE_WARN_MULTIPLE_DIRECTIVES
+                      ($key, $o->{document}) if $^W;
                     next;
                 }
                 $directives{$key} = $value;
@@ -697,11 +725,11 @@ sub _parse {
             $o->{preface} = join ' ', @words;
         }
         else {
-            croak msg_no_separator($separator);
+            croak YAML_PARSE_ERR_NO_SEPARATOR();
         }
 
         if (not $o->{done}) {
-	    _parse_next_line(COLLECTION);
+            _parse_next_line(COLLECTION);
         }
         if ($o->{done}) {
             $o->{indent} = -1;
@@ -709,12 +737,16 @@ sub _parse {
         }
 
         $directives{YAML} ||= '1.0';
+        $directives{TAB} ||= 'NONE';
         ($o->{major_version}, $o->{minor_version}) = 
           split /\./, $directives{YAML}, 2;
-        croak msg_bad_major_version($directives{YAML})
+        croak YAML_PARSE_ERR_BAD_MAJOR_VERSION($directives{YAML})
           if ($o->{major_version} ne '1');
-        warn msg_bad_minor_version($directives{YAML})
+        warn YAML_PARSE_WARN_BAD_MINOR_VERSION($directives{YAML})
           if ($^W and $o->{minor_version} ne '0');
+        croak "Unrecognized TAB policy"  # XXX add to ::Error
+          unless $directives{TAB} =~ /^(NONE|\d+)(:HARD)?$/;
+        
 
         push @{$o->{documents}}, _parse_node();
     }
@@ -743,24 +775,25 @@ sub _parse_node {
     ($anchor, $alias, $explicit, $implicit, $class, $preface) = 
       _parse_qualifiers($preface);
     if ($anchor) {
-        $o->{anchor2node}{$anchor} = bless [], 'YAML-anchor2node';
+        $o->{anchor2node}{$anchor} = CORE::bless [], 'YAML-anchor2node';
     }
     $o->{inline} = '';
     while (length $preface) {
         my $line = $o->{line} - 1;
-        if ($preface =~ s/^(\]|\|)(\\?)(\-?)\d*\s*//) {
+        # XXX rking suggests refactoring the following regex and its evil twin
+        if ($preface =~ s/^($FOLD_CHAR|$BLOCK_CHAR_RX)(-|\+)?\d*\s*//) { 
             $indicator = $1;
-	    $escape = 1 if length($2);
-	    $chomp = 1 if length($3);
+            $chomp = $2 if defined($2);
         }
         else {
-            croak msg_text_after_indicator() if $indicator;
+            croak YAML_PARSE_ERR_TEXT_AFTER_INDICATOR() if $indicator;
             $o->{inline} = $preface;
             $preface = '';
         }
     }
     if ($alias) {
-        croak msg_no_anchor($alias) unless defined $o->{anchor2node}{$alias};
+        croak YAML_PARSE_ERR_NO_ANCHOR($alias) 
+          unless defined $o->{anchor2node}{$alias};
         if (ref($o->{anchor2node}{$alias}) ne 'YAML-anchor2node') {
             $node = $o->{anchor2node}{$alias};
         }
@@ -772,45 +805,42 @@ sub _parse_node {
     elsif (length $o->{inline}) {
         $node = _parse_inline(1, $implicit, $explicit, $class);
         if (length $o->{inline}) {
-            croak msg_single_line_parse(); 
+            croak YAML_PARSE_ERR_SINGLE_LINE(); 
         }
     }
-    elsif ($indicator eq '|') {
+    elsif ($indicator eq $BLOCK_CHAR) {
         $o->{level}++;
         $node = _parse_block($chomp);
-        $node = _unescape($node) if $escape;
         $node = _parse_implicit($node) if $implicit;
-	$o->{level}--; 
+        $o->{level}--; 
     }
-    elsif ($indicator eq ']') {
+    elsif ($indicator eq $FOLD_CHAR) {
         $o->{level}++;
         $node = _parse_unfold($chomp);
-        $node = _unescape($node) if $escape;
         $node = _parse_implicit($node) if $implicit;
-	$o->{level}--;
+        $o->{level}--;
     }
     else {
         $o->{level}++;
-	if ($explicit =~ m{^perl/(hash|array)} or 
-            $o->{indent} == $o->{offset}[$o->{level}]) {
-	    if ($explicit eq 'perl/array' or $o->{content} =~ /^-( |$)/) {
-		$node = _parse_seq($anchor);
-	    }
-	    elsif ($explicit eq 'perl/hash' or 
-	           $o->{content} =~ /(^\?|\:( |$))/) {
-		$node = _parse_map($anchor);
-	    }
-	    elsif ($preface =~ /^\s*$/) {
-		$node = _parse_implicit('');
-	    }
-	    else {
-		croak msg_parse_node();
-	    }
-	}
-	else {
-	    croak msg_parse_node();
-	}
-	$o->{level}--;
+        $o->{offset}[$o->{level}] ||= 0;
+        if ($o->{indent} == $o->{offset}[$o->{level}]) {
+            if ($o->{content} =~ /^-( |$)/) {
+                $node = _parse_seq($anchor);
+            }
+            elsif ($o->{content} =~ /(^\?|\:( |$))/) {
+                $node = _parse_mapping($anchor);
+            }
+            elsif ($preface =~ /^\s*$/) {
+                $node = _parse_implicit('');
+            }
+            else {
+                croak YAML_PARSE_ERR_BAD_NODE();
+            }
+        }
+        else {
+            $node = '';
+        }
+        $o->{level}--;
     }
     $#{$o->{offset}} = $o->{level};
 
@@ -821,7 +851,7 @@ sub _parse_node {
                 undef $node;
                 $node = \$copy;
             }
-            bless $node, $class;
+            CORE::bless $node, $class;
         }
         else {
             $node = _parse_explicit($node, $explicit);
@@ -829,9 +859,10 @@ sub _parse_node {
     }
     if ($anchor) {
         if (ref($o->{anchor2node}{$anchor}) eq 'YAML-anchor2node') {
+            # XXX Can't remember what this code actually does
             for my $ref (@{$o->{anchor2node}{$anchor}}) {
                 ${$ref->[0]} = $node;
-                warn msg_unresolved_alias($anchor, $ref->[1]) if $^W;
+                warn YAML_LOAD_WARN_UNRESOLVED_ALIAS($anchor, $ref->[1]) if $^W;
             }
         }
         $o->{anchor2node}{$anchor} = $node;
@@ -847,83 +878,79 @@ sub _parse_qualifiers {
     while ($preface =~ /^[&*!]/) {
         my $line = $o->{line} - 1;
         if ($preface =~ s/^\!(\S+)\s*//) {
-            croak msg_many_explicit() if $explicit;
+            croak YAML_PARSE_ERR_MANY_EXPLICIT() if $explicit;
             $explicit = $1;
-            if ($explicit =~ 
-                m{^(?:yaml\:)?(perl/\w+)(?:\:(\w[\w:]*))?$}) {
-                $explicit = $1;
-                $class = $2 if defined $2;
-            }
-            elsif ($explicit =~ 
-                /^((?:yaml\:)?.*)$/) {
-                $explicit = $1;
-            }
-            else {
-                croak msg_bad_explicit($explicit);
-            }
         }
         elsif ($preface =~ s/^\!\s*//) {
-            croak msg_many_implicit() if $implicit;
+            croak YAML_PARSE_ERR_MANY_IMPLICIT() if $implicit;
             $implicit = 1;
         }
         elsif ($preface =~ s/^\&([^ ,:]+)\s*//) {
             $token = $1;
-            croak msg_bad_anchor() unless $token =~ /^[a-zA-Z0-9]+$/;
-            croak msg_many_anchor() if $anchor;
-            croak msg_anchor_alias() if $alias;
+            croak YAML_PARSE_ERR_BAD_ANCHOR() 
+              unless $token =~ /^[a-zA-Z0-9]+$/;
+            croak YAML_PARSE_ERR_MANY_ANCHOR() if $anchor;
+            croak YAML_PARSE_ERR_ANCHOR_ALIAS() if $alias;
             $anchor = $token;
         }
         elsif ($preface =~ s/^\*([^ ,:]+)\s*//) {
             $token = $1;
-            croak msg_bad_alias() unless $token =~ /^[a-zA-Z0-9]+$/;
-            croak msg_many_alias() if $alias;
-            croak msg_alias() if $anchor;
+            croak YAML_PARSE_ERR_BAD_ALIAS() unless $token =~ /^[a-zA-Z0-9]+$/;
+            croak YAML_PARSE_ERR_MANY_ALIAS() if $alias;
+            croak YAML_PARSE_ERR_ANCHOR_ALIAS() if $anchor;
             $alias = $token;
         }
     }
     return ($anchor, $alias, $explicit, $implicit, $class, $preface); 
 }
 
-# A lookup table for mapping Perl types to YAML types. 
-my %type_map = 
-  (
-   UNDEF => 'null',
-   SCALAR => 'ptr',
-   REF => 'ptr',
-   HASH => 'map',
-   ARRAY => 'seq',
-   STRING => 'str',
-  );
-
 # Morph a node to it's explicit type  
 sub _parse_explicit {
     my ($node, $explicit) = @_;
-    my $implicit = '';
-    $implicit = 'UNDEF' unless defined $node;
-    $implicit ||= ref $node || 'STRING';
-    $implicit = $type_map{$implicit};
-    $explicit =~ s{/}{_};
-    return $node if $explicit eq $implicit;
-    my $handler = "YAML::_parse_${implicit}_to_$explicit";
-    $handler =~ s/;/_/g;
-    no strict 'refs';
-    if (defined &$handler) {
+    if ($explicit =~ m{^(int|float|bool|date|time|datetime|binary)$}) {
+        my $handler = "YAML::_load_$1";
+        no strict 'refs';
         return &$handler($node);
     }
+    elsif ($explicit =~ m{^perl/(glob|regexp|code|ref)\:(\w(\w|\:\:)*)?$}) {
+        my ($type, $class) = (($1 || ''), ($2 || ''));
+        my $handler = "YAML::_load_perl_$type";
+        no strict 'refs';
+        if (defined &$handler) {
+            return &$handler($node, $class);
+        }
+        else {
+            croak YAML_LOAD_ERR_NO_CONVERT('XXX', $explicit);
+        }
+    }
+    elsif ($explicit =~ m{^perl/(\@|\$)?([a-zA-Z](\w|::)+)$}) {
+        my ($package) = ($2);
+        my $handler = "${package}::yaml_load";
+        no strict 'refs';
+        if (defined &$handler) {
+            return &$handler(YAML::Node->new($node, $explicit));
+        }
+        else {
+            return CORE::bless $node, $package;
+        }
+    }
+    elsif ($explicit !~ m|/|) {
+        croak YAML_LOAD_ERR_NO_CONVERT('XXX', $explicit);
+    }
     else {
-        croak msg_no_convert($implicit, $explicit);
+        return YAML::Node->new($node, $explicit);
     }
 }
 
 # Morph to a perl reference
-sub _parse_map_to_ptr {
+sub _load_perl_ref {
     my ($node) = @_;
-    croak msg_no_default_value('ptr') unless exists $node->{'='};
-    return \$node->{'='};
+    croak YAML_LOAD_ERR_NO_DEFAULT_VALUE('ptr') unless exists $node->{&VALUE};
+    return \$node->{&VALUE};
 }
 
-# Morph to a perl glob
-sub _parse_map_to_perl_regexp {
+# Morph to a perl regexp
+sub _load_perl_regexp {
     my ($node) = @_;
     my ($regexp, $modifiers);
     if (defined $node->{REGEXP}) {
@@ -931,7 +958,7 @@ sub _parse_map_to_perl_regexp {
         delete $node->{REGEXP};
     }
     else {
-        warn msg_no_regexp_in_regexp() if $^W;
+        warn YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP() if $^W;
         return undef;
     }
     if (defined $node->{MODIFIERS}) {
@@ -941,18 +968,18 @@ sub _parse_map_to_perl_regexp {
         $modifiers = '';
     }
     for my $elem (sort keys %$node) {
-        warn msg_bad_regexp_elem($elem) if $^W;
+        warn YAML_LOAD_WARN_BAD_REGEXP_ELEM($elem) if $^W;
     }
     my $value = eval "qr($regexp)$modifiers";
     if ($@) {
-        warn msg_regexp_create($regexp, $modifiers, $@) if $^W;
+        warn YAML_LOAD_WARN_REGEXP_CREATE($regexp, $modifiers, $@) if $^W;
         return undef;
     }
     return $value;
 }
 
 # Morph to a perl glob
-sub _parse_map_to_perl_glob {
+sub _load_perl_glob {
     my ($node) = @_;
     my ($name, $package);
     if (defined $node->{NAME}) {
@@ -960,7 +987,7 @@ sub _parse_map_to_perl_glob {
         delete $node->{NAME};
     }
     else {
-        warn msg_glob_name() if $^W;
+        warn YAML_LOAD_WARN_GLOB_NAME() if $^W;
         return undef;
     }
     if (defined $node->{PACKAGE}) {
@@ -974,83 +1001,93 @@ sub _parse_map_to_perl_glob {
         *{"${package}::$name"} = \$node->{SCALAR};
         delete $node->{SCALAR};
     }
-    for my $elem (qw(ARRAY HASH CODE)) {
+    for my $elem (qw(ARRAY HASH CODE IO)) {
         if (exists $node->{$elem}) {
+            if ($elem eq 'IO') {
+                warn YAML_LOAD_WARN_GLOB_IO() if $^W;
+                delete $node->{IO};
+                next;
+            }
             *{"${package}::$name"} = $node->{$elem};
             delete $node->{$elem};
         }
     }
     for my $elem (sort keys %$node) {
-        warn msg_bad_glob_elem($elem) if $^W;
+        warn YAML_LOAD_WARN_BAD_GLOB_ELEM($elem) if $^W;
     }
     return *{"${package}::$name"};
 }
 
-# Special support for an empty map
-sub _parse_str_to_map {
-    my ($node) = @_;
-    croak msg_non_empty_string('map') unless $node eq '';
-    return {};
-}
+# Special support for an empty mapping
+#sub _parse_str_to_map {
+#    my ($node) = @_;
+#    croak YAML_LOAD_ERR_NON_EMPTY_STRING('mapping') unless $node eq '';
+#    return {};
+#}
 
 # Special support for an empty sequence
-sub _parse_str_to_seq {
-    my ($node) = @_;
-    croak msg_non_empty_string('sequence') unless $node eq '';
-    return [];
-}
+#sub _parse_str_to_seq {
+#    my ($node) = @_;
+#    croak YAML_LOAD_ERR_NON_EMPTY_STRING('sequence') unless $node eq '';
+#    return [];
+#}
 
 # Support for sparse sequences
-sub _parse_map_to_seq {
-    my ($node) = @_;
-    my $seq = [];
-    for my $index (keys %$node) {
-        croak msg_bad_map_to_seq($index) unless $index =~ /^\d+/;
-        $seq->[$index] = $node->{$index};
-    }
-    return $seq;
-}
+#sub _parse_map_to_seq {
+#    my ($node) = @_;
+#    my $seq = [];
+#    for my $index (keys %$node) {
+#        croak YAML_LOAD_ERR_BAD_MAP_TO_SEQ($index) unless $index =~ /^\d+/;
+#        $seq->[$index] = $node->{$index};
+#    }
+#    return $seq;
+#}
 
 # Support for !int
-sub _parse_str_to_int {
+sub _load_int {
     my ($node) = @_;
-    croak msg_bad_str_to_int() unless $node =~ /^-?\d+$/;
+    croak YAML_LOAD_ERR_BAD_STR_TO_INT() unless $node =~ /^-?\d+$/;
+    return $node;
+}
+
+# Support for !date
+sub _load_date {
+    my ($node) = @_;
+    croak YAML_LOAD_ERR_BAD_STR_TO_DATE() unless $node =~ /^\d\d\d\d-\d\d-\d\d$/;
+    return $node;
+}
+
+# Support for !time
+sub _load_time {
+    my ($node) = @_;
+    croak YAML_LOAD_ERR_BAD_STR_TO_TIME() unless $node =~ /^\d\d:\d\d:\d\d$/;
     return $node;
 }
 
 # Support for !perl/code;deparse
-sub _parse_str_to_perl_code_deparse {
-    my ($node) = @_;
-    if ($o->{LoadCode} eq 'deparse' or
-        $o->{LoadCode} eq '1') {
-        $node = eval "package main; $node";
+sub _load_perl_code {
+    my ($node, $class) = @_;
+    if ($o->{LoadCode}) {
+        my $code = eval "package main; sub $node";
         if ($@) {
-            warn msg_parse_code($@) if $^W;
+            warn YAML_LOAD_WARN_PARSE_CODE($@) if $^W;
             return sub {};
         }
         else {
-            return $node;
+            CORE::bless $code, $class if $class;
+            return $code;
         }
     }
     else {
-        warn msg_code_deparse() if $^W;
         return sub {};
     }
-    return eval $node;
 }
 
-*_parse_str_to_perl_code = \&_parse_str_to_perl_code_deparse;
-
-# Support for !perl/:code;dummy
-sub _parse_str_to_perl_code_dummy {
-    return sub {};
-}
-
-# Parse a YAML map into a Perl hash
-sub _parse_map {
+# Parse a YAML mapping into a Perl hash
+sub _parse_mapping {
     my ($anchor) = @_;
-    my $map = {};
-    $o->{anchor2node}{$anchor} = $map;
+    my $mapping = {};
+    $o->{anchor2node}{$anchor} = $mapping;
     my $key;
     while (not $o->{done} and $o->{indent} == $o->{offset}[$o->{level}]) {
         # If structured key:
@@ -1062,7 +1099,11 @@ sub _parse_map {
         }
         # If "default" key (equals sign) 
         elsif ($o->{content} =~ s/^\=\s*//) {
-            $key = '=';
+            $key = VALUE;
+        }
+        # If "comment" key (slash slash)
+        elsif ($o->{content} =~ s/^\=\s*//) {
+            $key = COMMENT;
         }
         # Regular scalar key:
         else {
@@ -1074,20 +1115,20 @@ sub _parse_map {
         }
             
         unless ($o->{content} =~ s/^:\s*//) {
-            croak msg_bad_map_element();
+            croak YAML_LOAD_ERR_BAD_MAP_ELEMENT();
         }
         $o->{preface} = $o->{content};
         my $line = $o->{line};
         _parse_next_line(COLLECTION);
         my $value = _parse_node();
-        if (exists $map->{$key}) {
-            warn msg_duplicate_key() if $^W;
+        if (exists $mapping->{$key}) {
+            warn YAML_LOAD_WARN_DUPLICATE_KEY() if $^W;
         }
         else {
-            $map->{$key} = $value;
+            $mapping->{$key} = $value;
         }
     }
-    return $map;
+    return $mapping;
 }
 
 # Parse a YAML sequence into a Perl array
@@ -1097,24 +1138,24 @@ sub _parse_seq {
     $o->{anchor2node}{$anchor} = $seq;
     while (not $o->{done} and $o->{indent} == $o->{offset}[$o->{level}]) {
         if ($o->{content} =~ /^-(?: (.*))?$/) {
-            $o->{preface} = length($1) ? $1 : '';
+            $o->{preface} = defined($1) ? $1 : '';
         }
         else {
-            croak msg_map_seq_element();
+            croak YAML_LOAD_ERR_BAD_SEQ_ELEMENT();
         }
-	if ($o->{preface} =~ /^(\s*)(\w.*\:(?: |$).*)$/) {
-	    $o->{indent} = $o->{offset}[$o->{level}] + 2 + length($1);
-	    $o->{content} = $2;
-	    $o->{offset}[++$o->{level}] = $o->{indent};
-	    $o->{preface} = '';
-	    push @$seq, _parse_map('');
-	    $o->{level}--;
+        if ($o->{preface} =~ /^(\s*)(\w.*\:(?: |$).*)$/) {
+            $o->{indent} = $o->{offset}[$o->{level}] + 2 + length($1);
+            $o->{content} = $2;
+            $o->{offset}[++$o->{level}] = $o->{indent};
+            $o->{preface} = '';
+            push @$seq, _parse_mapping('');
+            $o->{level}--;
             $#{$o->{offset}} = $o->{level};
-	}
-	else {
-	    _parse_next_line(COLLECTION);
-	    push @$seq, _parse_node();
-	}
+        }
+        else {
+            _parse_next_line(COLLECTION);
+            push @$seq, _parse_node();
+        }
     }
     return $seq;
 }
@@ -1128,14 +1169,15 @@ sub _parse_inline {
     ($anchor, $alias, $explicit, $implicit, $class, $o->{inline}) = 
       _parse_qualifiers($o->{inline});
     if ($anchor) {
-        $o->{anchor2node}{$anchor} = bless [], 'YAML-anchor2node';
+        $o->{anchor2node}{$anchor} = CORE::bless [], 'YAML-anchor2node';
     }
     $implicit ||= $top_implicit;
     $explicit ||= $top_explicit;
     $class ||= $top_class;
     ($top_implicit, $top_explicit, $top_class) = ('', '', '');
     if ($alias) {
-        croak msg_no_anchor($alias) unless defined $o->{anchor2node}{$alias};
+        croak YAML_PARSE_ERR_NO_ANCHOR($alias) 
+          unless defined $o->{anchor2node}{$alias};
         if (ref($o->{anchor2node}{$alias}) ne 'YAML-anchor2node') {
             $node = $o->{anchor2node}{$alias};
         }
@@ -1144,10 +1186,10 @@ sub _parse_inline {
             push @{$o->{anchor2node}{$alias}}, [\$node, $o->{line}]; 
         }
     }
-    elsif ($o->{inline} =~ /^[{]/) {
-        $node = _parse_inline_map($anchor);
+    elsif ($o->{inline} =~ /^\{/) {
+        $node = _parse_inline_mapping($anchor);
     }
-    elsif ($o->{inline} =~ /^[[]/) {
+    elsif ($o->{inline} =~ /^\[/) {
         $node = _parse_inline_seq($anchor);
     }
     elsif ($o->{inline} =~ /^"/) {
@@ -1160,13 +1202,13 @@ sub _parse_inline {
         $node = _parse_implicit($node) if $implicit;
     }
     else {
-	if ($top) {
-	    $node = $o->{inline};
-	    $o->{inline} = '';
-	}
-	else {
-	    $node = _parse_inline_simple();
-	}
+        if ($top) {
+            $node = $o->{inline};
+            $o->{inline} = '';
+        }
+        else {
+            $node = _parse_inline_simple();
+        }
         $node = _parse_implicit($node) unless $explicit;
     }
     if ($explicit) {
@@ -1176,7 +1218,7 @@ sub _parse_inline {
                 undef $node;
                 $node = \$copy;
             }
-            bless $node, $class;
+            CORE::bless $node, $class;
         }
         else {
             $node = _parse_explicit($node, $explicit);
@@ -1186,7 +1228,7 @@ sub _parse_inline {
         if (ref($o->{anchor2node}{$anchor}) eq 'YAML-anchor2node') {
             for my $ref (@{$o->{anchor2node}{$anchor}}) {
                 ${$ref->[0]} = $node;
-                warn msg_unresolved_alias($anchor, $ref->[1]) if $^W;
+                warn YAML_LOAD_WARN_UNRESOLVED_ALIAS($anchor, $ref->[1]) if $^W;
             }
         }
         $o->{anchor2node}{$anchor} = $node;
@@ -1194,25 +1236,25 @@ sub _parse_inline {
     return $node;
 }
 
-# Parse the inline YAML map into a Perl hash
-sub _parse_inline_map {
+# Parse the inline YAML mapping into a Perl hash
+sub _parse_inline_mapping {
     my ($anchor) = @_;
     my $node = {};
     $o->{anchor2node}{$anchor} = $node;
 
-    croak msg_inline_map() unless $o->{inline} =~ s/^\{\s*//;
+    croak YAML_PARSE_ERR_INLINE_MAP() unless $o->{inline} =~ s/^\{\s*//;
     while (not $o->{inline} =~ s/^\}//) {
         my $key = _parse_inline();
-        croak msg_inline_map() unless $o->{inline} =~ s/^\: \s*//;
+        croak YAML_PARSE_ERR_INLINE_MAP() unless $o->{inline} =~ s/^\: \s*//;
         my $value = _parse_inline();
         if (exists $node->{$key}) {
-            warn msg_duplicate_key() if $^W;
+            warn YAML_LOAD_WARN_DUPLICATE_KEY() if $^W;
         }
         else {
             $node->{$key} = $value;
         }
         next if $o->{inline} =~ /^\}/;
-        croak msg_inline_map() unless $o->{inline} =~ s/^\,\s*//;
+        croak YAML_PARSE_ERR_INLINE_MAP() unless $o->{inline} =~ s/^\,\s*//;
     }
     return $node;
 }
@@ -1223,12 +1265,13 @@ sub _parse_inline_seq {
     my $node = [];
     $o->{anchor2node}{$anchor} = $node;
 
-    croak msg_inline_map() unless $o->{inline} =~ s/^\[\s*//;
+    croak YAML_PARSE_ERR_INLINE_SEQUENCE() unless $o->{inline} =~ s/^\[\s*//;
     while (not $o->{inline} =~ s/^\]//) {
         my $value = _parse_inline();
         push @$node, $value;
         next if $o->{inline} =~ /^\]/;
-        croak msg_inline_sequence() unless $o->{inline} =~ s/^\,\s*//;
+        croak YAML_PARSE_ERR_INLINE_SEQUENCE() 
+          unless $o->{inline} =~ s/^\,\s*//;
     }
     return $node;
 }
@@ -1241,7 +1284,7 @@ sub _parse_inline_double_quoted {
         $o->{inline} = $2;
         $node =~ s/\\"/"/g;
     } else {
-        croak msg_bad_double();
+        croak YAML_PARSE_ERR_BAD_DOUBLE();
     }
     return $node;
 }
@@ -1255,7 +1298,7 @@ sub _parse_inline_single_quoted {
         $o->{inline} = $2;
         $node =~ s/''/'/g;
     } else {
-        croak msg_bad_single();
+        croak YAML_PARSE_ERR_BAD_SINGLE();
     }
     return $node;
 }
@@ -1268,25 +1311,28 @@ sub _parse_inline_simple {
         substr($o->{inline}, 0, length($1)) = '';
     }
     else {
-        croak msg_bad_implicit($value);
+        croak YAML_PARSE_ERR_BAD_INLINE_IMPLICIT($value);
     }
     return $value;
 }
 
 # Apply regex matching for YAML's implicit types. !str, !int, !real,
-# !null and !time
+# !null, !date and !time
 sub _parse_implicit {
     my ($value) = @_;
     $value =~ s/\s*$//;
     return $value if $value eq '';
-    return $value if $value =~ /^[a-zA-Z]/;
-    return eval $value if $value =~ /^-?\d+$/;
-    return eval $value 
+    return $value + 0 if $value =~ /^-?\d+$/;
+    return $value * 1.0
       if ($value =~ /^[+-]?(\d*)(?:\.(\d*))?([Ee][+-]?\d+)?$/) and
-         (length($3) ? length($1) : length($1) + length($2));
+         (defined($3) ? defined($1) : defined($1) || defined($2));
+    return "$value" if $value =~  # XXX Change this to a Time::Object
+      /^\d{4}\-\d\d\-\d\d(T\d\d:\d\d:\d\d(\.\d*[1-9])?(Z|[-+]\d\d(:\d\d)?))?$/;
+    return "$value" if $value =~ /^\w/;
     return undef if $value =~ /^~$/;
-    return $value if $value =~ /^\d?\d:\d\d$/;
-    croak msg_bad_implicit($value);
+    return 1 if $value =~ /^\+$/;
+    return 0 if $value =~ /^-$/;
+    croak YAML_PARSE_ERR_BAD_IMPLICIT($value);
 }
 
 # Unfold a YAML multiline scalar into a single string.
@@ -1295,22 +1341,13 @@ sub _parse_unfold {
     my $node = '';
     my $space = 0;
     while (not $o->{done} and $o->{indent} == $o->{offset}[$o->{level}]) {
-        if (length $o->{content}) {
-            $node .= $o->{content};
-            unless ($node =~ s/\\\s*$//) {
-                $node .= ' ';
-                $space = 1;
-            }
-        }
-        else {
-            chop $node if $space;
-            $space = 0;
-            $node .= "\n";
-        }
+        $node .= "$o->{content}\n";
         _parse_next_line(LEAF);
     }
-    chop $node if $space;
-    $node =~ s/\n*\Z// if $chomp;
+    $node =~ s/^(\S.*)\n(?=\S)/$1 /gm;
+    $node =~ s/^(\S.*)\n(\n+\S)/$1$2/gm;
+    $node =~ s/\n*\Z// unless $chomp eq '+';
+    $node .= "\n" unless $chomp;
     return $node;
 }
 
@@ -1322,7 +1359,9 @@ sub _parse_block {
         $node .= $o->{content} . "\n";
         _parse_next_line(LEAF);
     }
-    $node =~ s/\n*\Z// if $chomp;
+    return $node if '+' eq $chomp;
+    $node =~ s/\n*\Z/\n/;
+    $node =~ s/\n\Z// if $chomp eq '-';
     return $node;
 }
 
@@ -1350,80 +1389,60 @@ sub _parse_throwaway_comments {
 # 4) Expand tabs appropriately  
 sub _parse_next_line {
     my ($type) = @_;
-# print "_parse_next_line level($o->{level}) type($_[0]) preface($o->{preface})\n";
     my $level = $o->{level};
     my $offset = $o->{offset}[$level];
-    croak msg_bad_level() unless defined $offset;
+    croak YAML_EMIT_ERR_BAD_LEVEL() unless defined $offset;
     shift @{$o->{lines}};
     $o->{eos} = $o->{done} = not @{$o->{lines}};
     return if $o->{eos};
     $o->{line}++;
 
     # Determine the offset for a new leaf node
-    if ($o->{preface} =~ qr/(?:\]|\|)\\?\-?(\d*)\s*$/) {
-	croak msg_zero_indent() if length($1) and $1 == 0;
-	$type = LEAF;
-	if (length($1)) {
-	    $o->{offset}[$level + 1] = $offset + $1;
-	}
-	else {
-	    # First get rid of any comments.
-	    while (@{$o->{lines}} && ($o->{lines}[0] =~ /^\s*#/)) {
-		while ($o->{lines}[0] =~ s{^( *)(\t+)} # Convert tabs to spaces
-		       {' ' x (length($1) + length($2) * 8 - length($1) % 8)}e
-		      ) {}
-		$o->{lines}[0] =~ /^( *)/ or die;
-		last unless length($1) <= $offset;
-		shift @{$o->{lines}};
-		$o->{line}++;
-	    }
-	    $o->{eos} = $o->{done} = not @{$o->{lines}};
-	    return if $o->{eos};
-	    while ($o->{lines}[0] =~ s{^( *)(\t+)} # Convert tabs to spaces
-		   {' ' x (length($1) + length($2) * 8 - length($1) % 8)}e
-	          ){}
-	    if ($o->{lines}[0] =~ /^( *)\S/ and length($1) > $offset) {
-		$o->{offset}[$level+1] = length($1);
-	    }
-	    else {
-		$o->{offset}[$level+1] = $offset + 1;
-	    }
-	}
-	$offset = $o->{offset}[++$level];
+    if ($o->{preface} =~ qr/(?:$FOLD_CHAR|$BLOCK_CHAR_RX)(?:-|\+)?(\d*)\s*$/) {
+        croak YAML_PARSE_ERR_ZERO_INDENT() if length($1) and $1 == 0;
+        $type = LEAF;
+        if (length($1)) {
+            $o->{offset}[$level + 1] = $offset + $1;
+        }
+        else {
+            # First get rid of any comments.
+            while (@{$o->{lines}} && ($o->{lines}[0] =~ /^\s*#/)) {
+                $o->{lines}[0] =~ /^( *)/ or die;
+                last unless length($1) <= $offset;
+                shift @{$o->{lines}};
+                $o->{line}++;
+            }
+            $o->{eos} = $o->{done} = not @{$o->{lines}};
+            return if $o->{eos};
+            if ($o->{lines}[0] =~ /^( *)\S/ and length($1) > $offset) {
+                $o->{offset}[$level+1] = length($1);
+            }
+            else {
+                $o->{offset}[$level+1] = $offset + 1;
+            }
+        }
+        $offset = $o->{offset}[++$level];
     }
     # Determine the offset for a new collection level
     elsif ($type == COLLECTION and 
            $o->{preface} =~ /^(\s*(\!\S*|\&\S+))*\s*$/) {
-	_parse_throwaway_comments();
-	if ($o->{eos}) {
-	    $o->{offset}[$level+1] = $offset + 1;
-	    return;
-	}
-	else {
-	    while ($o->{lines}[0] =~ s{^( *)(\t+)} # Convert tabs to spaces
-		   {' ' x (length($1) + length($2) * 8 - length($1) % 8)}e
-	          ){}
-	    $o->{lines}[0] =~ /^( *)\S/ or die;
-	    if (length($1) > $offset) {
-		$o->{offset}[$level+1] = length($1);
-	    }
-	    else {
-		$o->{offset}[$level+1] = $offset + 1;
-	    }
-	}
-	$offset = $o->{offset}[++$level];
+        _parse_throwaway_comments();
+        if ($o->{eos}) {
+            $o->{offset}[$level+1] = $offset + 1;
+            return;
+        }
+        else {
+            $o->{lines}[0] =~ /^( *)\S/ or die;
+            if (length($1) > $offset) {
+                $o->{offset}[$level+1] = length($1);
+            }
+            else {
+                $o->{offset}[$level+1] = $offset + 1;
+            }
+        }
+        $offset = $o->{offset}[++$level];
     }
-	
-    # Convert tabs to spaces for a given offset
-    my $border = $offset - 1;
-    while ($border > -1 and
-	   $o->{lines}[0] =~ s{^( {0,$border})(\t+)} # Convert tabs to spaces
-           {' ' x (length($1) + length($2) * 8 - length($1) % 8)}e
-	  ) { 
-       warn msg_ambiguous_tab() 
-         if (length($1) + length($2) * 8 - length($1) % 8) > $offset;
-    }
-
+        
     if ($type == LEAF) {
         while (@{$o->{lines}} and
                $o->{lines}[0] =~ m{^( *)(\#)} and
@@ -1431,14 +1450,6 @@ sub _parse_next_line {
               ) {
             shift @{$o->{lines}};
             $o->{line}++;
-	    # Convert tabs to spaces for a given offset
-	    while ($border > -1 and
-		   $o->{lines}[0] =~ s{^( {0,$border})(\t+)} # Convert tabs 
-		   {' ' x (length($1) + length($2) * 8 - length($1) % 8)}e
-		  ) { 
-	       warn msg_ambiguous_tab() 
-		 if (length($1) + length($2) * 8 - length($1) % 8) > $offset;
-	    }
         }
         $o->{eos} = $o->{done} = not @{$o->{lines}};
     }
@@ -1447,8 +1458,7 @@ sub _parse_next_line {
     }
     return if $o->{eos}; 
     
-    my $separator = $o->{separator};
-    if ($o->{lines}[0] =~ /^\Q$separator/) {
+    if ($o->{lines}[0] =~ /^---(\s|$)/) {
         $o->{done} = 1;
         return;
     }
@@ -1468,12 +1478,12 @@ sub _parse_next_line {
         while ($o->{offset}[$level] > length($1)) {
             $level--;
         }
-        croak msg_inconsistent_indentation() 
+        croak YAML_PARSE_ERR_INCONSISTENT_INDENTATION() 
           if $o->{offset}[$level] != length($1);
         $o->{indent} = length($1);
         $o->{content} = $2;
     }
-    croak msg_indentation() if $o->{indent} - $offset > 1;
+    croak YAML_PARSE_ERR_INDENTATION() if $o->{indent} - $offset > 1;
 }
 
 #==============================================================================
@@ -1485,7 +1495,7 @@ sub indent {
     my ($text) = @_;
     return $text unless length $text;
     $text =~ s/\n\Z//;
-    my $indent = ' ' x ($o->{level} * $o->{width});
+    my $indent = ' ' x $o->{offset}[$o->{level}];
     $text =~ s/^/$indent/gm;
     $text = "\n$text";
     return $text;
@@ -1495,23 +1505,20 @@ sub indent {
 sub fold {
     my ($text) = @_;
     my $folded = '';
-    $text =~ s/([^\n]\n+)/$1\n/g;
+    $text =~ s/^(\S.*)\n(?=\S)/$1\n\n/gm;
     while (length $text > 0) {
-        if (length($text) <= 75) {
-            $folded .= $text;
-            $text = '';
+        if ($text =~ s/^([^\n]{0,76})(\n|\Z)//) {
+            $folded .= $1;
         }
-        elsif (substr($text, 60, 16) =~ /^(.* )/) {
-            $folded .= substr($text, 0, 60 + length($1), '');
-            chop($folded);
+        elsif ($text =~ s/^(.{0,76})\s//) { 
+            $folded .= $1;
         }
         else {
-            $folded .= substr($text, 0, 75, '') . '\\';
+            croak "bad news" unless $text =~ s/(.*?)(\s|\Z)//;
+            $folded .= $1;
         }
         $folded .= "\n";
     }
-    chop $folded;
-    # (my $f = $folded) =~ s/\n/+/g;print "folded>$f<\n"; 
     return $folded;
 }
 
@@ -1546,277 +1553,27 @@ sub _unescape {
     return $node;
 }
 
-#==============================================================================
-# Messages
-#==============================================================================
-sub ws {
-    return <<END;
-YAML Store Warning:
-  $_[0]
-END
-}
-
-sub es {
-    return <<END;
-YAML Store Error:
-  $_[0]
-END
-}
-
-sub wl0 {
-    return <<END;
-YAML Load Warning:
-  $_[0]
-In YAML Stream line #$o->{line}; Document #$o->{document}.
-END
-}
-
-sub wl1 {
-    my $line = $o->{line} - 1;
-    return <<END;
-YAML Load Warning:
-  $_[0]
-In YAML Stream line #$line; Document #$o->{document}.
-END
-}
-
-sub wlx {
-    my $line = $_[1];
-    return <<END;
-YAML Load Warning:
-  $_[0]
-In YAML Stream line #$line; Document #$o->{document}.
-END
-}
-
-sub el0 {
-    my $msg = <<END;
-YAML Load Error:
-  $_[0]
-END
-    $msg .= <<END if $o->{line} > 0;
-In YAML Stream line #$o->{line}; Document #$o->{document}.
-END
-    return $msg;
-}
-
-sub el1 {
-    my $line = $o->{line} - 1;
-    return <<END;
-YAML Load Error:
-  $_[0]
-In YAML Stream line #$line; Document #$o->{document}.
-END
-}
-
-# Consider Storing these messages as YAML, and unfolding/autoloading at
-# run time.
-
-# Store messages
-sub msg_invalid_separator {
-    es "Invalid value for Separator";
-}
-sub msg_invalid_indent {
-    es "Invalid Indent width specified: '$_[0]'";
-}
-sub msg_storecode {
-    es "Invalid value for StoreCode: '$_[0]'";
-}
-sub msg_file_input {
-    es "Couldn't open $_[0] for input:\n$_[1]";
-}
-sub msg_file_concatenate {
-    es "Can't concatenate to YAML file $_[0]";
-}
-sub msg_file_output {
-    es "Couldn't open $_[0] for output:\n$_[1]";
-} 
-sub msg_no_header {
-    es "With UseHeader=0, the node must be a plain hash or array";
-}
-sub msg_bad_node_type { 
-    ws "Can't perform serialization for node type '$_[0]'";
-}
-sub msg_keys_error {
-    ws "Encountered a problem with 'keys':\n$_[0]";
-}
-sub msg_deparse_failed { 
-    ws "Deparse failed for CODE reference";
-}
-sub msg_emit_dummy { 
-    ws "Emitting dummy subroutine for CODE reference";
-}
-
-# Load messages
-sub usage_load {
-    "usage: YAML::Load(\$yaml_stream_scalar)\n";
-}
-sub msg_bad_chars {
-    el0 "Invalid characters in stream. This parser only supports printable ASCII";
-}
-sub msg_no_newline {
-    el0 "Stream does not end with newline character";
-}
-sub msg_bad_major_version {
-    el1 "Can't parse a $_[0] document with a 1.0 parser";
-}
-sub msg_bad_minor_version {
-    wl1 "Parsing a $_[0] document with a 1.0 parser";
-}
-sub msg_multiple_directives {
-    wl0 "$_[0] directive used more than once";
-}
-sub msg_no_separator {
-    el0 "Expected separator '$_[0]'";
-}
-sub msg_text_after_indicator {
-    el1 "No text allowed after indicator";
-}
-sub msg_no_anchor {
-    el1 "No anchor for alias '*$_[0]'";
-}
-sub msg_single_line_parse {
-    el1 "Couldn't parse single line value";
-}
-sub msg_parse_node {
-    el0 "Can't parse node";
-}
-sub msg_bad_explicit {
-    el1 "Unsupported explicit transfer: '$_[0]'";
-}
-sub msg_many_explicit {
-    el1 "More than one explicit transfer";
-}
-sub msg_many_implicit {
-    el1 "More than one implicit request";
-}
-sub msg_bad_anchor {
-    el1 "Invalid anchor";
-}
-sub msg_many_anchor {
-    el1 "More than one anchor";
-}
-sub msg_anchor_alias {
-    el1 "Can't define both an anchor and an alias";
-}
-sub msg_bad_alias {
-    el1 "Invalid alias";
-}
-sub msg_many_alias {
-    el1 "More than one alias";
-}
-sub msg_no_convert {
-    el1 "Can't convert implicit '$_[0]' node to explicit '$_[1]' node";
-}
-sub msg_no_default_value {
-    el1 "No default value for '$_[0]' explicit transfer";
-}
-sub msg_non_empty_string {
-    el1 "Only the empty string can be converted to a '$_[0]'";
-}
-sub msg_bad_map_to_seq {
-    el1 "Can't transfer map as sequence.\nNon numeric key '$_[0]' encountered";
-}
-sub msg_bad_glob {
-    el1 "'$_[0]' is an invalid value for Perl glob";
-}
-sub msg_bad_regexp {
-    el1 "'$_[0]' is an invalid value for Perl Regexp";
-}
-sub msg_bad_str_to_int {
-    el1 "Can't transfer string to integer";
-}
-sub msg_bad_map_element {
-    el0 "Invalid element in map";
-}
-sub msg_duplicate_key {
-    wl1 "Duplicate map key found. Ignoring.";
-}
-sub msg_map_seq_element {
-    el0 "Invalid element in sequence";
-}
-sub msg_inline_map {
-    el1 "Can't parse inline map";
-}
-sub msg_inline_sequence {
-    el1 "Can't parse inline sequence";
-}
-sub msg_bad_double {
-    el1 "Can't parse double quoted string";
-}
-sub msg_bad_single {
-    el1 "Can't parse single quoted string";
-}
-sub msg_bad_inline_implicit {
-    el1 "Can't parse inline implicit value '$_[0]'";
-}
-sub msg_bad_implicit {
-    el1 "Unrecognized implicit value '$_[0]'";
-}
-sub msg_indentation {
-    el0 "Error. Invalid indentation level";
-}
-sub msg_inconsistent_indentation {
-    el0 "Inconsistent indentation level";
-}
-sub msg_unresolved_alias { 
-    wlx "Can't resolve alias '*$_[0]'", $_[1];
-}
-
-my $messages_yaml = <<'END_YAML';
-
---- #YAML:1.0
-msg_no_regexp_in_regexp:
-    type: wl1 
-    msg:  No 'REGEXP' element for Perl regexp
-msg_bad_regexp_elem:
-    type: wl1 
-    msg:  Unknown element '$_[0]' in Perl regexp
-msg_regexp_create:
-    type: wl1 
-    msg:  Couldn't create regexp qr($_[0])$_[1]\n$_[2]
-msg_glob_name:
-    type: wl1 
-    msg:  No 'NAME' element for Perl glob
-msg_parse_code:
-    type: wl1 
-    msg:  Couldn't parse Perl code scalar:\n$_[0]
-msg_code_deparse:
-    type: wl1 
-    msg:  Won't parse Perl code unless \$YAML::LoadCode is set
-msg_bad_level:
-    type: el0 
-    msg:  Internal Error: Bad level detected
-msg_ambiguous_tab:
-    type: wl0 
-    msg:  Amibiguous tab converted to spaces
-msg_bad_glob_elem:
-    type: wl1 
-    msg:  Unknown element '$_[0]' in Perl glob
-msg_zero_indent:
-    type: el1 
-    msg:  Can't use zero as an indentation width
-
-END_YAML
-
-my $messages;
-sub AUTOLOAD {
-    my $autoload;
-    my $object_saver = $o;
-    $messages = Load($messages_yaml) unless defined $messages;
-    $o = $object_saver;
-    ($autoload = $YAML::AUTOLOAD) =~ s/^YAML:://;
-    croak "Can't AUTOLOAD subroutine '$YAML::AUTOLOAD'\n"
-      unless $messages->{$autoload};
-    my $message;
-    {
-	no strict 'refs';
-	$message = &{$messages->{$autoload}{type}}
-	  (eval qq{"$messages->{$autoload}{msg}"});  
-    }
-    return $message;
-} 
-
 sub DESTROY () {}
+
+sub AUTOLOAD {
+    (my $autoload = $YAML::AUTOLOAD) =~ s/^YAML:://;
+    if ($autoload =~ /^[A-Z]/ and 
+        ref($_[0]) eq 'YAML' and
+        defined $_[0]->{$autoload}
+       ) {
+        defined($_[1]) ? (($_[0]->{$autoload} = $_[1]), return $_[0]) 
+                       : return $_[0]->{$autoload};
+        return;
+    }
+        
+    croak "Can't autoload '$YAML::AUTOLOAD'\n"
+      unless $autoload =~ /^YAML_(PARSE|LOAD|DUMP|EMIT)_(ERR|WARN|USAGE)/;
+    require YAML::Error;  
+    $o->{error} = YAML::Error->new($autoload, $o->{line}, $o->{document}, @_);
+    my $o_save = $o;
+    my $dump = $o->{error}->dump;
+    $o = $o_save;
+    return "$dump...\n";
+}
 
 1;

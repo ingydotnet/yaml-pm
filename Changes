@@ -1,6 +1,51 @@
 # Revision history for Perl extension YAML.
 
 ---
+version: 0.32
+date:    Sat May 11 19:54:52 EDT 2002
+changes: Moved error handling into YAML::Error
+
+---
+version: 0.32
+date:    Mon May  6 13:42:44 EDT 2002
+changes: Enabled UseAliases=0 to mean skip Dump checking of alias nodes.
+
+---
+version: 0.32
+date:    Mon May  6 13:42:44 EDT 2002
+changes: Changed Defaults. Indent=2. CompressSeries=1.
+
+---
+version: 0.32
+date:    Mon May  6 13:42:44 EDT 2002
+changes: Deprecated Store() in favor of Dump()
+
+---
+version: 0.32
+date:    Mon Apr 22 00:57:21 EDT 2002
+changes: Refactored test suite
+
+---
+version: 0.32
+date:    Mon Apr 22 00:57:21 EDT 2002
+changes: Added key list to SortKeys
+
+---
+version: 0.32
+date:    Mon Apr 22 00:57:21 EDT 2002
+changes: Added ForceBlock option
+
+---
+version: 0.32
+date:    Sat Feb 16 17:56:27 PST 2002
+changes: CONTROL-D can be used to terminate ysh. Ryan King will be happy.
+
+---
+version: 0.32
+date:    Sun Feb 10 22:38:32 PST 2002
+change:  Added the ability to direct STDIN to the ysh. 
+
+---
 version: 0.27
 date:    Tue Jan 15 01:46:18 PST 2002
 change:  Make '-' chomp all trailing newlines
@@ -18,21 +63,21 @@ change:  YAC-010 Allow a map as a sequence entry to be collapsed to one line.
 ---
 version: 0.27
 date:    Mon Jan 14 16:52:27 PST 2002
-change:  ]
+change:  >
   Changed the nextline scalar indicators. '^' means folded, and escaping
   ('\') can be applied to folded or blocks. Chomping is now '-'.
 
 ---
 version: 0.27
 date:    Mon Jan 14 16:52:27 PST 2002
-change:  ]
+change:  >
     YAC-013. Generic indentation. This change was big, ugly, hard and it
     really made my brain hurt. But look. It works! :)
 
 ---
 version: 0.27
 date:    Mon Jan 14 16:52:27 PST 2002
-change:  ]
+change:  >
  YAC-012. Added ability to put comments anywhere, at any
  indentation level.
  
@@ -54,7 +99,7 @@ change:  Added $YAML::Indent config option
 ---
 version: 0.27
 date:    Thu Jan 10 15:50:06 PST 2002
-change:  ]
+change:  >
  YAC-012. Handled all Throwaway Issues. Blank lines and comments can be
  used anywhere, and they will work appropriately.
  
@@ -66,7 +111,7 @@ change:  Converted Changes file (this file) to use YAML
 ---
 version: 0.27
 date:    Thu Jan 10 11:36:48 PST 2002
-change:  ]
+change:  >
  YAC-016. Support "assumed header" (--- #YAML:1.0) if no header. 
 
 ---
@@ -82,7 +127,7 @@ change:  YAC-015. Support Top Level Inline nodes
 ---
 version: 0.27  
 date:    Thu Jan 10 01:38:52 PST 2002
-change:  ]
+change:  >
  Added testing for Store to test suite. (Now there's no excuse not to
  create lot's of new tests. :)
 

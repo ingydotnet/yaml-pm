@@ -14,20 +14,18 @@ while (<YAMLPM>) {
     }
 }
 close YAMLPM;
-	    
+    
 open OUT,">$file" or die "Can't create $file: $!";
 chmod(0755, $file);
 print "Extracting $file (with variable substitutions)\n";
 
-print OUT <<"!GROK!THIS!";
+print OUT <<"!GROK!THIS!", <<'!NO!SUBS!';
 $Config{'startperl'} -w
 
 \$VERSION = '$version';
 \$perl_version = '$Config{version}';
 
 !GROK!THIS!
-
-print OUT <<'!NO!SUBS!';
 
 =head1 NAME
 
@@ -54,6 +52,13 @@ which is typically '---'. Use '===' to indicate that there is no YAML
 header. Enter as many lines as needed. Terminate with a line
 containing just '...'.
 
+To read in and process an external YAML file, enter '< filename'. The
+ysh will also work as a standalone filter. It will read anything on
+STDIN as a YAML stream and write the Perl output to STDOUT. You can say
+(on most Unix systems):
+
+    cat yaml.file | ysh | less
+
 =head1 COMMAND LINE OPTIONS
 
 =over 4
@@ -70,8 +75,8 @@ exists, it will be deleted first.
 
 =item -r
 
-Test roundtripping. Every piece of Perl code entered will be Stored,
-Loaded, and Stored again. If the two stores do not match, an error
+Test roundtripping. Every piece of Perl code entered will be Dumped,
+Loaded, and Dumped again. If the two stores do not match, an error
 message will be reported.
 
 =item -R
@@ -151,8 +156,10 @@ See L<http://www.perl.com/perl/misc/Artistic.html>
 use strict;
 
 use Term::ReadLine;
+sub Term::ReadLine::Perl::Tie::FIRSTKEY {undef}
 use YAML;
 use Data::Dumper;
+$Data::Dumper::Indent = 1;
 use vars qw($prompt);
 $prompt = 'ysh > ';
 my $round_trip = 0;
@@ -161,6 +168,7 @@ my $log = 0;
 $| = 1;
 my @env_args = split /\s+/, ($ENV{YSH_OPT} || '');
 my @args = (@env_args, @ARGV);
+my $stream = -t STDIN ? '' : join('', <STDIN>);
 
 while (my $arg = shift @args) {
     handle_help(), exit if $arg eq '-h';
@@ -202,21 +210,48 @@ sub Print {
 }
 local $SIG{__WARN__} = sub { Print @_ };
 
-Print "Welcome to the YAML Test Shell. Type ':help' for more information\n\n";
+if (not length($stream)) {
+    Print <<END;
+Welcome to the YAML Test Shell. Type ':help' for more information.
+
+END
+}
 
 {
-    my $sh = Term::ReadLine::->new('The YAML Shell');
-    #$readline::rl_completion_function =
-    #$readline::rl_completion_function = sub { () };
+    my $sh;
+    {
+        local @ENV{qw(HOME EDITOR)};
+        local $^W;
+        $sh = Term::ReadLine::->new('The YAML Shell');
+    }
+
     sub my_readline {
         print LOGFILE $prompt if $log;
-        $sh->readline($prompt) . "\n";
+	my $input = $sh->readline($prompt);
+	if (not defined $input) {
+	    $input = ':exit';
+	    Print "\n";
+	}
+	$input .= "\n";
     }
 }
 
+if (length($stream)) {
+    my @objects;
+    eval { @objects = YAML::Load($stream) };
+    if ($@) {
+        print STDERR $@;
+    }
+    else {
+        print STDOUT Data::Dumper::Dumper(@objects);
+    }
+    exit 0;
+}
+ 
 while ($_ = my_readline()) {
     print LOGFILE $_ if $log;
     next if /^\s*$/;
+    exec('ysh', @ARGV) if /^\/$/;
     handle_command($_),next if /^:/;
     handle_file($1),next if /^<\s*(\S+)\s*$/;
     handle_yaml($_),next if /^--\S/;
@@ -227,9 +262,9 @@ while ($_ = my_readline()) {
 }
 
 sub handle_file {
-    my ($file) = $1;
+    my ($file) = @_;
     my @objects;
-    eval { @objects = YAML::LoadFile("$file") };
+    eval { @objects = YAML::LoadFile($file) };
     if ($@) {
         Print $@;
     }
@@ -252,18 +287,14 @@ sub handle_perl {
     }
     @objects = eval "no strict;$perl";
     Print("Bad Perl expression:\n$@"), return if $@;
-    eval { $yaml = Store(@objects) };
+    eval { $yaml = Dump(@objects) };
     $@ =~ s/^ at.*\Z//sm if $@;
-    Print("Store failed:\n$@"), return if $@;
-    # my $yaml1 = $yaml;  #
-    # $yaml1 =~ s/ /_/g;  #
-    # $yaml1 =~ s/\n/+/g; #
-    # Print $yaml1, "\n"; #
+    Print("Dump failed:\n$@"), return if $@;
     Print $yaml;
     if ($round_trip) {
         {
             local $SIG{__WARN__} = sub {};
-            eval { $yaml2 = Store(Load($yaml)) };
+            eval { $yaml2 = Dump(Load($yaml)) };
         }
         $@ =~ s/^ at.*\Z//sm if $@;
         Print("Load failed:\n$@"), return if $@;
