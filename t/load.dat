@@ -186,9 +186,9 @@ yaml: |
  ---
  - a
  - sequence
- --- \
+ --- ]
  plain scalar
- --- \\
+ --- ]\
  escaped\nscalar
  --- |
  This
@@ -201,12 +201,12 @@ yaml: |
    a
   here
  document.
- --- ||
+ --- |-
  A
   chomped
    block.
 ---
-abstract: 
+abstract: Even More Stuff
 script: |
  use YAML;
  
@@ -262,3 +262,72 @@ yaml: |
  #
  # sequence of maps
  - [{name: Ingy},{name: Clark},{name: Oren},]
+---
+abstract: Top Level Inlines
+script: |
+ use YAML;
+
+ $a = 42;
+ $b = "foo";
+ $c = " bar ";
+ $d = [];
+ $e = {};
+ $f = "#YAML:9.9";
+ $g = {foo => [1, 2, 3], '12:34' => bar};
+
+ print YAML::Store($a, $b, $c, $d, $e, $f, $g);
+yaml: |
+ --- 42
+ --- foo
+ --- " bar "
+ --- []
+ --- #YAML:1.0 {}
+ --- '#YAML:9.9'
+ --- {foo: [1, 2, 3], 12:34: bar}
+---
+abstract: Assumed Header
+script: |
+ use YAML;
+
+ print YAML::Store([2,3,4], {foo => bar});
+yaml: |
+ - 2
+ - 3
+ - 4
+ --- #YAML:1.0
+ foo: bar
+---
+abstract: Comments Anywhere
+script: |
+ use YAML;
+
+ print YAML::Store([2,3,4,5], 
+                   {foo => 'bar', boo => 'far'}, 
+                   ["# Not a comment; #Not a comment"],
+                   42);
+yaml: |1
+      # A pre header comment
+ ---
+ # comment
+  # comment
+                                           #comment
+ - 2
+ # comment
+ # comment
+ - 3
+ - 4
+    # comment
+ - 5
+ # last comment
+ --- #YAML:1.0
+ boo:                          far
+   # a comment
+ foo                  :        bar  
+ ---
+ - ]
+  # Not a comment;
+ # Is a comment
+  #Not a comment
+ --- 42
+           #Final
+          #Comment

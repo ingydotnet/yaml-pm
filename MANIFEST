@@ -6,9 +6,11 @@ YAML.pod
 bin/ysh.PL
 t/00init.t
 t/01load.t
-t/02errors.t
+t/02store.t
+t/03errors.t
 t/errors.dat
 t/load.dat
+t/store.dat
 t/testlib/YAML_Test.pm
 t/testlib/YAML.pm
 t/testlib/Yumper.pm

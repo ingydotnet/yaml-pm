@@ -35,7 +35,7 @@ ysh - The YAML Test Shell
 
 =head1 SYNOPSIS
 
- ysh [-l | -L] [-r | -R] [-c] [-v | -V] [-h]
+ ysh [options]
 
 =head1 DESCRIPTION
 
@@ -58,10 +58,6 @@ containing just '...'.
 
 =over 4
 
-NOTE: Whenever you find a bug in YAML.pm, please try to recreate it in
-      ysh using the '-l' or '-L' flags. Then send the log file to
-      ingy@cpan.org.
-
 =item -l
 
 Keep a log of all ysh activity in './ysh.log'. If the log file already
@@ -80,13 +76,36 @@ message will be reported.
 
 =item -R
 
-Same as above, except that a confirmation message will be printed when
-everything is fine.
+Same as above, except that a B<confirmation> message will be printed
+when the roundtrip succeeds.
 
-=item -c
+=item -i<number>
 
-Shortcut for setting '$YAML::PerlCode = 1'. Allows subroutine references
+Specify the number of characters to indent each level. This is the same
+as setting $YAML::Indent.
+
+=item -ub
+
+Shortcut for setting '$YAML::UseBlock = 1'. Force multiline scalars to
+use 'block' style.
+
+=item -uf
+
+Shortcut for setting '$YAML::UseFold = 1'. Force multiline scalars to
+use 'folded' style.
+
+=item -uc
+
+Shortcut for setting '$YAML::UseCode = 1'. Allows subroutine references
 to be processed.
+
+=item -nh
+
+Shortcut for setting '$YAML::UseHeader = 0'.
+
+=item -nv
+
+Shortcut for setting '$YAML::UseVersion = 0'.
 
 =item -v
 
@@ -102,6 +121,14 @@ Print a help message.
 
 =back
 
+=head2 YSH_OPT
+
+If you don't want to enter your favorite options every time you enter
+ysh, you can put the options into the C<YSH_OPT> environment variable.
+Do something like this:
+
+    export YSH_OPT='-i3 -uc -L'
+
 =head1 SEE ALSO
 
 L<YAML>
@@ -109,6 +136,15 @@ L<YAML>
 =head1 AUTHOR
 
 Brian Ingerson <ingy@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2001, 2002. Brian Ingerson. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See L<http://www.perl.com/perl/misc/Artistic.html>
 
 =cut
 
@@ -123,17 +159,24 @@ my $round_trip = 0;
 my $force = 0;
 my $log = 0;
 $| = 1;
+my @env_args = split /\s+/, ($ENV{YSH_OPT} || '');
+my @args = (@env_args, @ARGV);
 
-while (my $arg = shift @ARGV) {
-    handle_help(), exit if $arg =~ /^-h$/;
-    handle_version(), exit if $arg =~ /^-v$/;
-    handle_Version(), exit if $arg =~ /^-V$/;
-    $YAML::PerlCode = 1, next if $arg =~ /^-c$/;
-    $round_trip = 1, next if $arg =~ /^-r$/;
-    $round_trip = 2, next if $arg =~ /^-R$/;
-    $log = 1, next if $arg =~ /^-l$/;
-    $log = 2, next if $arg =~ /^-L$/;
-    $force = 1, next if $arg =~ /^-F$/;
+while (my $arg = shift @args) {
+    handle_help(), exit if $arg eq '-h';
+    handle_version(), exit if $arg eq '-v';
+    handle_Version(), exit if $arg eq '-V';
+    $YAML::Indent = $1, next if $arg =~ /^-i(\d+)$/;
+    $YAML::UseFold = 1, next if $arg eq '-uf';
+    $YAML::UseBlock = 1, next if $arg eq '-ub';
+    $YAML::UseCode = 1, next if $arg eq '-uc';
+    $YAML::UseHeader = 0, next if $arg eq '-nh';
+    $YAML::UseVersion = 0, next if $arg eq '-nv';
+    $round_trip = 1, next if $arg eq '-r';
+    $round_trip = 2, next if $arg eq '-R';
+    $log = 1, next if $arg eq '-l';
+    $log = 2, next if $arg eq '-L';
+    $force = 1, next if $arg eq '-F';
     warn(<<END), exit; 
 Unknown YAML Shell argument: '$arg'.
 For help, try: perldoc ysh
@@ -257,6 +300,7 @@ sub handle_yaml {
         print LOGFILE $line if $log;
         last unless defined $line;
     }
+    $yaml =~ s/\^{2,8}/\t/g;
     eval { @objects = Load($yaml) };
     $@ =~ s/^ at.*\Z//sm if $@;
     $@ =~ s/^/  /gm if $@;

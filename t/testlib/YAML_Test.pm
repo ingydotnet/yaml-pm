@@ -2,7 +2,7 @@ package YAML_Test;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(SetTestNumber TestLoad TestError);
+@EXPORT = qw(SetTestNumber TestLoad TestStore TestError);
 
 use strict;
 use YAML;
@@ -42,6 +42,52 @@ sub TestLoad {
                 print "ok $test_number\n";
             }
             else {
+		local $YAML::UseBlock = 1;
+                print STDERR YAML::Store({test => $test_number,
+		                          result => $yumper,
+				          expected => $dumper,
+				         });
+                print "not ok $test_number\n"
+            }
+        }
+        else {
+            warn $@;
+            print "not ok $test_number\n";
+        }
+    }
+    else {
+        warn "Invalid test file '$test'\n";
+        print "not ok $test_number\n";
+    }
+    $test_number++;
+}
+
+sub TestStore {
+    eval "use diagnostics";
+    croak $@ if $@;
+
+    my $test = shift;
+    my ($emit, $result, $expect);
+    if (-f "./t/data/emit/$test" &&
+        -f "./t/data/expect/$test"
+       ) {
+        open EMIT, "< ./t/data/emit/$test" or croak $!;
+        open EXPECT, "< ./t/data/expect/$test" or croak $!;
+        $emit = join '', <EMIT>;
+        $expect = join '', <EXPECT>;
+        close EMIT;
+        close EXPECT;
+        $result = eval "$emit";
+        if (not $@) {
+            if ($result eq $expect) {
+                print "ok $test_number\n";
+            }
+            else {
+		local $YAML::UseBlock = 1;
+                print STDERR YAML::Store({test => $test_number,
+		                          result => $result,
+				          expected => $expect,
+				         });
                 print "not ok $test_number\n"
             }
         }

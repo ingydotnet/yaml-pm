@@ -4,6 +4,7 @@ use YAML;
 
 mkdir('t/data', 0777) || die "$!" unless -d 't/data';
 unpack_tests('t/load.dat');
+unpack_tests('t/store.dat');
 unpack_tests('t/errors.dat');
 
 my $perl = $Config{perlpath};

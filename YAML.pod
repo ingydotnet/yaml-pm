@@ -20,7 +20,7 @@ YAML - YAML Ain't Markup Language (tm)
     - clark
     - oren
     - ingy
-    --- \
+    --- ]
     You probably think YAML stands for "Yet Another Markup Language". It
     ain't! YAML is really a data serialization language. But if you want
     to think of it as a markup, that's OK with me. A lot of people try
@@ -266,6 +266,15 @@ The current options are:
 
 =over 4
 
+=item Indent
+
+This is the number of characters to use for each indentation level when
+doing a Store(). The default is 1.
+
+By the way, YAML can use any number of characters for indentation at
+any level. So if you are editing YAML by hand feel free to do it anyway that
+looks pleasing to you; just be consistent for a given level.
+
 =item Separator
 
 Default is '---'.
@@ -280,8 +289,9 @@ Default is 1. (true)
 
 This tells YAML.pm whether use a separator string for a Store operation.
 
-NOTE: It is currently illegal to not begin a YAML stream with a
-      separator if there are more than one documents in the YAML stream.
+NOTE: 
+It is currently illegal to not begin a YAML stream with a separator if
+there are more than one documents in the YAML stream.
 
 =item UseVersion
 
@@ -300,10 +310,10 @@ Default is 1. (true)
 
 Tells YAML.pm whether or not to sort hash keys when storing a document.
 
-=item PerlCode
+=item UseCode
 
-Setting the PerlCode option is a shortcut to set both the StoreCode and
-LoadCode options at once. Setting PerlCode to '1' tells YAML.pm to dump
+Setting the UseCode option is a shortcut to set both the StoreCode and
+LoadCode options at once. Setting UseCode to '1' tells YAML.pm to dump
 Perl code references as Perl (using B::Deparse) and to load them back
 into memory using eval(). The reason this has to be an option is that
 using eval() to parse untrusted code is, well, untrustworthy. Safe
@@ -331,6 +341,17 @@ know where your YAML has been.
 LoadCode can also be set to a subroutine reference so that you can write
 your own deserializing routine. YAML.pm passes the serialization (as a
 string) and a format indicator. You pass back the code reference.
+
+=item UseBlock
+
+YAML.pm uses heuristics to guess which scalar style is best for a
+given node. Sometimes you'll want all multiline scalars to use the
+'block' style. If so, set this option to 1.
+
+=item UseFold
+
+If you want to force YAML to use the 'folded' style for all multiline scalars,
+then set $UseFold to 1.
 
 =back
 
@@ -467,44 +488,43 @@ be used. There is no implicit transfer and it must still be single line.
 
     - "This scalar\nhas two lines"
 
-=item plain scalar
+=item folded scalar
 
 This is a multiline scalar which begins on the next line. It is
-indicated by a single backslash. It is unescaped like the single
+indicated by a single closing brace. It is unescaped like the single
 quoted scalar. Line folding is also performed.
 
-    - \
-     This is a multiline scalar which begins
-     on the next line. It is indicated by a
-     single backslash. It is unescaped like
-     the single quoted scalar. Line folding is
-     also performed.
-
-=item escaped scalar
-
-This is a multiline scalar which begins on the next line. It is
-indicated by a double backslash. It is escaped like the double
-quoted scalar and subject to line folding.
-    
-    - \\ 
-     This is a multiline scalar which
-     begins on the next line.\nIt is
-     indicated by a double backslash.\nIt
-     is escaped like the double quoted
-     scalar and subject to line folding.
+    - ] 
+     This is a multiline scalar which begins on
+     the next line. It is indicated by a single
+     carat. It is unescaped like the single
+     quoted scalar. Line folding is also
+     performed.
 
 =item block scalar
 
 This final multiline form is akin to Perl's here-document except that
-(as in all YAML data) scope is indicated by indentation. Therefore,
-no ending marker is required. The data is verbatim. No escaping, no
-line folding.
+(as in all YAML data) scope is indicated by indentation. Therefore, no
+ending marker is required. The data is verbatim. No line folding.
 
     - |
         QTY  DESC          PRICE  TOTAL
         ---  ----          -----  -----
           1  Foo Fighters  $19.95 $19.95
           2  Bar Belles    $29.95 $59.90
+
+=item escaped scalar
+
+Either the folded or block styles of multiline scalars can support
+backslash style escapes. This is accomplished by appending a backslash
+to the indicator.
+
+    - ]\ 
+     This is a multiline scalar which begins
+     on the next line.\nIt is indicated by
+     an added backslash.\nIt is escaped like
+     the double quoted scalar and subject to
+     line folding.
 
 =item parser
 
@@ -527,11 +547,11 @@ walks through each Perl data structure and gives info to the emitter.
 
 The emitter takes info from the dumper and turns it into a YAML stream. 
 
-NOTE: In YAML.pm the parser/loader and the dumper/emitter code are
-      currently very closely tied together. When libyaml is written (in
-      C) there will be a definite separation. libyaml will contain a
-      parser and emitter, and YAML.pm (and YAML.py etc) will supply the
-      loader and dumper.
+NOTE: 
+In YAML.pm the parser/loader and the dumper/emitter code are currently
+very closely tied together. When libyaml is written (in C) there will be
+a definite separation. libyaml will contain a parser and emitter, and
+YAML.pm (and YAML.py etc) will supply the loader and dumper.
 
 =back
 
@@ -549,54 +569,13 @@ To run ysh, (assuming you installed it along with YAML.pm) simply type:
 
     ysh [options]
 
-C<ysh> has a few handy command line options:
-
-=over 4
-
-=item -r
-
-Test round-tripping. When you enter Perl code, ysh will Store it, Load
-it and Store it again. If the two Stores don't match, it will bark.
-
-=item -R
-
-Same as -r except that it also prints a confirmation when the data
-B<does> round-trip.
-
-=item -c
-
-Sets $YAML::PerlCode to '1' automatically. This allows you to dump Perl
-code references.
-
-=item -l
-
-Turns on logging. Will write the log to './ysh.log'. Concatenates to the
-log file if the file already exists.
-
-=item -L
-
-Same as -l, but overwrites the log file if it exists.
-
-=item -v
-
-Print the versions for ysh and YAML.pm and exit.
-
-=item -V 
-
-Same as -v, but prints the version of perl and YAML related
-modules as well.
-
-=item -h
-
-Print a help screen and exit.
-
-=back
+Please read L<ysh> for the full details. There are lots of options.
 
 =head1 BUGS & DEFICIENCIES
 
 If you find a bug in YAML, please try to recreate it in the YAML Shell
-(ysh) with logging turned on. When you have successfully reproduced the
-bug, please mail the LOG file to the author (ingy@cpan.org).
+with logging turned on ('ysh -L'). When you have successfully reproduced
+the bug, please mail the LOG file to the author (ingy@cpan.org).
 
 WARNING: This is *ALPHA* code. It is brand spanking new. It probably has
 lots of bugs and speling mistakes.
@@ -634,6 +613,10 @@ pure Perl patch to fix it for me.
 By the way, similar non-leaf structures Store and Load just fine:
 
     $foo->[0] = $foo;
+
+You can test these examples using 'ysh -r'. This option makes sure that
+the example can be deserialized after it is serialized. We call that
+"roundtripping", thus the '-r'.
 
 =item Unicode
 
@@ -687,11 +670,11 @@ Load support (to the existing Store support) for globs.
 
 NOTE: For a (huge) dump of Perl's global guts, try:
 
-    perl -MYAML -e '$YAML::PerlCode=1; print Store \%main::'
+    perl -MYAML -e '$YAML::UseCode=1; print Store \%main::'
 
 To limit this to a single namespace try:
 
-    perl -MCGI -MYAML -e '$YAML::PerlCode=1; print Store \%CGI::'
+    perl -MCGI -MYAML -e '$YAML::UseCode=1; print Store \%CGI::'
 
 =item Speed
 
@@ -708,6 +691,16 @@ Please join us on the YAML mailing list if you are interested in
 implementing something. 
 
 L<https://lists.sourceforge.net/lists/listinfo/yaml-core>
+
+=item Streaming Access
+
+This module Stores and Loads in one operation. There is no interface
+for parsing or emitting a YAML stream one node at a time. It's all
+or nothing.
+
+A serial interface will probably be supported by an entirely different
+module or set of modules. Something like YAML::Serial, or YAML::Parser
+and YAML::Emitter.
 
 =back
 
@@ -730,54 +723,54 @@ The following people have shown an interest in doing implementations.
 Please contact them if you are also interested in writing an
 implementation.
 
-    -
-     name: ingy
-     project: YAML.pm
-     email: ingy@ttul.org
-    -
-     name: Clark Evans
-     project: libyaml
-     email: cce@clarkevans.com
-    -
-     name: Oren Ben-Kiki
-     project: Java Loader/Dumper
-     email: orenbk@richfx.com
-    -
-     name: Jon Prettyman
-     project: libyaml
-     email: jon@prettyman.org
-    -
-     name: Paul Prescod
-     project: YAML Antagonist/Anarchist
-     email: paul@prescod.net
-    -
-     name: Patrick Leboutillier
-     project: Java Loader/Dumper
-     email: patrick_leboutillier@hotmail.com
-    -
-     name: Shane Caraveo
-     project: PHP Loader/Dumper
-     email: shanec@activestate.com
-    -
-     name: Neil Kandalgoankar
-     project: Python Loader/Dumper
-     email: neil_j_k@yahoo.com
-    -
-     name: Brian Quinlan
-     project: Python Loader/Dumper
-     email: brian@sweetapp.com
-    -
-     name: Jeff Hobbs
-     project: Tcl Loader/Dumper
-     email: jeff@hobbs.org
-    -
-     name: Claes Jacobsson
-     project: JavaScript Loader/Dumper
-     email: claes@contiller.se
-    -
-     name: Neil Watkiss
-     project: YAML mode for the vim editor
-     email: nwatkiss@ttul.org
+    ---
+    - name:    ingy
+      project: YAML.pm
+      email:   ingy@ttul.org
+
+    - name:    Clark Evans
+      project: libyaml
+      email:   cce@clarkevans.com
+
+    - name:    Oren Ben-Kiki
+      project: Java Loader/Dumper
+      email:   orenbk@richfx.com
+
+    - name:    Jon Prettyman
+      project: libyaml
+      email:   jon@prettyman.org
+
+    - name:    Paul Prescod
+      project: YAML Antagonist/Anarchist
+      email:   paul@prescod.net
+
+    - name:    Patrick Leboutillier
+      project: Java Loader/Dumper
+      email:   patrick_leboutillier@hotmail.com
+
+    - name:    Shane Caraveo
+      project: PHP Loader/Dumper
+      email:   shanec@activestate.com
+
+    - name:    Neil Kandalgoankar
+      project: Python Loader/Dumper
+      email:   neil_j_k@yahoo.com
+
+    - name:    Brian Quinlan
+      project: Python Loader/Dumper
+      email:   brian@sweetapp.com
+
+    - name:    Jeff Hobbs
+      project: Tcl Loader/Dumper
+      email:   jeff@hobbs.org
+
+    - name:    Claes Jacobsson
+      project: JavaScript Loader/Dumper
+      email:   claes@contiller.se
+
+    - name:    Neil Watkiss
+      project: YAML mode for the vim editor
+      email:   nwatkiss@ttul.org
 
 =head1 AUTHOR
 
