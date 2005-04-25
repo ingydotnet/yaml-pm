@@ -9,6 +9,9 @@ version_from('lib/YAML.pm');
 requires(qw(
     perl 5.5.3
 ));
+build_requires(qw(
+    Test::More 0.54
+));
 
 install_script('ysh');
 

@@ -1,9 +1,11 @@
 name: YAML
-version: 0.38
+version: 0.39
 abstract: YAML Ain't Markup Language
 author: Brian Ingerson <ingy@cpan.org>
 license: perl
 distribution_type: module
+build_requires:
+  Test::More: 0.54
 requires:
   perl: 5.005003
 no_index:

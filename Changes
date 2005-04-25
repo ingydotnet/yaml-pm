@@ -1,4 +1,8 @@
-# Revision history for Perl extension YAML.
+---
+version: 0.39
+date:    Tue Apr 12 15:28:40 PDT 2005
+changes:
+- Need newer Test::More or tests hang.
 
 ---
 version: 0.38
