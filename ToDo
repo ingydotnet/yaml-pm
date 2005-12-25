@@ -1,0 +1,19 @@
+* Migrate most of the old tests over
+* Replace croak with throw
+* Redo error handling
+* Test errors
+
+* Ship with ysh!
+
+* Don't ship with Spiffy -Base filtering. (use -base)
+
+* Support this cruft:
+
+    @EXPORT_OK = qw(
+                    VALUE COMMENT
+                    Bless Blessed
+                   );
+
+    use strict;
+    use YAML::Node;
+    use YAML::Transfer;

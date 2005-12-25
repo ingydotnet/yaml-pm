@@ -1,10 +1,33 @@
-use lib 'lib', 't';
-use TestChunks;
-plan tests => number_of_tests;
-test_load;
+use t::TestYAML tests => 15;
+
+run {
+    my $block = shift;
+    my @result = eval {
+        YAML::Load($block->yaml)
+    };
+    my $error1 = $@ || '';
+    if ( $error1 ) {
+        # $error1 =~ s{line: (\d+)}{"line: $1   ($0:".($1+$test->{lines}{yaml}-1).")"}e;
+    }
+    my @expect = eval $block->perl;
+    my $error2 = $@ || ''; 
+    if (my $errors = $error1 . $error2) {
+        fail($block->description
+              . $errors);
+        next;
+    }
+    is_deeply(
+        \@result,
+        \@expect,
+        $block->description,
+    ) or do {
+        diag("Wanted: ".Dumper(\@expect));
+        diag("Got: ".Dumper(\@result));
+    }
+};
 
 __DATA__
-===
+=== a yaml error log
 +++ yaml
 ---
 date: Sun Oct 28 20:41:17 2001
@@ -29,7 +52,7 @@ date: Sun Oct 28 20:42:19 2001
 error msg: malformed header from script. Bad header=</UL>
 END
 ($a, $b, $c)
-===
+=== comments and some top level documents
 +++ yaml
 # Top level documents
 #
@@ -82,7 +105,7 @@ A
 END
 chomp($e);
 ($a, $b, $c, $d, $e)
-===
+=== an array of assorted junk
 +++ yaml
 # Inline collections
 #
@@ -135,7 +158,7 @@ my $k = [];
 push @$k, $k, $k, $k;
 my $l = [{name => 'Ingy'}, {name => 'Clark'}, {name => 'Oren'}, ];
 [$a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l]
-===
+=== a bunch of small top level thingies
 +++ yaml
 --- 42
 --- foo
@@ -153,7 +176,7 @@ my $e = {};
 my $f = "#YAML:9.9";
 my $g = {foo => [1, 2, 3], '12:34:56' => 'bar'};
 ($a, $b, $c, $d, $e, $f, $g)
-===
+=== a headerless sequence and a map
 +++ yaml
 - 2
 - 3
@@ -162,7 +185,7 @@ my $g = {foo => [1, 2, 3], '12:34:56' => 'bar'};
 foo: bar
 +++ perl
 ([2,3,4], {foo => 'bar'})
-===
+=== comments in various places
 +++ yaml
      # A pre header comment
 ---
@@ -194,7 +217,7 @@ foo                  :        bar
  {foo => 'bar', boo => 'far'}, 
  ["# Not a comment; #Not a comment\n"],
  42)
-===
+=== several docs, some empty
 +++ yaml
 ---
 - foo
@@ -211,13 +234,13 @@ foo                  :        bar
 - bar
 +++ perl
 (['foo', 'bar'],'',['foo', 'foo'],'',['bar', 'bar'])
-===
+=== a perl reference to a scalar
 +++ yaml
 --- !perl/ref:
   =: 42
 +++ perl
 (\42);
-===
+=== date loading
 +++ yaml
 ---
 - 1964-03-25
@@ -234,7 +257,7 @@ foo                  :        bar
  '12:00:00',
  '01:23:45',
 ];
-===
+=== sequence with trailing comment
 +++ yaml
 ---
 - fee
@@ -243,7 +266,7 @@ foo                  :        bar
 # no num defined
 +++ perl
 [qw(fee fie foe)]
-===
+=== a simple literal block
 +++ yaml
 ---
 - |
@@ -252,8 +275,8 @@ foo                  :        bar
 
 +++ perl
 ["foo\nbar\n"]
-===
-+++ yaml
+=== an unchomped literal
++++ yaml -trim
 ---
 - |+
   foo
@@ -261,8 +284,8 @@ foo                  :        bar
 
 +++ perl
 ["foo\nbar\n\n"]
-===
-+++ yaml
+=== a chomped literal
++++ yaml -trim
 ---
 - |-
   foo
@@ -270,7 +293,7 @@ foo                  :        bar
 
 +++ perl
 ["foo\nbar"]
-===
+=== assorted numerics
 +++ yaml
 ---
 #- -
@@ -289,17 +312,7 @@ foo                  :        bar
 [44, -45, 4.6, -4.7, '3e+2', ['-4e+3', '5e-4'], -.0000000006, 
  '2001-12-15', '2001-12-15T02:59:43.1Z', '2001-12-14T21:59:43.25-05:00',
 ]
-===
-+++ yaml
----
-+++ perl
-''
-===
-+++ yaml
----
-+++ perl
-''
-===
+=== an empty string top level doc
 +++ yaml
 ---
 +++ perl

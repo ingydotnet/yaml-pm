@@ -1,4 +1,10 @@
 ---
+version: 0.50
+date:    Sun Dec 25 11:09:18 PST 2005
+changes:
+- Major refactoring of YAML.pm
+
+---
 version: 0.39
 date:    Tue Apr 12 15:28:40 PDT 2005
 changes:

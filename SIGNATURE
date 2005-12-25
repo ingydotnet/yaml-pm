@@ -1,0 +1,59 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.50.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 a648c64b5a322d86ba3f4c10498ccc21ecdd4c4a Changes
+SHA1 e1b0b8523e0f04cdf24fcc8c5823c60ba74a0b1d MANIFEST
+SHA1 53be1bf2e1fcfd9c2b1ba96693ab9a75dd16962e META.yml
+SHA1 9af201b15bb04cc387e5864d77afc79aac1f85fa Makefile.PL
+SHA1 22cdb2dbb0188d71834407a4343691e81534b4ee README
+SHA1 7adb93511bc73c991f4308c00e57de9ec5e6fa92 ToDo
+SHA1 e6515d0ad5246dbeaa5aaf3286f13cddd2a64d99 inc/Module/Install.pm
+SHA1 2077040a5fcfb6624729dc2379bfeca947829326 inc/Module/Install/Base.pm
+SHA1 8c9e4ae0dd242d4605177b276abd6af74afd78cf inc/Module/Install/Can.pm
+SHA1 e251a9bc02e660e54c1096d1b9bc7e98f7972933 inc/Module/Install/Fetch.pm
+SHA1 535b3e9b56497d8eec53543d463b438e4d24c2e9 inc/Module/Install/Makefile.pm
+SHA1 2c573084d7fff3492b412a37122f82b0a5a9197f inc/Module/Install/Metadata.pm
+SHA1 4fa48c92f8a012c4c3255f70daf37301ef8d312f inc/Module/Install/Win32.pm
+SHA1 8c9ca03883f65745790297e8b21434e7eb479094 inc/Module/Install/WriteAll.pm
+SHA1 093428914578a76467f2cc3ade1946ba50734826 lib/YAML.pm
+SHA1 45f18b765ca5d71c37838aad29094aec84b86194 lib/YAML/Base.pm
+SHA1 ace0433ac0a0474b9b4d6a3d7d1989196c61e83b lib/YAML/Dumper.pm
+SHA1 167bff3371eba0451a810c4b4891669d23dc7c64 lib/YAML/Dumper/Base.pm
+SHA1 3a0df840e21d950b3dd47731a7e578d8793a5333 lib/YAML/Error.pm
+SHA1 24c1578b95396ae83d527b9ee5e48be439396f18 lib/YAML/Loader.pm
+SHA1 9e074cd38f3263bb83917911e21a0596a5df5269 lib/YAML/Loader/Base.pm
+SHA1 822d2ee45dc59a58581be6b2f180f03e49d05d8b lib/YAML/Node.pm
+SHA1 26a1279f1e4cf71c226af41bcee19035f431edc3 lib/YAML/Types.pm
+SHA1 bf1ac3c2f565908996cdece351a6fa7bf43d78b8 t/TestYAML.pm
+SHA1 d389512c3571eec01e149468c0408a2c5c79f5b5 t/basic-tests.t
+SHA1 2304c3a8f0752d573d0c6a4865d33bef268fb33c t/dump-basics.t
+SHA1 e802df8de5b74582ee30e5c72dc1022f5908e669 t/dump-tests.t
+SHA1 bcf1ae5394840dd6d75e53f635b326b49b0af357 t/dump-works.t
+SHA1 ca9d34e264a7bf7de403c31c3889c9a7c483e333 t/export.t
+SHA1 d9a91e400a74d4f527c5e0060bc45e2925fa9843 t/freeze-thaw.t
+SHA1 285d8acf6030e7141abac8dca281a8a618f97b62 t/global-api.t
+SHA1 bdac8e09deb210c53dbd6113adfed6c3dbbb569c t/load-fails.t
+SHA1 f4bb75fe132031ecdf8ab919b274756bb6b1f4da t/load-passes.t
+SHA1 06dfa06430baf06fbb7701f1e6485e80610c8ad0 t/loader-tests.t
+SHA1 5da1c2d25becec69966de0ab3cbcaab53d9feee3 t/loader-works.t
+SHA1 b2de03d80f0e05884cd7dc254709095bcaa01b0c t/test.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (Darwin)
+
+iD8DBQFDrvI1jB6MiGOYt0gRAutfAJ48PqWDJEaZenuaztKGoZWXzYoIMACdG4pY
+2h2uRGRiPoOYizkugjUdGUU=
+=MSkK
+-----END PGP SIGNATURE-----

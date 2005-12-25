@@ -1,44 +1,37 @@
 package YAML::Error;
-use strict;
-use YAML;
+use YAML::Base -Base;
 use Carp;
+
+field 'message';
+field 'type';
+field 'line';
+field 'document';
+field 'arguments' => [];
 
 my ($error_messages, %line_adjust);
 
-sub new {
-    my ($class, $code, $line, $document, @args) = @_;
-    croak "No such YAML error message: '$code'" 
-      unless defined $error_messages->{$code}; 
-    croak "Invalid YAML error code: $code\n"
-      unless $code =~ 
-        /^YAML_(PARSE|LOAD|DUMP|EMIT)_(ERR|WARN|USAGE)(_\w+)?$/;
-    my ($operation, $severity) = ($1, $2);
-    my $msg = sprintf($error_messages->{$code}, @args);
-    $msg =~ s/\\n/\n/g;
-    $class = 'YAML::Warning' if $severity eq 'WARN';
-    my $self = bless { code => $code,
-                       msg => $msg, 
-	             }, $class;  
-    if ($severity ne 'USAGE' and 
-        $operation eq 'LOAD' or 
-        $operation eq 'PARSE'
-       ) {
-        $self->{line} = $line - ($line_adjust{$code} || 0);
-        $self->{document} = $document if defined $document;
-    }
-    $self
+sub die {
+    $self->type('Error');
+    Carp::croak $self->format_message;
 }
 
-sub msg { $_[0]->{msg} }
+sub warn {
+    $self->type('Warning');
+    warn $self->format_message if $^W;
+}
 
-sub dump {
-    my ($self) = @_;
-    local $YAML::Indent = 4;
-    local $YAML::UseHeader = 1;
-    local $YAML::UseVersion = 0;
-    local $YAML::SortKeys = [qw(code msg line document)];
-    YAML::Dump($self)
-} 
+sub format_message {
+    my $output = 'YAML ' . $self->type . ': ';
+    my $message = $self->message;
+    if ($error_messages->{$message}) {
+        $message = sprintf($error_messages->{$message}, @{$self->arguments});
+    }
+    $output .= $message . "\n";
+
+    $output .= '   Line: ' . $self->line . "\n";
+    $output .= '   Document: ' . $self->document . "\n";
+    return $output;
+}
 
 %$error_messages = map {s/^\s+//;$_} split "\n", <<'...';
 YAML_PARSE_ERR_BAD_CHARS

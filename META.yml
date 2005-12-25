@@ -1,14 +1,14 @@
 name: YAML
-version: 0.39
-abstract: YAML Ain't Markup Language
-author: Brian Ingerson <ingy@cpan.org>
+version: 0.49_70
+abstract: YAML Ain't Markup Language (tm)
+author: Ingy döt Net <ingy@cpan.org> is resonsible for YAML.pm.
 license: perl
 distribution_type: module
-build_requires:
-  Test::More: 0.54
 requires:
-  perl: 5.005003
+  perl: 5.6.0
+  Spiffy: 0.24
+  Test::Base: 0.44
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.36
+generated_by: Module::Install version 0.47

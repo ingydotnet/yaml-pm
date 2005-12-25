@@ -1,12 +1,8 @@
 package YAML::Node;
-
-use Exporter;
-@ISA = qw(Exporter);
-@EXPORT = qw(ynode);
-
-use strict;
+use YAML::Base -base;
 use YAML::Family;
-use Carp;
+
+our @EXPORT = qw(ynode);
 
 sub ynode {
     my $self;
@@ -34,7 +30,7 @@ sub new {
     $self->{KIND} = (not defined $type) ? 'scalar' :
                     ($type eq 'ARRAY') ? 'sequence' :
 		    ($type eq 'HASH') ? 'mapping' :
-		    croak "Can't create YAML::Node from '$type'";
+		    $self->die("Can't create YAML::Node from '$type'");
     family($self, ($family || ''));
     if ($self->{KIND} eq 'scalar') {
 	yaml_scalar->new($self, $_[1]);
