@@ -122,17 +122,20 @@ YAML IMPLEMENTATIONS IN PERL
         bugs. It is mostly a great tool for dumping Perl data structures to
         a readable form.
 
-    YAML::Simple
-        The point of YAML::Simple is to strip YAML down to the 90% that
-        people use most and offer that in a small, fast, stable, pure Perl
-        form. YAML::Simple will simply die when it is asked to do something
-        it can't.
+    YAML::Lite
+        The point of YAML::Lite is to strip YAML down to the 90% that people
+        use most and offer that in a small, fast, stable, pure Perl form.
+        YAML::Lite will simply die when it is asked to do something it
+        can't.
 
     YAML::Syck
         "libsyck" is the C based YAML processing library used by the Ruby
         programming language (and also Python, PHP and Pugs). YAML::Syck is
         the Perl binding to "libsyck". It should be very fast, but may have
         problems of its own. It will also require C compilation.
+
+        NOTE: Audrey Tang has actually completed this module and it works
+        great and is 10 times faster than YAML.pm.
 
     In the future, there will likely be even more YAML modules. Remember,
     people other than Ingy are allowed to write YAML modules!
@@ -256,6 +259,23 @@ GLOBAL OPTIONS
         anyway that looks pleasing to you; just be consistent for a given
         level.
 
+    SortKeys
+        Default is 1. (true)
+
+        Tells YAML.pm whether or not to sort hash keys when storing a
+        document.
+
+        YAML::Node objects can have their own sort order, which is usually
+        what you want. To override the YAML::Node order and sort the keys
+        anyway, set SortKeys to 2.
+
+    Stringify
+        Default is 0. (false)
+
+        Objects with string overloading should honor the overloading and
+        dump the stringification of themselves, rather than the actual
+        object's guts.
+
     UseHeader
         Default is 1. (true)
 
@@ -270,16 +290,6 @@ GLOBAL OPTIONS
         separator/header.
 
             --- %YAML:1.0
-
-    SortKeys
-        Default is 1. (true)
-
-        Tells YAML.pm whether or not to sort hash keys when storing a
-        document.
-
-        YAML::Node objects can have their own sort order, which is usually
-        what you want. To override the YAML::Node order and sort the keys
-        anyway, set SortKeys to 2.
 
     AnchorPrefix
         Default is ''.
@@ -550,14 +560,16 @@ ysh - The YAML Shell
 
         ysh [options]
 
-    Please read ysh for the full details. There are lots of options.
+    Please read the "ysh" documentation for the full details. There are lots
+    of options.
 
 BUGS & DEFICIENCIES
     If you find a bug in YAML, please try to recreate it in the YAML Shell
     with logging turned on ('ysh -L'). When you have successfully reproduced
     the bug, please mail the LOG file to the author (ingy@cpan.org).
 
-    WARNING: This is *ALPHA* code.
+    WARNING: This is still *ALPHA* code. Well, most of this code has been
+    around for years...
 
     BIGGER WARNING: YAML.pm has been slow in the making, but I am committed
     to having top notch YAML tools in the Perl world. The YAML team is close
@@ -576,16 +588,21 @@ RESOURCES
 
     <http://yaml.kwiki.org> is the official YAML wiki.
 
+SEE ALSO
+    See YAML::Syck. Fast!
+
 AUTHOR
-    Ingy döt Net <ingy@cpan.org> is resonsible for YAML.pm.
+    Ingy döt Net <ingy@cpan.org>
+
+    is resonsible for YAML.pm.
 
     The YAML serialization language is the result of years of collaboration
     between Oren Ben-Kiki, Clark Evans and Ingy döt Net. Several others
     have added help along the way.
 
 COPYRIGHT
-    Copyright (c) 2005. Ingy döt Net. All rights reserved. Copyright (c)
-    2001, 2002, 2005. Brian Ingerson. All rights reserved.
+    Copyright (c) 2005, 2006. Ingy döt Net. All rights reserved. Copyright
+    (c) 2001, 2002, 2005. Brian Ingerson. All rights reserved.
 
     This program is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.

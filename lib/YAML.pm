@@ -1,42 +1,39 @@
 package YAML;
 use YAML::Base -base;
-require 5.6.1;
-our $VERSION = '0.49_70';
+use 5.006001;
+our $VERSION = '0.50';
 our @EXPORT = qw'Dump Load';
 our @EXPORT_OK = qw'freeze thaw DumpFile LoadFile Bless Blessed';
 
-# This line is here to convince "autouse" into believing we are autousable.
-sub can {
-    ($_[1] eq 'import' and caller()->isa('autouse'))
-        ? \&Exporter::import        # pacify autouse's equality test
-        : $_[0]->SUPER::can($_[1])  # normal case
-}
-
-# XXX This value nonsense needs to go.
+# XXX This VALUE nonsense needs to go.
 use constant VALUE => "\x07YAML\x07VALUE\x07";
 
 # Global Options are an idea taken from Data::Dumper. Really they are just
 # sugar on top of real OO properties. They make the simple Dump/Load API
 # easy to configure.
+#
+# These options are no longer set by YAML.pm into globals. The action
+# modules will check the globals, set by the user.
 
 # New global options
-our $SpecVersion = '1.0';
-our $LoaderClass = '';
-our $DumperClass = '';
+# our $SpecVersion = '1.0';
+# our $LoaderClass = '';
+# our $DumperClass = '';
 
 # Legacy global options
-our $Indent         = 2;
-our $UseHeader      = 1;
-our $UseVersion     = 0;
-our $SortKeys       = 1;
-our $AnchorPrefix   = '';
-our $UseCode        = 0;
-our $DumpCode       = '';
-our $LoadCode       = '';
-our $UseBlock       = 0;
-our $UseFold        = 0;
-our $CompressSeries = 1;
-our $UseAliases     = 1;
+# our $Indent         = 2;
+# our $UseHeader      = 1;
+# our $UseVersion     = 0;
+# our $SortKeys       = 1;
+# our $AnchorPrefix   = '';
+# our $UseCode        = 0;
+# our $DumpCode       = '';
+# our $LoadCode       = '';
+# our $UseBlock       = 0;
+# our $UseFold        = 0;
+# our $CompressSeries = 1;
+# our $UseAliases     = 1;
+# our $Stringify      = 0;
 
 # YAML Object Properties
 field dumper_class => 'YAML::Dumper';
@@ -47,7 +44,7 @@ field loader_object =>
     -init => '$self->init_action_object("loader")';
 
 sub Dump {
-    my $yaml = 'YAML'->new;
+    my $yaml = YAML->new;
     $yaml->dumper_class($DumperClass)
         if $DumperClass;
     return $yaml->dumper_object->dump(@_);
@@ -60,6 +57,14 @@ sub Load {
     return $yaml->loader_object->load(@_);
 }
 
+{
+    no warnings 'once';
+    # freeze/thaw is the API for Storable string serialization. Some
+    # modules make use of serializing packages on if they use freeze/thaw.
+    *freeze = \ &Dump;
+    *thaw   = \ &Load;
+}
+
 sub DumpFile {
     my $filename = shift;
     local $/ = "\n"; # reset special to "sane"
@@ -68,23 +73,14 @@ sub DumpFile {
         ($mode, $filename) = ($1, $2);
     }
     open my $OUT, $mode, $filename
-      or $self->die("Can't open '$filename' for output:\n$!");
+      or YAML::Base->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, $!);
     print $OUT Dump(@_);
-}
-
-{
-    no warnings 'once';
-    # freeze/thaw is the API for Storable string serialization. Some
-    # modules make use of serializing packages on if they use freeze/thaw.
-    *freeze = \ &Dump;
-    *thaw   = \ &Load;
-    # This 
 }
 
 sub LoadFile {
     my $filename = shift;
     open my $IN, $filename
-      or $self->die("Can't open '$filename' for input:\n$!");
+      or YAML::Base->die('YAML_LOAD_ERR_FILE_INPUT', $filename, $!);
     return Load(do { local $/; <$IN> });
 }   
 
@@ -93,7 +89,7 @@ sub init_action_object {
     my $object_class = (shift) . '_class';
     my $module_name = $self->$object_class;
     eval "require $module_name";
-    die "Error in require $module_name - $@"
+    $self->die("Error in require $module_name - $@")
         if $@ and "$@" !~ /Can't locate/;
     my $object = $self->$object_class->new;
     $object->set_global_options;
@@ -252,11 +248,11 @@ YAML specification in pure Perl. This may not be the fastest or most
 stable module though. Currently, YAML.pm has lots of known bugs. It is
 mostly a great tool for dumping Perl data structures to a readable form.
 
-=item YAML::Simple
+=item YAML::Lite
 
-The point of YAML::Simple is to strip YAML down to the 90% that people
+The point of YAML::Lite is to strip YAML down to the 90% that people
 use most and offer that in a small, fast, stable, pure Perl form.
-YAML::Simple will simply die when it is asked to do something it can't.
+YAML::Lite will simply die when it is asked to do something it can't.
 
 =item YAML::Syck
 
@@ -264,6 +260,9 @@ C<libsyck> is the C based YAML processing library used by the Ruby
 programming language (and also Python, PHP and Pugs). YAML::Syck is the
 Perl binding to C<libsyck>. It should be very fast, but may have
 problems of its own. It will also require C compilation.
+
+NOTE: Audrey Tang has actually completed this module and it works great
+      and is 10 times faster than YAML.pm.
 
 =back
 
@@ -411,6 +410,23 @@ By the way, YAML can use any number of characters for indentation at any
 level. So if you are editing YAML by hand feel free to do it anyway that
 looks pleasing to you; just be consistent for a given level.
 
+=item SortKeys
+
+Default is 1. (true)
+
+Tells YAML.pm whether or not to sort hash keys when storing a document. 
+
+YAML::Node objects can have their own sort order, which is usually what
+you want. To override the YAML::Node order and sort the keys anyway, set
+SortKeys to 2.
+
+=item Stringify
+
+Default is 0. (false)
+
+Objects with string overloading should honor the overloading and dump the
+stringification of themselves, rather than the actual object's guts.
+
 =item UseHeader
 
 Default is 1. (true)
@@ -427,16 +443,6 @@ Tells YAML.pm whether to include the YAML version on the
 separator/header.
 
     --- %YAML:1.0
-
-=item SortKeys
-
-Default is 1. (true)
-
-Tells YAML.pm whether or not to sort hash keys when storing a document. 
-
-YAML::Node objects can have their own sort order, which is usually what
-you want. To override the YAML::Node order and sort the keys anyway, set
-SortKeys to 2.
 
 =item AnchorPrefix
 
@@ -734,7 +740,8 @@ To run ysh, (assuming you installed it along with YAML.pm) simply type:
 
     ysh [options]
 
-Please read L<ysh> for the full details. There are lots of options.
+Please read the C<ysh> documentation for the full details. There are
+lots of options.
 
 =head1 BUGS & DEFICIENCIES
 
@@ -742,7 +749,8 @@ If you find a bug in YAML, please try to recreate it in the YAML Shell
 with logging turned on ('ysh -L'). When you have successfully reproduced
 the bug, please mail the LOG file to the author (ingy@cpan.org).
 
-WARNING: This is *ALPHA* code. 
+WARNING: This is still *ALPHA* code. Well, most of this code has been
+around for years...
 
 BIGGER WARNING: YAML.pm has been slow in the making, but I am committed
 to having top notch YAML tools in the Perl world. The YAML team is close
@@ -762,9 +770,15 @@ L<http://www.yaml.org/spec/> is the YAML 1.0 specification.
 
 L<http://yaml.kwiki.org> is the official YAML wiki.
 
+=head1 SEE ALSO
+
+See YAML::Syck. Fast!
+
 =head1 AUTHOR
 
-Ingy döt Net <ingy@cpan.org> is resonsible for YAML.pm.
+Ingy döt Net <ingy@cpan.org>
+
+is resonsible for YAML.pm.
 
 The YAML serialization language is the result of years of collaboration
 between Oren Ben-Kiki, Clark Evans and Ingy döt Net. Several others
@@ -772,7 +786,7 @@ have added help along the way.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005. Ingy döt Net. All rights reserved.
+Copyright (c) 2005, 2006. Ingy döt Net. All rights reserved.
 Copyright (c) 2001, 2002, 2005. Brian Ingerson. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it

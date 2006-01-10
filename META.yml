@@ -1,13 +1,14 @@
 name: YAML
-version: 0.49_70
+version: 0.50
 abstract: YAML Ain't Markup Language (tm)
-author: Ingy döt Net <ingy@cpan.org> is resonsible for YAML.pm.
+author: Ingy döt Net <ingy@cpan.org>
 license: perl
 distribution_type: module
 requires:
-  perl: 5.6.0
-  Spiffy: 0.24
-  Test::Base: 0.44
+  perl: 5.6.1
+  Spiffy: 0.25
+  Test::Base: 0.45
+  Test::More: 0.62
 no_index:
   directory:
     - inc

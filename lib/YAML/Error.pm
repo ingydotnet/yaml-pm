@@ -1,36 +1,33 @@
 package YAML::Error;
 use YAML::Base -Base;
-use Carp;
 
-field 'message';
-field 'type';
+field 'code';
+field 'type' => 'Error';
 field 'line';
 field 'document';
 field 'arguments' => [];
 
 my ($error_messages, %line_adjust);
 
-sub die {
-    $self->type('Error');
-    Carp::croak $self->format_message;
-}
-
-sub warn {
-    $self->type('Warning');
-    warn $self->format_message if $^W;
-}
-
 sub format_message {
     my $output = 'YAML ' . $self->type . ': ';
-    my $message = $self->message;
-    if ($error_messages->{$message}) {
-        $message = sprintf($error_messages->{$message}, @{$self->arguments});
+    my $code = $self->code;
+    if ($error_messages->{$code}) {
+        $code = sprintf($error_messages->{$code}, @{$self->arguments});
     }
-    $output .= $message . "\n";
+    $output .= $code . "\n";
 
-    $output .= '   Line: ' . $self->line . "\n";
-    $output .= '   Document: ' . $self->document . "\n";
+    $output .= '   Code: ' . $self->code . "\n"
+        if defined $self->code;
+    $output .= '   Line: ' . $self->line . "\n"
+        if defined $self->line;
+    $output .= '   Document: ' . $self->document . "\n"
+        if defined $self->document;
     return $output;
+}
+
+sub error_messages {
+    $error_messages;
 }
 
 %$error_messages = map {s/^\s+//;$_} split "\n", <<'...';
@@ -73,7 +70,7 @@ YAML_DUMP_ERR_FILE_OUTPUT
 YAML_DUMP_ERR_NO_HEADER
   With UseHeader=0, the node must be a plain hash or array
 YAML_DUMP_WARN_BAD_NODE_TYPE
-  Can't perform serialization for node type %s
+  Can't perform serialization for node type: '%s'
 YAML_EMIT_WARN_KEYS
   Encountered a problem with 'keys':\n%s
 YAML_DUMP_WARN_DEPARSE_FAILED
@@ -104,12 +101,6 @@ YAML_DUMP_ERR_BAD_GLOB
   '%s' is an invalid value for Perl glob
 YAML_DUMP_ERR_BAD_REGEXP
   '%s' is an invalid value for Perl Regexp
-YAML_LOAD_ERR_BAD_STR_TO_INT
-  Can't transfer string to integer
-YAML_LOAD_ERR_BAD_STR_TO_DATE
-  Can't transfer string to date object
-YAML_LOAD_ERR_BAD_STR_TO_TIME
-  Can't transfer string to time object
 YAML_LOAD_ERR_BAD_MAP_ELEMENT
   Invalid element in map
 YAML_LOAD_WARN_DUPLICATE_KEY
@@ -138,8 +129,6 @@ YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP
   No 'REGEXP' element for Perl regexp
 YAML_LOAD_WARN_BAD_REGEXP_ELEM
   Unknown element '%s' in Perl regexp
-YAML_LOAD_WARN_REGEXP_CREATE
-  Couldn't create regexp qr(%s)%s: %s
 YAML_LOAD_WARN_GLOB_NAME
   No 'NAME' element for Perl glob
 YAML_LOAD_WARN_PARSE_CODE
@@ -196,4 +185,32 @@ YAML_LOAD_WARN_GLOB_IO
 package YAML::Warning;
 use base 'YAML::Error';
 
-1;
+__END__
+
+=head1 NAME
+
+YAML::Error - Error formatting class for YAML modules
+
+=head1 SYNOPSIS
+
+    $self->die('YAML_PARSE_ERR_NO_ANCHOR', $alias);
+    $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY');
+
+=head1 DESCRIPTION
+
+This module provides a C<die> and a C<warn> facility.
+
+=head1 AUTHOR
+
+Ingy döt Net <ingy@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2006. Ingy döt Net. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See L<http://www.perl.com/perl/misc/Artistic.html>
+
+=cut

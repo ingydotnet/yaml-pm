@@ -1,23 +1,7 @@
-use t::TestYAML tests => 59;
+use t::TestYAML tests => 58;
 
-filters {
-    perl => ['eval'],
-};
-
-run {
-    my $block = shift;
-    is(YAML::Dump($block->perl), $block->yaml);
-    return if exists $block->{no_round_trip};
-    is(dumper_it(YAML::Load($block->yaml)), dumper_it($block->perl));
-};
-
-sub dumper_it {
-    require Data::Dumper;
-    $Data::Dumper::Sortkeys = 1;
-    $Data::Dumper::Terse = 1;
-    $Data::Dumper::Indent = 1;
-    Data::Dumper::Dumper(@_);
-}
+no_diff();
+run_roundtrip_nyn('dumper');
 
 __DATA__
 
@@ -136,7 +120,6 @@ bless [map "$_",42..45], 'Foo::Bar'
 
 ===
 +++ perl
-use YAML::Node;
 my $yn = YAML::Node->new({}, 'foo.com/bar');
 $yn->{foo} = 'bar';
 $yn->{bar} = 'baz';
@@ -149,6 +132,8 @@ bar: baz
 baz: foo
 
 ===
++++ perl
+use YAML::Node;
 +++ no_round_trip
 +++ perl
 my $a = '';
@@ -319,6 +304,9 @@ local $YAML::Indent = 4;
   foo: 42
 
 ===
++++ no_round_trip
+Since we don't use eval for regexp reconstitution any more (for safety
+sake) this test doesn't roundtrip even though the values are equivalent.
 +++ perl
 [qr{bozo$}i]
 +++ yaml
@@ -422,4 +410,3 @@ bless \$a, 'Heart';
 +++ yaml
 ---
 'foo[bar]': baz
-

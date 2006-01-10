@@ -1,9 +1,10 @@
-use t::TestYAML;
+use t::TestYAML tests => 6;
 
 filters {
     perl => [qw'eval yaml_dump'],
 };
 
+no_diff;
 run_is;
 
 __DATA__

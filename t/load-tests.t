@@ -1,9 +1,9 @@
-use t::TestYAML tests => 15;
+use t::TestYAML tests => 16;
 
 run {
     my $block = shift;
     my @result = eval {
-        YAML::Load($block->yaml)
+        Load($block->yaml)
     };
     my $error1 = $@ || '';
     if ( $error1 ) {
@@ -233,7 +233,7 @@ foo                  :        bar
 - bar
 - bar
 +++ perl
-(['foo', 'bar'],'',['foo', 'foo'],'',['bar', 'bar'])
+(['foo', 'bar'],undef,['foo', 'foo'],undef,['bar', 'bar'])
 === a perl reference to a scalar
 +++ yaml
 --- !perl/ref:
@@ -316,4 +316,13 @@ foo                  :        bar
 +++ yaml
 ---
 +++ perl
-''
+undef
+
+=== an array of various undef
++++ yaml
+---
+-
+-
+- ''
++++ perl
+[undef,undef,'']

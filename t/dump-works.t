@@ -1,11 +1,9 @@
 use t::TestYAML;
 
-delimiters('===', '+++');
-
 run_is;
 
 sub yaml_dump {
-    return YAML::Dump(@_);
+    return Dump(@_);
 }
 
 __DATA__

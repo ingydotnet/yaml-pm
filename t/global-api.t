@@ -17,8 +17,8 @@ use YAML;
     is Load(\%ENV), 'got to loader',
         'Load got to the business end';
 
-    is YAML::Dump(\%ENV), 'got to dumper',
+    is Dump(\%ENV), 'got to dumper',
         'YAML::Dump got to the business end';
-    is YAML::Load(\%ENV), 'got to loader',
+    is Load(\%ENV), 'got to loader',
         'YAML::Load got to the business end';
 }

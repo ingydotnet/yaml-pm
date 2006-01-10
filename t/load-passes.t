@@ -1,11 +1,6 @@
 use t::TestYAML tests => 8;
 
-run {
-    my $block = shift;
-    my $yaml = $block->yaml;
-    eval { YAML::Load $yaml };
-    is("$@", "");
-};
+run_load_passes();
 
 __DATA__
 ===

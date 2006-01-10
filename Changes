@@ -3,6 +3,22 @@ version: 0.50
 date:    Sun Dec 25 11:09:18 PST 2005
 changes:
 - Major refactoring of YAML.pm
+- Completely OO with same old functional UI
+- Support the $YAML::Stringify option which most be on for objects to get
+  stringified. Otherwise dump the object.
+- Can dump overloaded objects now.
+- Completely refactor test suite using Test::Base
+- Create Test::YAML
+- Make test framework compatible with YAML::Syck - Test-Base-0.45
+- Reviewed all rt bugs. fixed many
+- Reviewed all emailed bugs. Fixed many.
+- Helped audrey complete YAML::Syck and worked on interoperability issues
+- Test well known yaml docs like svk and META.yml
+- Eliminate unsafe string evals
+- Can use with autouse. Spiffy-0.25
+- Support YAML::Marshall to help classes that want to do their own marshalling
+- Make objects tags configurable
+- -M option for ysh to test other implementations like YAML::Syck
 
 ---
 version: 0.39

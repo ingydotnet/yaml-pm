@@ -1,19 +1,15 @@
 package YAML::Loader;
 use YAML::Loader::Base -Base;
+use YAML::Types;
 
 # Context constants
 use constant LEAF => 1;
 use constant COLLECTION => 2;
-use constant KEY => 3;
-use constant BLESSED => 4;
-use constant FROMARRAY => 5;
 use constant VALUE => "\x07YAML\x07VALUE\x07";
 use constant COMMENT => "\x07YAML\x07COMMENT\x07";
 
 # Common YAML character sets
-my $WORD_CHAR = '[A-Za-z-]';
 my $ESCAPE_CHAR = '[\\x00-\\x08\\x0b-\\x0d\\x0e-\\x1f]';
-my $INDICATOR_CHAR = '[#-:?*&!|\\\\^@%]';
 my $FOLD_CHAR = '>';
 my $LIT_CHAR = '|';    
 my $LIT_CHAR_RX = "\\$LIT_CHAR";    
@@ -66,8 +62,8 @@ sub _parse {
                 my ($key, $value) = ($1, $2);
                 shift(@words);
                 if (defined $directives{$key}) {
-                    warn YAML_PARSE_WARN_MULTIPLE_DIRECTIVES
-                      ($key, $self->document) if $^W;
+                    $self->warn('YAML_PARSE_WARN_MULTIPLE_DIRECTIVES',
+                      $key, $self->document);
                     next;
                 }
                 $directives{$key} = $value;
@@ -91,9 +87,9 @@ sub _parse {
         ($self->{major_version}, $self->{minor_version}) = 
           split /\./, $directives{YAML}, 2;
         $self->die('YAML_PARSE_ERR_BAD_MAJOR_VERSION', $directives{YAML})
-          if ($self->major_version ne '1');
-        warn YAML_PARSE_WARN_BAD_MINOR_VERSION($directives{YAML})
-          if ($^W and $self->minor_version ne '0');
+          if $self->major_version ne '1';
+        $self->warn('YAML_PARSE_WARN_BAD_MINOR_VERSION', $directives{YAML})
+          if $self->minor_version ne '0';
         $self->die('Unrecognized TAB policy')
           unless $directives{TAB} =~ /^(NONE|\d+)(:HARD)?$/;
 
@@ -106,22 +102,11 @@ sub _parse {
 # recurses back through here. (Inlines are an exception as they have
 # their own sub-parser.)
 sub _parse_node {
-# ??????????????????????????????????????    
-# $|=1;
-# print <<END;
-# _parse_node ${\++$YAML::x}
-# indent  - $self->{indent}
-# preface - $self->{preface}
-# content - $self->{content}
-# level   - $self->{level}
-# offsets - @{$self->{offset}}
-# END
-# ??????????????????????????????????????    
     my $preface = $self->preface;
     $self->preface('');
     my ($node, $type, $indicator, $escape, $chomp) = ('') x 5;
     my ($anchor, $alias, $explicit, $implicit, $class) = ('') x 5;
-    ($anchor, $alias, $explicit, $implicit, $class, $preface) = 
+    ($anchor, $alias, $explicit, $implicit, $preface) = 
       $self->_parse_qualifiers($preface);
     if ($anchor) {
         $self->anchor2node->{$anchor} = CORE::bless [], 'YAML-anchor2node';
@@ -151,7 +136,7 @@ sub _parse_node {
         }
     }
     elsif (length $self->inline) {
-        $node = $self->_parse_inline(1, $implicit, $explicit, $class);
+        $node = $self->_parse_inline(1, $implicit, $explicit);
         if (length $self->inline) {
             $self->die('YAML_PARSE_ERR_SINGLE_LINE'); 
         }
@@ -186,7 +171,7 @@ sub _parse_node {
             }
         }
         else {
-            $node = '';
+            $node = undef;
         }
         $self->{level}--;
     }
@@ -210,7 +195,8 @@ sub _parse_node {
             # XXX Can't remember what this code actually does
             for my $ref (@{$self->anchor2node->{$anchor}}) {
                 ${$ref->[0]} = $node;
-                warn YAML_LOAD_WARN_UNRESOLVED_ALIAS($anchor, $ref->[1]) if $^W;
+                $self->warn('YAML_LOAD_WARN_UNRESOLVED_ALIAS',
+                    $anchor, $ref->[1]);
             }
         }
         $self->anchor2node->{$anchor} = $node;
@@ -221,7 +207,7 @@ sub _parse_node {
 # Preprocess the qualifiers that may be attached to any node.
 sub _parse_qualifiers {
     my ($preface) = @_;
-    my ($anchor, $alias, $explicit, $implicit, $class, $token) = ('') x 6;
+    my ($anchor, $alias, $explicit, $implicit, $token) = ('') x 5;
     $self->inline('');
     while ($preface =~ /^[&*!]/) {
         my $line = $self->line - 1;
@@ -250,191 +236,49 @@ sub _parse_qualifiers {
             $alias = $token;
         }
     }
-    return ($anchor, $alias, $explicit, $implicit, $class, $preface); 
+    return ($anchor, $alias, $explicit, $implicit, $preface); 
 }
 
 # Morph a node to it's explicit type  
 sub _parse_explicit {
     my ($node, $explicit) = @_;
-    if ($explicit =~ m{^(int|float|bool|date|time|datetime|binary)$}) {
-        my $handler = "YAML::Loader::_load_$1";
+    my ($type, $class);
+    if ($explicit =~ /^perl\/(undef|glob|regexp|code|ref)\:(\w(\w|\:\:)*)?$/) {
+        ($type, $class) = (($1 || ''), ($2 || ''));
+        my $type_class = "YAML::Type::$type";
         no strict 'refs';
-        return $self->$handler($node);
-    }
-    elsif ($explicit =~ m{^perl/(glob|regexp|code|ref)\:(\w(\w|\:\:)*)?$}) {
-        my ($type, $class) = (($1 || ''), ($2 || ''));
-        my $handler = "YAML::Loader::_load_perl_$type";
-        no strict 'refs';
-        if (defined &$handler) {
-            return $self->$handler($node, $class);
+        if ($type_class->can('yaml_load')) {
+            return $type_class->yaml_load($node, $class, $self);
         }
         else {
             $self->die('YAML_LOAD_ERR_NO_CONVERT', 'XXX', $explicit);
         }
     }
-    elsif ($explicit =~ m{^perl/(\@|\$)?([a-zA-Z](\w|::)+)$}) {
-        my ($package) = ($2);
-        my $handler = "${package}::yaml_load";
-        no strict 'refs';
-        if (defined &$handler) {
-            return &$handler(YAML::Node->new($node, $explicit));
+    elsif ($YAML::TagClass->{$explicit} ||
+           $explicit =~ m{^perl/(\@|\$)?([a-zA-Z](\w|::)+)$}
+          ) {
+        $class = $YAML::TagClass->{$explicit} || $2;
+        if ($class->can('yaml_load')) {
+            require YAML::Node;
+            return $class->yaml_load(YAML::Node->new($node, $explicit));
         }
         else {
-            return CORE::bless $node, $package;
+            if (ref $node) {
+                return CORE::bless $node, $class;
+            }
+            else {
+                return CORE::bless \$node, $class;
+            }
         }
     }
-    elsif ($explicit !~ m|/|) {
-        $self->die('YAML_LOAD_ERR_NO_CONVERT', 'XXX', $explicit);
-    }
-    else {
+    elsif (ref $node) {
         require YAML::Node;
         return YAML::Node->new($node, $explicit);
     }
-}
-
-# Morph to a perl reference
-sub _load_perl_ref {
-    my ($node) = @_;
-    $self->die('YAML_LOAD_ERR_NO_DEFAULT_VALUE', 'ptr')
-      unless exists $node->{&VALUE};
-    return \$node->{&VALUE};
-}
-
-# Morph to a perl regexp
-sub _load_perl_regexp {
-    my ($node) = @_;
-    my ($regexp, $modifiers);
-    if (defined $node->{REGEXP}) {
-        $regexp = $node->{REGEXP};
-        delete $node->{REGEXP};
-    }
     else {
-        warn YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP() if $^W;
-        return undef;
-    }
-    if (defined $node->{MODIFIERS}) {
-        $modifiers = $node->{MODIFIERS};
-        delete $node->{MODIFIERS};
-    } else {
-        $modifiers = '';
-    }
-    for my $elem (sort keys %$node) {
-        warn YAML_LOAD_WARN_BAD_REGEXP_ELEM($elem) if $^W;
-    }
-    my $value = eval "qr($regexp)$modifiers";
-    if ($@) {
-        warn YAML_LOAD_WARN_REGEXP_CREATE($regexp, $modifiers, $@) if $^W;
-        return undef;
-    }
-    return $value;
-}
-
-# Morph to a perl glob
-sub _load_perl_glob {
-    my ($node) = @_;
-    my ($name, $package);
-    if (defined $node->{NAME}) {
-        $name = $node->{NAME};
-        delete $node->{NAME};
-    }
-    else {
-        warn YAML_LOAD_WARN_GLOB_NAME() if $^W;
-        return undef;
-    }
-    if (defined $node->{PACKAGE}) {
-        $package = $node->{PACKAGE};
-        delete $node->{PACKAGE};
-    } else {
-        $package = 'main';
-    }
-    no strict 'refs';
-    if (exists $node->{SCALAR}) {
-        *{"${package}::$name"} = \$node->{SCALAR};
-        delete $node->{SCALAR};
-    }
-    for my $elem (qw(ARRAY HASH CODE IO)) {
-        if (exists $node->{$elem}) {
-            if ($elem eq 'IO') {
-                warn YAML_LOAD_WARN_GLOB_IO() if $^W;
-                delete $node->{IO};
-                next;
-            }
-            *{"${package}::$name"} = $node->{$elem};
-            delete $node->{$elem};
-        }
-    }
-    for my $elem (sort keys %$node) {
-        warn YAML_LOAD_WARN_BAD_GLOB_ELEM($elem) if $^W;
-    }
-    return *{"${package}::$name"};
-}
-
-# Special support for an empty mapping
-#sub _parse_str_to_map {
-#    my ($node) = @_;
-#    $self->die('YAML_LOAD_ERR_NON_EMPTY_STRING', 'mapping') unless $node eq '';
-#    return {};
-#}
-
-# Special support for an empty sequence
-#sub _parse_str_to_seq {
-#    my ($node) = @_;
-#    $self->die('YAML_LOAD_ERR_NON_EMPTY_STRING', 'sequence')
-#      unless $node eq '';
-#    return [];
-#}
-
-# Support for sparse sequences
-#sub _parse_map_to_seq {
-#    my ($node) = @_;
-#    my $seq = [];
-#    for my $index (keys %$node) {
-#        $self->die('YAML_LOAD_ERR_BAD_MAP_TO_SEQ', $index)
-#          unless $index =~ /^\d+/;
-#        $seq->[$index] = $node->{$index};
-#    }
-#    return $seq;
-#}
-
-# Support for !int
-sub _load_int {
-    my ($node) = @_;
-    $self->die('YAML_LOAD_ERR_BAD_STR_TO_INT') unless $node =~ /^-?\d+$/;
-    return $node;
-}
-
-# Support for !date
-sub _load_date {
-    my ($node) = @_;
-    $self->die('YAML_LOAD_ERR_BAD_STR_TO_DATE')
-      unless $node =~ /^\d\d\d\d-\d\d-\d\d$/;
-    return $node;
-}
-
-# Support for !time
-sub _load_time {
-    my ($node) = @_;
-    $self->die('YAML_LOAD_ERR_BAD_STR_TO_TIME')
-      unless $node =~ /^\d\d:\d\d:\d\d$/;
-    return $node;
-}
-
-# Support for !perl/code;deparse
-sub _load_perl_code {
-    my ($node, $class) = @_;
-    if ($self->load_code) {
-        my $code = eval "package main; sub $node";
-        if ($@) {
-            warn YAML_LOAD_WARN_PARSE_CODE($@) if $^W;
-            return sub {};
-        }
-        else {
-            CORE::bless $code, $class if $class;
-            return $code;
-        }
-    }
-    else {
-        return sub {};
+        # XXX This is likely wrong. Failing test:
+        # --- !unknown 'scalar value'
+        return $node;
     }
 }
 
@@ -477,7 +321,7 @@ sub _parse_mapping {
         $self->_parse_next_line(COLLECTION);
         my $value = $self->_parse_node();
         if (exists $mapping->{$key}) {
-            warn YAML_LOAD_WARN_DUPLICATE_KEY() if $^W;
+            $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY');
         }
         else {
             $mapping->{$key} = $value;
@@ -519,18 +363,17 @@ sub _parse_seq {
 # Parse an inline value. Since YAML supports inline collections, this is
 # the top level of a sub parsing.
 sub _parse_inline {
-    my ($top, $top_implicit, $top_explicit, $top_class) = (@_, '', '', '', '');
+    my ($top, $top_implicit, $top_explicit) = (@_, '', '', '');
     $self->{inline} =~ s/^\s*(.*)\s*$/$1/; # OUCH - mugwump
-    my ($node, $anchor, $alias, $explicit, $implicit, $class) = ('') x 6;
-    ($anchor, $alias, $explicit, $implicit, $class, $self->{inline}) = 
+    my ($node, $anchor, $alias, $explicit, $implicit) = ('') x 5;
+    ($anchor, $alias, $explicit, $implicit, $self->{inline}) = 
       $self->_parse_qualifiers($self->inline);
     if ($anchor) {
         $self->anchor2node->{$anchor} = CORE::bless [], 'YAML-anchor2node';
     }
     $implicit ||= $top_implicit;
     $explicit ||= $top_explicit;
-    $class ||= $top_class;
-    ($top_implicit, $top_explicit, $top_class) = ('', '', '');
+    ($top_implicit, $top_explicit) = ('', '');
     if ($alias) {
         $self->die('YAML_PARSE_ERR_NO_ANCHOR', $alias)
           unless defined $self->anchor2node->{$alias};
@@ -568,23 +411,14 @@ sub _parse_inline {
         $node = $self->_parse_implicit($node) unless $explicit;
     }
     if ($explicit) {
-        if ($class) {
-            if (not ref $node) {
-                my $copy = $node;
-                undef $node;
-                $node = \$copy;
-            }
-            CORE::bless $node, $class;
-        }
-        else {
-            $node = $self->_parse_explicit($node, $explicit);
-        }
+        $node = $self->_parse_explicit($node, $explicit);
     }
     if ($anchor) {
         if (ref($self->anchor2node->{$anchor}) eq 'YAML-anchor2node') {
             for my $ref (@{$self->anchor2node->{$anchor}}) {
                 ${$ref->[0]} = $node;
-                warn YAML_LOAD_WARN_UNRESOLVED_ALIAS($anchor, $ref->[1]) if $^W;
+                $self->warn('YAML_LOAD_WARN_UNRESOLVED_ALIAS',
+                    $anchor, $ref->[1]);
             }
         }
         $self->anchor2node->{$anchor} = $node;
@@ -600,18 +434,18 @@ sub _parse_inline_mapping {
 
     $self->die('YAML_PARSE_ERR_INLINE_MAP')
       unless $self->{inline} =~ s/^\{\s*//;
-    while (not $self->{inline} =~ s/^\}//) {
+    while (not $self->{inline} =~ s/^\s*\}//) {
         my $key = $self->_parse_inline();
         $self->die('YAML_PARSE_ERR_INLINE_MAP')
           unless $self->{inline} =~ s/^\: \s*//;
         my $value = $self->_parse_inline();
         if (exists $node->{$key}) {
-            warn YAML_LOAD_WARN_DUPLICATE_KEY() if $^W;
+            $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY');
         }
         else {
             $node->{$key} = $value;
         }
-        next if $self->inline =~ /^\}/;
+        next if $self->inline =~ /^\s*\}/;
         $self->die('YAML_PARSE_ERR_INLINE_MAP')
           unless $self->{inline} =~ s/^\,\s*//;
     }
@@ -626,10 +460,10 @@ sub _parse_inline_seq {
 
     $self->die('YAML_PARSE_ERR_INLINE_SEQUENCE')
       unless $self->{inline} =~ s/^\[\s*//;
-    while (not $self->{inline} =~ s/^\]//) {
+    while (not $self->{inline} =~ s/^\s*\]//) {
         my $value = $self->_parse_inline();
         push @$node, $value;
-        next if $self->inline =~ /^\]/;
+        next if $self->inline =~ /^\s*\]/;
         $self->die('YAML_PARSE_ERR_INLINE_SEQUENCE') 
           unless $self->{inline} =~ s/^\,\s*//;
     }
@@ -643,7 +477,8 @@ sub _parse_inline_double_quoted {
         $node = $1;
         $self->inline($2);
         $node =~ s/\\"/"/g;
-    } else {
+    }
+    else {
         $self->die('YAML_PARSE_ERR_BAD_DOUBLE');
     }
     return $node;
@@ -657,7 +492,8 @@ sub _parse_inline_single_quoted {
         $node = $1;
         $self->inline($2);
         $node =~ s/''/'/g;
-    } else {
+    }
+    else {
         $self->die('YAML_PARSE_ERR_BAD_SINGLE');
     }
     return $node;
@@ -750,7 +586,9 @@ sub _parse_next_line {
     $self->{line}++;
 
     # Determine the offset for a new leaf node
-    if ($self->preface =~ qr/(?:$FOLD_CHAR|$LIT_CHAR_RX)(?:-|\+)?(\d*)\s*$/) {
+    if ($self->preface =~
+        qr/(?:^|\s)(?:$FOLD_CHAR|$LIT_CHAR_RX)(?:-|\+)?(\d*)\s*$/
+       ) {
         $self->die('YAML_PARSE_ERR_ZERO_INDENT')
           if length($1) and $1 == 0;
         $type = LEAF;
@@ -827,7 +665,6 @@ sub _parse_next_line {
     }
     else {
         $self->lines->[0] =~ /^( *)(\S.*)$/;
-# print "   indent(${\length($1)})  offsets(@{$self->offset}) \n";
         while ($self->offset->[$level] > length($1)) {
             $level--;
         }
@@ -859,3 +696,37 @@ sub _unescape {
               (length($1)>1)?pack("H2",$2):$unescapes{$1}/gex;
     return $node;
 }
+
+__END__
+
+=head1 NAME
+
+YAML::Loader - YAML class for loading Perl objects to YAML
+
+=head1 SYNOPSIS
+
+    use YAML::Loader;
+    my $loader = YAML::Loader->new;
+    my $hash = $loader->load(<<'...');
+    foo: bar
+    ...
+
+=head1 DESCRIPTION
+
+YAML::Loader is the module that YAML.pm used to deserialize YAML to Perl
+objects. It is fully object oriented and usable on its own.
+
+=head1 AUTHOR
+
+Ingy döt Net <ingy@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2006. Ingy döt Net. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See L<http://www.perl.com/perl/misc/Artistic.html>
+
+=cut
