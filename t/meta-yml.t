@@ -15,20 +15,21 @@ __DATA__
 {
   'no_index' => {
                   'directory' => [
-                                   'inc'
+                                   'inc',
+                                   't'
                                  ]
                 },
-  'generated_by' => 'Module::Install version 0.47',
+  'generated_by' => 'Module::Install version 0.54',
   'distribution_type' => 'module',
   'version' => '0.49_70',
   'name' => 'YAML',
   'author' => 'Ingy döt Net <ingy@cpan.org>',
   'license' => 'perl',
   'requires' => {
-                  'Test::Base' => '0.45',
+                  'Test::Base' => '0.46',
                   'Test::More' => '0.62',
                   'perl' => '5.6.1',
-                  'Spiffy' => '0.25'
+                  'Spiffy' => '0.26'
                 },
   'abstract' => 'YAML Ain\'t Markup Language (tm)'
 };

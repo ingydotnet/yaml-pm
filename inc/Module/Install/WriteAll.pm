@@ -5,9 +5,9 @@ use Module::Install::Base; @ISA = qw(Module::Install::Base);
 sub WriteAll {
     my $self = shift;
     my %args = (
-        meta => 1,
-        sign => 0,
-        inline => 0,
+        meta        => 1,
+        sign        => 0,
+        inline      => 0,
         check_nmake => 1,
         @_
     );
@@ -17,10 +17,10 @@ sub WriteAll {
     $self->admin->WriteAll(%args) if $self->is_admin;
 
     if ($0 =~ /Build.PL$/i) {
-	$self->Build->write;
+        $self->Build->write;
     }
     else {
-	$self->check_nmake if $args{check_nmake};
+        $self->check_nmake if $args{check_nmake};
         $self->makemaker_args( PL_FILES => {} )
             unless $self->makemaker_args->{'PL_FILES'};
 

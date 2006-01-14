@@ -52,14 +52,15 @@ sub can_cc {
 # Fix Cygwin bug on maybe_command();
 if ($^O eq 'cygwin') {
     require ExtUtils::MM_Cygwin;
+    require ExtUtils::MM_Win32;
     if (!defined(&ExtUtils::MM_Cygwin::maybe_command)) {
         *ExtUtils::MM_Cygwin::maybe_command = sub {
             my ($self, $file) = @_;
-            if ($file =~ m{^/cygdrive/}i) {
+            if ($file =~ m{^/cygdrive/}i and ExtUtils::MM_Win32->can('maybe_command')) {
                 ExtUtils::MM_Win32->maybe_command($file);
             }
             else {
-                $self->SUPER::maybe_command($file);
+                ExtUtils::MM_Unix->maybe_command($file);
             }
         }
     }

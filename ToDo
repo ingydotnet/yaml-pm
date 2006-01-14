@@ -1,7 +1,20 @@
-=== Review
-+ change set_global_options in YAML::Dumper::Base
-+ use YAML::Node in YAML::Base to export ynode everywhere
+=== 0.51
++ Don't sign the tarball
+  + Just use new Module::Install
+- Fix audrey's bugs
++ Fix windows issues
++ Checkin inc
+- Add tests to YAML::Syck
++ Skip Diff tests in Test::Base if modules not installed
+  + Eliminate prereqs
 
+=== Testing for release
+= test on clean perl install
+- Test on 5.6.1
+- Test on ActivePerl
+- Test on Cygwin
+- Test on Solaris
+- Check Test::YAML for YAML::Syck
 
 === 0.50 Checklist
 + get stringify working
@@ -30,13 +43,6 @@ x Don't ship with Spiffy -Base filtering. (use -base)
 + Refactor test suite to use t::TestYAML (which use Test::YAML)
 + Release Spiffy 0.25
 + Release Test::Base 0.45
-
-=== Testing for release
-= test on clean perl install
-- Test on 5.6.1
-- Test on ActivePerl
-- Test on Cygwin
-- Check Test::YAML for YAML::Syck
 
 === Next release
 

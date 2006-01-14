@@ -1,3 +1,9 @@
+version: 0.51
+date:    Sat Jan 14 17:09:09 GMT 2006
+change:
+- Tests pass on win32 and cygwin
+- Don't gpg sign the distribution tarball
+
 ---
 version: 0.50
 date:    Sun Dec 25 11:09:18 PST 2005

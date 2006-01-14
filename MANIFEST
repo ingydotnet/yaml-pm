@@ -28,7 +28,6 @@ t/2-scalars.t
 t/basic-tests.t
 t/bugs-emailed.t
 t/bugs-rt.t
-t/bugs-rt.t.rej
 t/changes.t
 t/dump-basics.t
 t/dump-blessed.t
@@ -43,6 +42,7 @@ t/errors.t
 t/export.t
 t/freeze-thaw.t
 t/global-api.t
+t/inbox.t
 t/load-fails.t
 t/load-passes.t
 t/load-slides.t
@@ -57,9 +57,5 @@ t/svk-config.yaml
 t/svk.t
 t/test.t
 t/TestYAML.pm
-t/todo/non-indented-sequence.t
-t/todo/roundtrip-scalars.t
-t/todo/structured-keys.t
 ToDo
 ysh
-SIGNATURE                                Public-key signature (added by MakeMaker)

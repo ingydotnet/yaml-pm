@@ -1,4 +1,4 @@
 package t::TestYAML;
-use Test::YAML -Base;
+use Test::YAML 0.51 -Base;
 
 $Test::YAML::YAML = 'YAML';

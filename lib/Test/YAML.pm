@@ -2,6 +2,8 @@ package Test::YAML;
 use Test::Base 0.45 -Base;
 use lib 'lib';
 
+our $VERSION = '0.51';
+
 our $YAML = 'YAML';
 
 our @EXPORT = qw(
