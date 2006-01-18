@@ -1,5 +1,5 @@
 package YAML::Base;
-use Spiffy 0.25 -Base;
+use Spiffy 0.27 -Base;
 
 our @EXPORT = qw(
     XXX

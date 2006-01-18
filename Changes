@@ -1,3 +1,10 @@
+---
+version: 0.52
+date:    Wed Jan 18 14:25:24 PST 2006
+change:
+- Error in Spiffy-0.26 causing problems. Require 0.27
+
+---
 version: 0.51
 date:    Sat Jan 14 17:09:09 GMT 2006
 change:
