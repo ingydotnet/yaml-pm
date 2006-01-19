@@ -1,5 +1,6 @@
 package YAML::Base;
-use Spiffy 0.27 -Base;
+use strict; use warnings;
+use Class::Spiffy 0.12 -base;
 
 our @EXPORT = qw(
     XXX
@@ -8,18 +9,20 @@ our @EXPORT = qw(
 # Use lexical subs to reduce pollution of private methods by base class.
 my ($_new_error, $_info, $_scalar_info);
 
-sub XXX() {
+sub XXX {
     require Data::Dumper;
     CORE::die(Data::Dumper::Dumper(@_));
 }
 
 sub die {
+    my $self = shift;
     my $error = $self->$_new_error(@_);
     $error->type('Error');
     Carp::croak($error->format_message);
 }
 
 sub warn {
+    my $self = shift;
     return unless $^W;
     my $error = $self->$_new_error(@_);
     $error->type('Warning');
@@ -32,6 +35,7 @@ sub warn {
 # Can't handle:
 # * blessed regexp
 sub node_info {
+    my $self = shift;
     my $stringify = $_[1] || 0;
     my ($class, $type, $id) =
         ref($_[0])
@@ -92,7 +96,7 @@ YAML::Base - Base class for YAML classes
 =head1 DESCRIPTION
 
 YAML::Base is the parent of all YAML classes. YAML::Base itself inherits
-from Spiffy.
+from Class::Spiffy.
 
 =head1 AUTHOR
 

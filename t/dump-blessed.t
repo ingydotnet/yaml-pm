@@ -1,12 +1,13 @@
 use t::TestYAML tests => 2;
 
 package Foo::Bar;
-use Spiffy -Base;
+use Class::Spiffy -base;
 
 field 'one';
 field 'two';
 
 sub yaml_dump {
+    my $self = shift;
     my $node = YAML::Node->new({
         two => $self->two - 1,
         one => $self->one + 1,

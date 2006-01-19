@@ -1,3 +1,10 @@
+=== 0.53
+- Spiffy => Class::Spiffy
+- add use strict;
+- remove -Base
+- sub foo() { }
+- DumpFile is broken!?
+
 === 0.51
 + Don't sign the tarball
   + Just use new Module::Install

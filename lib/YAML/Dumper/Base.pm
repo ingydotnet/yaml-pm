@@ -1,5 +1,6 @@
 package YAML::Dumper::Base;
-use YAML::Base -Base;
+use strict; use warnings;
+use YAML::Base -base;
 use YAML::Node;
 
 # YAML Dumping options
@@ -31,6 +32,7 @@ field headless => 0;
 field blessed_map => {};
 
 sub set_global_options {
+    my $self = shift;
     $self->spec_version($YAML::SpecVersion)
       if defined $YAML::SpecVersion;
     $self->indent_width($YAML::Indent)
@@ -62,10 +64,12 @@ sub set_global_options {
 }
 
 sub dump {
+    my $self = shift;
     $self->die('dump() not implemented in this class.');
 }
 
 sub blessed {
+    my $self = shift;
     my ($ref) = @_;
     $ref = \$_[0] unless ref $ref;
     my (undef, undef, $node_id) = YAML::Base->node_info($ref);
@@ -73,6 +77,7 @@ sub blessed {
 }
     
 sub bless {
+    my $self = shift;
     my ($ref, $blessing) = @_;
     my $ynode;
     $ref = \$_[0] unless ref $ref;

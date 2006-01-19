@@ -1,5 +1,6 @@
 package YAML::Loader;
-use YAML::Loader::Base -Base;
+use strict; use warnings;
+use YAML::Loader::Base -base;
 use YAML::Types;
 
 # Context constants
@@ -15,6 +16,7 @@ my $LIT_CHAR = '|';
 my $LIT_CHAR_RX = "\\$LIT_CHAR";    
 
 sub load {
+    my $self = shift;
     $self->stream($_[0] || '');
     return $self->_parse();
 }
@@ -22,6 +24,7 @@ sub load {
 # Top level function for parsing. Parse each document in order and
 # handle processing for YAML headers.
 sub _parse {
+    my $self = shift;
     my (%directives, $preface);
     $self->{stream} =~ s|\015\012|\012|g;
     $self->{stream} =~ s|\015|\012|g;
@@ -102,6 +105,7 @@ sub _parse {
 # recurses back through here. (Inlines are an exception as they have
 # their own sub-parser.)
 sub _parse_node {
+    my $self = shift;
     my $preface = $self->preface;
     $self->preface('');
     my ($node, $type, $indicator, $escape, $chomp) = ('') x 5;
@@ -206,6 +210,7 @@ sub _parse_node {
 
 # Preprocess the qualifiers that may be attached to any node.
 sub _parse_qualifiers {
+    my $self = shift;
     my ($preface) = @_;
     my ($anchor, $alias, $explicit, $implicit, $token) = ('') x 5;
     $self->inline('');
@@ -241,6 +246,7 @@ sub _parse_qualifiers {
 
 # Morph a node to it's explicit type  
 sub _parse_explicit {
+    my $self = shift;
     my ($node, $explicit) = @_;
     my ($type, $class);
     if ($explicit =~ /^perl\/(undef|glob|regexp|code|ref)\:(\w(\w|\:\:)*)?$/) {
@@ -284,6 +290,7 @@ sub _parse_explicit {
 
 # Parse a YAML mapping into a Perl hash
 sub _parse_mapping {
+    my $self = shift;
     my ($anchor) = @_;
     my $mapping = {};
     $self->anchor2node->{$anchor} = $mapping;
@@ -332,6 +339,7 @@ sub _parse_mapping {
 
 # Parse a YAML sequence into a Perl array
 sub _parse_seq {
+    my $self = shift;
     my ($anchor) = @_;
     my $seq = [];
     $self->anchor2node->{$anchor} = $seq;
@@ -363,6 +371,7 @@ sub _parse_seq {
 # Parse an inline value. Since YAML supports inline collections, this is
 # the top level of a sub parsing.
 sub _parse_inline {
+    my $self = shift;
     my ($top, $top_implicit, $top_explicit) = (@_, '', '', '');
     $self->{inline} =~ s/^\s*(.*)\s*$/$1/; # OUCH - mugwump
     my ($node, $anchor, $alias, $explicit, $implicit) = ('') x 5;
@@ -428,6 +437,7 @@ sub _parse_inline {
 
 # Parse the inline YAML mapping into a Perl hash
 sub _parse_inline_mapping {
+    my $self = shift;
     my ($anchor) = @_;
     my $node = {};
     $self->anchor2node->{$anchor} = $node;
@@ -454,6 +464,7 @@ sub _parse_inline_mapping {
 
 # Parse the inline YAML sequence into a Perl array
 sub _parse_inline_seq {
+    my $self = shift;
     my ($anchor) = @_;
     my $node = [];
     $self->anchor2node->{$anchor} = $node;
@@ -472,6 +483,7 @@ sub _parse_inline_seq {
 
 # Parse the inline double quoted string.
 sub _parse_inline_double_quoted {
+    my $self = shift;
     my $node;
     if ($self->inline =~ /^"((?:\\"|[^"])*)"\s*(.*)$/) {
         $node = $1;
@@ -487,6 +499,7 @@ sub _parse_inline_double_quoted {
 
 # Parse the inline single quoted string.
 sub _parse_inline_single_quoted {
+    my $self = shift;
     my $node;
     if ($self->inline =~ /^'((?:''|[^'])*)'\s*(.*)$/) {
         $node = $1;
@@ -501,6 +514,7 @@ sub _parse_inline_single_quoted {
 
 # Parse the inline unquoted string and do implicit typing.
 sub _parse_inline_simple {
+    my $self = shift;
     my $value;
     if ($self->inline =~ /^(|[^!@#%^&*].*?)(?=[\[\]\{\},]|, |: |- |:\s*$|$)/) {
         $value = $1;
@@ -513,6 +527,7 @@ sub _parse_inline_simple {
 }
 
 sub _parse_implicit {
+    my $self = shift;
     my ($value) = @_;
     $value =~ s/\s*$//;
     return $value if $value eq '';
@@ -525,6 +540,7 @@ sub _parse_implicit {
 
 # Unfold a YAML multiline scalar into a single string.
 sub _parse_unfold {
+    my $self = shift;
     my ($chomp) = @_;
     my $node = '';
     my $space = 0;
@@ -541,6 +557,7 @@ sub _parse_unfold {
 
 # Parse a YAML block style scalar. This is like a Perl here-document.
 sub _parse_block {
+    my $self = shift;
     my ($chomp) = @_;
     my $node = '';
     while (not $self->done and $self->indent == $self->offset->[$self->level]) {
@@ -556,6 +573,7 @@ sub _parse_block {
 # Handle Perl style '#' comments. Comments must be at the same indentation
 # level as the collection line following them.
 sub _parse_throwaway_comments {
+    my $self = shift;
     while (@{$self->lines} and
            $self->lines->[0] =~ m{^\s*(\#|$)}
           ) {
@@ -576,6 +594,7 @@ sub _parse_throwaway_comments {
 #   B) Set $self->indent, $self->content, $self->line
 # 4) Expand tabs appropriately  
 sub _parse_next_line {
+    my $self = shift;
     my ($type) = @_;
     my $level = $self->level;
     my $offset = $self->offset->[$level];
@@ -691,6 +710,7 @@ my %unescapes =
    
 # Transform all the backslash style escape characters to their literal meaning
 sub _unescape {
+    my $self = shift;
     my ($node) = @_;
     $node =~ s/\\([never\\fartz]|x([0-9a-fA-F]{2}))/
               (length($1)>1)?pack("H2",$2):$unescapes{$1}/gex;

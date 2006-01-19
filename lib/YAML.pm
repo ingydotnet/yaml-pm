@@ -1,7 +1,8 @@
 package YAML;
+use strict; use warnings;
 use YAML::Base -base;
 use 5.006001;
-our $VERSION = '0.52';
+our $VERSION = '0.53';
 our @EXPORT = qw'Dump Load';
 our @EXPORT_OK = qw'freeze thaw DumpFile LoadFile Bless Blessed';
 
@@ -45,15 +46,15 @@ field loader_object =>
 
 sub Dump {
     my $yaml = YAML->new;
-    $yaml->dumper_class($DumperClass)
-        if $DumperClass;
+    $yaml->dumper_class($YAML::DumperClass)
+        if $YAML::DumperClass;
     return $yaml->dumper_object->dump(@_);
 }
 
 sub Load {
     my $yaml = YAML->new;
-    $yaml->loader_class($LoaderClass)
-        if $LoaderClass;
+    $yaml->loader_class($YAML::LoaderClass)
+        if $YAML::LoaderClass;
     return $yaml->loader_object->load(@_);
 }
 

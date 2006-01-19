@@ -1,8 +1,8 @@
 package Test::YAML;
-use Test::Base 0.45 -Base;
+use Test::Base 0.47 -Base;
 use lib 'lib';
 
-our $VERSION = '0.51';
+our $VERSION = '0.53';
 
 our $YAML = 'YAML';
 

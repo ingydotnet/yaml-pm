@@ -1,5 +1,6 @@
 package YAML::Error;
-use YAML::Base -Base;
+use strict; use warnings;
+use YAML::Base -base;
 
 field 'code';
 field 'type' => 'Error';
@@ -10,6 +11,7 @@ field 'arguments' => [];
 my ($error_messages, %line_adjust);
 
 sub format_message {
+    my $self = shift;
     my $output = 'YAML ' . $self->type . ': ';
     my $code = $self->code;
     if ($error_messages->{$code}) {

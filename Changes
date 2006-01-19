@@ -1,4 +1,10 @@
 ---
+version: 0.53
+date:    Thu Jan 19 06:03:17 PST 2006
+change:
+- Depend on Class::Spiffy instead of Spiffy. No source filtering.
+
+---
 version: 0.52
 date:    Wed Jan 18 14:25:24 PST 2006
 change:

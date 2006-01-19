@@ -1,5 +1,6 @@
 package YAML::Loader::Base;
-use YAML::Base -Base;
+use strict; use warnings;
+use YAML::Base -base;
 
 field load_code => 0;
 
@@ -21,6 +22,7 @@ field minor_version => 0;
 field inline => '';
 
 sub set_global_options {
+    my $self = shift;
     $self->load_code($YAML::LoadCode || $YAML::UseCode)
       if defined $YAML::LoadCode or defined $YAML::UseCode;
 }

@@ -1,5 +1,6 @@
 package YAML::Types;
-use YAML::Base -Base;
+use strict; use warnings;
+use YAML::Base -base;
 use YAML::Node;
 
 # XXX These classes and their APIs could still use some refactoring,
@@ -8,6 +9,7 @@ use YAML::Node;
 package YAML::Type::blessed;
 my %sigil = (HASH => '', ARRAY => '@', SCALAR => '$');
 sub yaml_dump {
+    my $self = shift;
     my ($value) = @_;
     my ($class, $type) = YAML::Base->node_info($value);
     no strict 'refs';
@@ -24,14 +26,17 @@ sub yaml_dump {
 #-------------------------------------------------------------------------------
 package YAML::Type::undef;
 sub yaml_dump {
+    my $self = shift;
 }
 
 sub yaml_load {
+    my $self = shift;
 }
 
 #-------------------------------------------------------------------------------
 package YAML::Type::glob;
 sub yaml_dump {
+    my $self = shift;
     my $ynode = YAML::Node->new({}, 'perl/glob:');
     for my $type (qw(PACKAGE NAME SCALAR ARRAY HASH CODE IO)) {
         my $value = *{$_[0]}{$type};
@@ -56,6 +61,7 @@ sub yaml_dump {
 }
 
 sub yaml_load {
+    my $self = shift;
     my ($node, $class, $loader) = @_;
     my ($name, $package);
     if (defined $node->{NAME}) {
@@ -100,6 +106,7 @@ package YAML::Type::code;
 my $dummy_warned = 0; 
 my $default = '{ "DUMMY" }';
 sub yaml_dump {
+    my $self = shift;
     my $code;
     my ($dumpflag, $value) = @_;
     my ($class, $type) = YAML::Base->node_info($value);
@@ -130,6 +137,7 @@ sub yaml_dump {
 }    
 
 sub yaml_load {
+    my $self = shift;
     my ($node, $class, $loader) = @_;
     if ($loader->load_code) {
         my $code = eval "package main; sub $node";
@@ -150,10 +158,12 @@ sub yaml_load {
 #-------------------------------------------------------------------------------
 package YAML::Type::ref;
 sub yaml_dump {
+    my $self = shift;
     YAML::Node->new({(&YAML::VALUE, ${$_[0]})}, 'perl/ref:')
 }
 
 sub yaml_load {
+    my $self = shift;
     my ($node, $class, $loader) = @_;
     $loader->die('YAML_LOAD_ERR_NO_DEFAULT_VALUE', 'ptr')
       unless exists $node->{&YAML::VALUE};
@@ -164,6 +174,7 @@ sub yaml_load {
 package YAML::Type::regexp;
 # XXX Be sure to handle blessed regexps (if possible)
 sub yaml_dump {
+    my $self = shift;
     my ($node, $class, $dumper) = @_;
     my ($regexp, $modifiers);
     if ("$node" =~ /^\(\?(\w*)(?:\-\w+)?\:(.*)\)$/) {
@@ -182,6 +193,7 @@ sub yaml_dump {
 }
 
 sub yaml_load {
+    my $self = shift;
     my ($node, $class, $loader) = @_;
     my ($regexp, $modifiers);
     if (defined $node->{REGEXP}) {

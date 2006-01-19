@@ -1,4 +1,5 @@
 package YAML::Node;
+use strict; use warnings;
 use YAML::Base -base;
 use YAML::Tag;
 

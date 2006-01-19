@@ -1,5 +1,6 @@
 package YAML::Dumper;
-use YAML::Dumper::Base -Base;
+use strict; use warnings;
+use YAML::Dumper::Base -base;
 
 use YAML::Node;
 use YAML::Types;
@@ -16,32 +17,9 @@ my $FOLD_CHAR = '>';
 my $LIT_CHAR = '|';    
 
 #==============================================================================
-# Save the contents of a Dump operation to a file. If the file exists
-# and has data, and a concatenation was requested, then verify the
-# existing header.
-sub DumpFile {
-    my $filename = shift;
-    local $/ = "\n"; # reset special to "sane"
-    my $mode = '>';
-    if ($filename =~ /^\s*(>{1,2})\s*(.*)$/) {
-        ($mode, $filename) = ($1, $2);
-    }
-    if ($mode eq '>>' && -f $filename && -s $filename) {
-        open MYYAML, "< $filename" 
-            or $self->die('YAML_LOAD_ERR_FILE_INPUT', $filename, $!);
-        my $line = <MYYAML>;
-        close MYYAML;
-        $self->die('YAML_DUMP_ERR_FILE_CONCATENATE', $filename)
-          unless $line =~ /^---(\s|$)/;
-    }
-    open MYYAML, "$mode $filename"
-      or $self->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, $!);
-    print MYYAML YAML::Dump(@_);
-    close MYYAML;
-}
-    
 # OO version of Dump. YAML->new->dump($foo); 
 sub dump {
+    my $self = shift;
     $self->stream('');
     $self->document(0);
     for my $document (@_) {
@@ -62,6 +40,7 @@ sub dump {
 # Every YAML document in the stream must begin with a YAML header, unless
 # there is only a single document and the user requests "no header".
 sub _emit_header {
+    my $self = shift;
     my ($node) = @_;
     if (not $self->use_header and 
         $self->document == 1
@@ -87,6 +66,7 @@ sub _emit_header {
 # This function is where the Dumper does all its work. All type
 # transfers happen here.
 sub _prewalk {
+    my $self = shift;
     my $stringify = $self->stringify;
     my ($class, $type, $node_id) = $self->node_info(\$_[0], $stringify);
 
@@ -226,6 +206,7 @@ value: $value
 # Every data element and sub data element is a node.
 # Everything emitted goes through this function.
 sub _emit_node {
+    my $self = shift;
     my ($type, $node_id);
     my $ref = ref($_[0]);
     if ($ref and $ref ne 'Regexp') {
@@ -290,6 +271,7 @@ sub _emit_node {
 
 # A YAML mapping is akin to a Perl hash. 
 sub _emit_mapping {
+    my $self = shift;
     my ($value, $tag, $node_id, $context) = @_;
     $self->{stream} .= " !$tag" if $tag;
 
@@ -363,6 +345,7 @@ sub _emit_mapping {
 
 # A YAML series is akin to a Perl array.
 sub _emit_sequence {
+    my $self = shift;
     my ($value, $tag) = @_;
     $self->{stream} .= " !$tag" if $tag;
 
@@ -400,6 +383,7 @@ sub _emit_sequence {
 
 # Emit a mapping key
 sub _emit_key {
+    my $self = shift;
     my ($value, $context) = @_;
     $self->{stream} .= ' ' x $self->offset->[$self->level]
       unless $context == FROMARRAY;
@@ -408,18 +392,21 @@ sub _emit_key {
 
 # Emit a blessed SCALAR
 sub _emit_scalar {
+    my $self = shift;
     my ($value, $tag) = @_;
     $self->{stream} .= " !$tag";
     $self->_emit_str($value, BLESSED);
 }
 
 sub _emit {
+    my $self = shift;
     $self->{stream} .= join '', @_;
 }
 
 # Emit a string value. YAML has many scalar styles. This routine attempts to
 # guess the best style for the text.
 sub _emit_str {
+    my $self = shift;
     my $type = $_[1] || 0;
 
     # Use heuristics to find the best scalar emission style.
@@ -489,6 +476,7 @@ sub _emit_str {
 
 # Check whether or not a scalar should be emitted as an plain scalar.
 sub is_valid_plain {
+    my $self = shift;
     return 0 unless length $_[0];
     # refer to YAML::Loader::parse_inline_simple()
     return 0 if $_[0] =~ /^[\s\{\[\~\`\'\"\!\@\#\>\|\%\&\?\*\^]/;
@@ -502,6 +490,7 @@ sub is_valid_plain {
 
 # A nested scalar is either block or folded 
 sub _emit_block {
+    my $self = shift;
     my ($indicator, $value) = @_;
     $self->{stream} .= $indicator;
     $value =~ /(\n*)\Z/;
@@ -518,17 +507,20 @@ sub _emit_block {
 
 # Plain means that the scalar is unquoted.
 sub _emit_plain {
+    my $self = shift;
     $self->{stream} .= defined $_[0] ? $_[0] : '~';
 }
 
 # Double quoting is for single lined escaped strings.
 sub _emit_double {
+    my $self = shift;
     (my $escaped = $self->escape($_[0])) =~ s/"/\\"/g;
     $self->{stream} .= qq{"$escaped"};
 }
 
 # Single quoting is for single lined unescaped strings.
 sub _emit_single {
+    my $self = shift;
     my $item = shift;
     $item =~ s{'}{''}g;
     $self->{stream} .= "'$item'";
@@ -540,6 +532,7 @@ sub _emit_single {
 
 # Indent a scalar to the current indentation level.
 sub indent {
+    my $self = shift;
     my ($text) = @_;
     return $text unless length $text;
     $text =~ s/\n\Z//;
@@ -551,6 +544,7 @@ sub indent {
 
 # Fold a paragraph to fit within a certain columnar restraint.
 sub fold {
+    my $self = shift;
     my ($text) = @_;
     my $folded = '';
     $text =~ s/^(\S.*)\n(?=\S)/$1\n\n/gm;
@@ -579,6 +573,7 @@ my @escapes = qw(\z   \x01 \x02 \x03 \x04 \x05 \x06 \a
 
 # Escape the unprintable characters
 sub escape {
+    my $self = shift;
     my ($text) = @_;
     $text =~ s/\\/\\\\/g;
     $text =~ s/([\x00-\x1f])/$escapes[ord($1)]/ge;

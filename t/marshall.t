@@ -2,13 +2,14 @@ use t::TestYAML tests => 10;
 
 #-------------------------------------------------------------------------------
 package Foo::Bar;
-use Spiffy -Base;
+use Class::Spiffy -base;
 use YAML::Marshall -mixin;
 
 field 'x';
 field 'y';
 
 sub yaml_dump {
+    my $self = shift;
     my $array = [];
     for my $k (sort keys %$self) {
         push @$array, $k, $self->{$k};
@@ -26,12 +27,12 @@ sub yaml_load() {
 
 #-------------------------------------------------------------------------------
 package Bar::Baz;
-use Spiffy -Base;
+use Class::Spiffy -base;
 use YAML::Marshall -mixin, 'random/object:bar.baz';
 
 #-------------------------------------------------------------------------------
 package Baz::Foo;
-use Spiffy -Base;
+use Class::Spiffy -base;
 use YAML::Marshall -mixin;
 
 sub yaml_dump {

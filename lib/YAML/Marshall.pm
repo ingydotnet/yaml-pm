@@ -1,8 +1,9 @@
 package YAML::Marshall;
-use Spiffy -Base;
+use strict; use warnings;
+use Class::Spiffy -base;
 use YAML::Node();
 
-sub import() {
+sub import {
     my ($package, $mixin, $tag) = @_;
     if ($mixin eq '-mixin' && $tag) {
         my $class = caller;
@@ -13,16 +14,17 @@ sub import() {
         pop @_;
     }
 
-    goto &Spiffy::import;
+    goto &Class::Spiffy::import;
 }
 
 sub yaml_dump {
+    my $self = shift;
     no strict 'refs';
     my $tag = ${ref($self) . "::YamlTag"} || 'perl/' . ref($self);
     $self->yaml_node($self, $tag);
 }
 
-sub yaml_load() {
+sub yaml_load {
     my ($class, $node) = @_;
     if (my $ynode = $class->yaml_ynode($node)) {
         $node = $ynode->{NODE};
@@ -31,12 +33,16 @@ sub yaml_load() {
 }
 
 sub yaml_node {
+    shift;
     YAML::Node->new(@_);
 }
 
 sub yaml_ynode {
+    shift;
     YAML::Node::ynode(@_);
 }
+
+1;
 
 __END__
 
