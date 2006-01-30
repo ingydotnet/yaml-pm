@@ -1,4 +1,10 @@
 ---
+version: 0.56
+date:    Mon Jan 30 10:26:33 PST 2006
+change:
+- Add Module::Install::TestBase support
+
+---
 version: 0.55
 date:    Sun Jan 29 19:03:35 PST 2006
 change:

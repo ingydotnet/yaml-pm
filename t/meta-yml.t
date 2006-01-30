@@ -21,7 +21,7 @@ __DATA__
                 },
   'generated_by' => 'Module::Install version 0.54',
   'distribution_type' => 'module',
-  'version' => '0.55',
+  'version' => '0.56',
   'name' => 'YAML',
   'author' => 'Ingy döt Net <ingy@cpan.org>',
   'license' => 'perl',
@@ -29,7 +29,7 @@ __DATA__
                   'perl' => '5.6.1'
                 },
   'build_requires' => {
-                  'Test::Base' => '0.47'
+                  'Test::Base' => '0.49'
                 },
   'abstract' => 'YAML Ain\'t Markup Language (tm)'
 };

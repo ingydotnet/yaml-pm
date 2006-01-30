@@ -3,9 +3,9 @@
 #
 package Test::Base;
 use 5.006001;
-use Spiffy 0.29 -Base;
+use Spiffy 0.30 -Base;
 use Spiffy ':XXX';
-our $VERSION = '0.47';
+our $VERSION = '0.49';
 
 my @test_more_exports;
 BEGIN {
@@ -627,4 +627,4 @@ sub _get_filters {
 
 __DATA__
 
-#line 1265
+#line 1289

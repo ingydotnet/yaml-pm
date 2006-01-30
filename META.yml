@@ -5,12 +5,12 @@ no_index:
     - t
 generated_by: Module::Install version 0.54
 distribution_type: module
-version: 0.55
+version: 0.56
 name: YAML
 author: "Ingy d\xC3\xB6t Net <ingy@cpan.org>"
 license: perl
 build_requires: 
-  Test::Base: 0.47
+  Test::Base: 0.49
 requires: 
   perl: 5.6.1
 abstract: YAML Ain't Markup Language (tm)
