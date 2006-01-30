@@ -1,27 +1,24 @@
 use t::TestYAML tests => 2;
 
 package Foo::Bar;
-use Class::Spiffy -base;
-
-field 'one';
-field 'two';
+use base 't::Base';
 
 sub yaml_dump {
     my $self = shift;
     my $node = YAML::Node->new({
-        two => $self->two - 1,
-        one => $self->one + 1,
+        two => $self->{two} - 1,
+        one => $self->{one} + 1,
     }, 'perl/Foo::Bar');
     YAML::Node::ynode($node)->keys(['two', 'one']);
     return $node;
 }
 
-sub yaml_load() {
+sub yaml_load {
     my $class = shift;
     my $node = shift;
     my $self = $class->new;
-    $self->one($node->{one} - 1);
-    $self->two($node->{two} + 1);
+    $self->{one} = ($node->{one} - 1);
+    $self->{two} = ($node->{two} + 1);
     return $self;
 }
 
@@ -35,8 +32,8 @@ __END__
 === Object class handles marshalling
 +++ perl
 my $fb = Foo::Bar->new();
-$fb->one(5);
-$fb->two(3);
+$fb->{one} = 5;
+$fb->{two} = 3;
 $fb;
 +++ yaml
 --- !perl/Foo::Bar

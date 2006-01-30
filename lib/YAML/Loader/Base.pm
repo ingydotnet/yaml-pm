@@ -1,6 +1,6 @@
 package YAML::Loader::Base;
 use strict; use warnings;
-use YAML::Base -base;
+use YAML::Base; use base 'YAML::Base';
 
 field load_code => 0;
 

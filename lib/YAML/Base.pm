@@ -1,17 +1,76 @@
 package YAML::Base;
 use strict; use warnings;
-use Class::Spiffy 0.12 -base;
+use base 'Exporter';
 
-our @EXPORT = qw(
-    XXX
-);
+our @EXPORT = qw(field XXX);
+
+sub new {
+    my $class = shift;
+    $class = ref($class) || $class;
+    my $self = bless {}, $class;
+    while (@_) {
+        my $method = shift;
+        $self->$method(shift);
+    }
+    return $self;
+}
 
 # Use lexical subs to reduce pollution of private methods by base class.
-my ($_new_error, $_info, $_scalar_info);
+my ($_new_error, $_info, $_scalar_info, $parse_arguments, $default_as_code);
 
 sub XXX {
     require Data::Dumper;
     CORE::die(Data::Dumper::Dumper(@_));
+}
+
+my %code = (
+    sub_start =>
+      "sub {\n",
+    set_default =>
+      "  \$_[0]->{%s} = %s\n    unless exists \$_[0]->{%s};\n",
+    init =>
+      "  return \$_[0]->{%s} = do { my \$self = \$_[0]; %s }\n" .
+      "    unless \$#_ > 0 or defined \$_[0]->{%s};\n",
+    return_if_get =>
+      "  return \$_[0]->{%s} unless \$#_ > 0;\n",
+    set =>
+      "  \$_[0]->{%s} = \$_[1];\n",
+    sub_end => 
+      "  return \$_[0]->{%s};\n}\n",
+);
+
+sub field {
+    my $package = caller;
+    my ($args, @values) = &$parse_arguments(
+        [ qw(-package -init) ],
+        @_,
+    );
+    my ($field, $default) = @values;
+    $package = $args->{-package} if defined $args->{-package};
+    return if defined &{"${package}::$field"};
+    my $default_string =
+        ( ref($default) eq 'ARRAY' and not @$default )
+        ? '[]'
+        : (ref($default) eq 'HASH' and not keys %$default )
+          ? '{}'
+          : &$default_as_code($default);
+
+    my $code = $code{sub_start};
+    if ($args->{-init}) {
+        my $fragment = $code{init};
+        $code .= sprintf $fragment, $field, $args->{-init}, ($field) x 4;
+    }
+    $code .= sprintf $code{set_default}, $field, $default_string, $field
+      if defined $default;
+    $code .= sprintf $code{return_if_get}, $field;
+    $code .= sprintf $code{set}, $field;
+    $code .= sprintf $code{sub_end}, $field;
+
+    my $sub = eval $code;
+    die $@ if $@;
+    no strict 'refs';
+    *{"${package}::$field"} = $sub;
+    return $code if defined wantarray;
 }
 
 sub die {
@@ -82,6 +141,32 @@ $_new_error = sub {
     return $error;
 };
     
+$parse_arguments = sub {
+    my $paired_arguments = shift || []; 
+    my ($args, @values) = ({}, ());
+    my %pairs = map { ($_, 1) } @$paired_arguments;
+    while (@_) {
+        my $elem = shift;
+        if (defined $elem and defined $pairs{$elem} and @_) {
+            $args->{$elem} = shift;
+        }
+        else {
+            push @values, $elem;
+        }
+    }
+    return wantarray ? ($args, @values) : $args;        
+};
+
+$default_as_code = sub {
+    no warnings 'once';
+    require Data::Dumper;
+    local $Data::Dumper::Sortkeys = 1;
+    my $code = Data::Dumper::Dumper(shift);
+    $code =~ s/^\$VAR1 = //;
+    $code =~ s/;$//;
+    return $code;
+};
+
 __END__
 
 =head1 NAME
@@ -95,8 +180,7 @@ YAML::Base - Base class for YAML classes
 
 =head1 DESCRIPTION
 
-YAML::Base is the parent of all YAML classes. YAML::Base itself inherits
-from Class::Spiffy.
+YAML::Base is the parent of all YAML classes.
 
 =head1 AUTHOR
 

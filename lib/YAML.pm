@@ -1,8 +1,9 @@
 package YAML;
 use strict; use warnings;
-use YAML::Base -base;
+use YAML::Base;
+use base 'YAML::Base';
 use 5.006001;
-our $VERSION = '0.53';
+our $VERSION = '0.54';
 our @EXPORT = qw'Dump Load';
 our @EXPORT_OK = qw'freeze thaw DumpFile LoadFile Bless Blessed';
 

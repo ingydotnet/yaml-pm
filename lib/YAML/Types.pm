@@ -1,6 +1,6 @@
 package YAML::Types;
 use strict; use warnings;
-use YAML::Base -base;
+use YAML::Base; use base 'YAML::Base';
 use YAML::Node;
 
 # XXX These classes and their APIs could still use some refactoring,

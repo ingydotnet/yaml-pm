@@ -1,6 +1,6 @@
 package YAML::Node;
 use strict; use warnings;
-use YAML::Base -base;
+use YAML::Base; use base 'YAML::Base';
 use YAML::Tag;
 
 our @EXPORT = qw(ynode);

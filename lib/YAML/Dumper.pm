@@ -1,6 +1,7 @@
 package YAML::Dumper;
 use strict; use warnings;
-use YAML::Dumper::Base -base;
+use YAML::Base;
+use base 'YAML::Dumper::Base';
 
 use YAML::Node;
 use YAML::Types;

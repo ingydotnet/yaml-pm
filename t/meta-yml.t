@@ -26,9 +26,10 @@ __DATA__
   'author' => 'Ingy döt Net <ingy@cpan.org>',
   'license' => 'perl',
   'requires' => {
-                  'Class::Spiffy' => '0.12',
-                  'Test::Base' => '0.47',
                   'perl' => '5.6.1'
+                },
+  'build_requires' => {
+                  'Test::Base' => '0.47'
                 },
   'abstract' => 'YAML Ain\'t Markup Language (tm)'
 };

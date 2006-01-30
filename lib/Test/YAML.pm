@@ -2,7 +2,7 @@ package Test::YAML;
 use Test::Base 0.47 -Base;
 use lib 'lib';
 
-our $VERSION = '0.53';
+our $VERSION = '0.54';
 
 our $YAML = 'YAML';
 

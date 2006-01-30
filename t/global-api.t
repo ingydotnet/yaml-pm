@@ -1,3 +1,8 @@
+use Test::YAML();
+BEGIN { 
+    @Test::YAML::EXPORT =
+        grep { not /^(Dump|Load)(File)?$/ } @Test::YAML::EXPORT;
+}
 use t::TestYAML tests => 4;
 use YAML;
 

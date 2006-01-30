@@ -1,6 +1,6 @@
 package YAML::Error;
 use strict; use warnings;
-use YAML::Base -base;
+use YAML::Base; use base 'YAML::Base';
 
 field 'code';
 field 'type' => 'Error';

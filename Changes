@@ -1,4 +1,10 @@
 ---
+version: 0.54
+date:    Sun Jan 29 17:28:46 PST 2006
+change:
+- Remove dependency on Class::Spiffy (and/or Spiffy).
+
+---
 version: 0.53
 date:    Thu Jan 19 06:03:17 PST 2006
 change:

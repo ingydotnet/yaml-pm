@@ -1,12 +1,11 @@
 use t::TestYAML tests => 10;
+use strict;
+use warnings;
 
 #-------------------------------------------------------------------------------
 package Foo::Bar;
-use Class::Spiffy -base;
-use YAML::Marshall -mixin;
-
-field 'x';
-field 'y';
+use base 't::Base';
+use YAML::Marshall;
 
 sub yaml_dump {
     my $self = shift;
@@ -17,7 +16,7 @@ sub yaml_dump {
     $self->yaml_node($array, 'perl/Foo::Bar');
 }
 
-sub yaml_load() {
+sub yaml_load {
     my $class = shift;
     my $node = shift;
     my $self = $class->new;
@@ -27,22 +26,24 @@ sub yaml_load() {
 
 #-------------------------------------------------------------------------------
 package Bar::Baz;
-use Class::Spiffy -base;
-use YAML::Marshall -mixin, 'random/object:bar.baz';
+use base 't::Base';
+use YAML::Marshall 'random/object:bar.baz';
 
 #-------------------------------------------------------------------------------
 package Baz::Foo;
-use Class::Spiffy -base;
-use YAML::Marshall -mixin;
+use base 't::Base';
+use YAML::Marshall;
 
 sub yaml_dump {
-    my $node = super;
+    my $self = shift;
+    my $node = $self->SUPER::yaml_dump(@_);
     $node->{comment} = "Hi, Mom";
     return $node;
 }
 
 sub yaml_load {
-    my $node = super;
+    my $class = shift;
+    my $node = $class->SUPER::yaml_load(@_);
     delete $node->{comment};
     return $node;
 }

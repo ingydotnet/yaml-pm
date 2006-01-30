@@ -1,6 +1,7 @@
 package YAML::Loader;
 use strict; use warnings;
-use YAML::Loader::Base -base;
+use YAML::Base;
+use base 'YAML::Loader::Base';
 use YAML::Types;
 
 # Context constants

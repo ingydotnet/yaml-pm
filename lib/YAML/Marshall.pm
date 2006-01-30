@@ -1,20 +1,21 @@
 package YAML::Marshall;
 use strict; use warnings;
-use Class::Spiffy -base;
 use YAML::Node();
 
 sub import {
-    my ($package, $mixin, $tag) = @_;
-    if ($mixin eq '-mixin' && $tag) {
-        my $class = caller;
-        no warnings 'once';
-        $YAML::TagClass->{$tag} = $class;
-        no strict 'refs';
-        ${$class . "::YamlTag"} = $tag;
-        pop @_;
+    my $class = shift;
+    no strict 'refs';
+    my $package = caller;
+    unless (grep { $_ eq $class} @{$package . '::ISA'}) {
+        push @{$package . '::ISA'}, $class;
     }
 
-    goto &Class::Spiffy::import;
+    my $tag = shift;
+    if ($tag) {
+        no warnings 'once';
+        $YAML::TagClass->{$tag} = $package;
+        ${$package . "::YamlTag"} = $tag;
+    }
 }
 
 sub yaml_dump {
