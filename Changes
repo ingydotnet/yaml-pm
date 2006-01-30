@@ -1,4 +1,11 @@
 ---
+version: 0.55
+date:    Sun Jan 29 19:03:35 PST 2006
+change:
+- Load YAML::Node because Module::Build expects it to be loaded.
+  We can undo this when Module::Build starts loading it for itself.
+
+---
 version: 0.54
 date:    Sun Jan 29 17:28:46 PST 2006
 change:
