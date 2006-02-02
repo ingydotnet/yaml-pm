@@ -1,4 +1,10 @@
 ---
+version: 0.57
+date:    Wed Feb  1 23:06:25 PST 2006
+changes:
+- Add obligatory '1;' to end of each module.
+
+---
 version: 0.56
 date:    Mon Jan 30 10:26:33 PST 2006
 change:

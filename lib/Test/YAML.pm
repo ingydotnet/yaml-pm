@@ -2,7 +2,7 @@ package Test::YAML;
 use Test::Base 0.47 -Base;
 use lib 'lib';
 
-our $VERSION = '0.54';
+our $VERSION = '0.57';
 
 our $YAML = 'YAML';
 
@@ -236,3 +236,33 @@ sub _perl_eval_result_error_warning {
     return ($result, $@, $warning);
 }
 
+1;
+
+=head1 NAME
+
+Test::YAML - Testing Module for YAML Implementations
+
+=head1 SYNOPSIS
+
+    use Test::YAML tests => 1;
+
+    pass;
+
+=head1 DESCRIPTION
+
+Test::YAML is a subclass of Test::Base with YAML specific support.
+
+=head1 AUTHOR
+
+Ingy döt Net <ingy@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2006. Ingy döt Net. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See L<http://www.perl.com/perl/misc/Artistic.html>
+
+=cut
