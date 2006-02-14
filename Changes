@@ -1,4 +1,11 @@
 ---
+version: 0.58
+date:    Tue Feb 14 12:42:34 PST 2006
+changes:
+- Fixed bug reported by Slaven Rezic on 5.8.0
+- Fixed a ysh bug reported on rt. 17589
+
+---
 version: 0.57
 date:    Wed Feb  1 23:06:25 PST 2006
 changes:

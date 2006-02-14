@@ -230,7 +230,8 @@ sub _emit_node {
               $self->node_info($value, $self->stringify);
         }
         else {
-            $tag = ynode($self->transferred->{$node_id})->tag->short;
+            $ynode = ynode($self->transferred->{$node_id});
+            $tag = defined $ynode ? $ynode->tag->short : '';
             $type = 'SCALAR';
             (undef, undef, $node_id) = 
               $self->node_info(

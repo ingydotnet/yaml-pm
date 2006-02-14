@@ -5,7 +5,7 @@ no_index:
     - t
 generated_by: Module::Install version 0.54
 distribution_type: module
-version: 0.56
+version: 0.58
 name: YAML
 author: "Ingy d\xC3\xB6t Net <ingy@cpan.org>"
 license: perl

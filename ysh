@@ -139,7 +139,7 @@ use Data::Dumper;
 $Data::Dumper::Indent = 1;
 use vars qw($prompt);
 $prompt = 'ysh > ';
-our $VERSION = '0.50';
+our $VERSION = '0.58';
 my $round_trip = 0;
 my $force = 0;
 my $log = 0;
@@ -234,6 +234,7 @@ END
 
 if (length($stream)) {
     my @objects;
+    no strict 'refs';
     eval { @objects = &{"${yaml_module}::Load"}($stream) };
     if ($@) {
         print STDERR $@;
