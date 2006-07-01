@@ -1,4 +1,5 @@
 Changes
+COMPATIBILITY
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -63,6 +64,7 @@ t/marshall.t
 t/meta-yml.t
 t/node-info.t
 t/pugs-objects.t
+t/references.t
 t/svk-config.yaml
 t/svk.t
 t/test.t

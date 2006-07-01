@@ -1,4 +1,4 @@
-#line 1 "inc/Spiffy.pm - /Users/ingy/local/lib/perl5/site_perl/5.8.6/Spiffy.pm"
+#line 1
 package Spiffy;
 use strict;
 use 5.006001;

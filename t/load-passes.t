@@ -3,6 +3,20 @@ use t::TestYAML tests => 8;
 run_load_passes();
 
 __DATA__
+
+=== Bug reported by Rich Morin
++++ SKIP
++++ yaml
+foo:                                                                          
+  -   >                                                                       
+    This is a test.                                                           
+
+=== Bug reported by audreyt
++++ SKIP
++++ yaml
+--- "\n\
+\r"
+
 ===
 +++ yaml
 ---

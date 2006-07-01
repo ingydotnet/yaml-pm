@@ -1,4 +1,4 @@
-#line 1 "inc/Test/Builder.pm - /Users/ingy/local/lib/perl5/5.8.6/Test/Builder.pm"
+#line 1
 package Test::Builder;
 
 use 5.004;

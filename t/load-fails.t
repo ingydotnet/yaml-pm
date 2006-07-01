@@ -11,6 +11,15 @@ run_like yaml => 'msg';
 __DATA__
 
 ===
++++ SKIP
+This test hangs YAML.pm
++++ msg
+YAML Error: Inconsistent indentation level
++++ yaml
+a: *
+
+
+===
 +++ msg
 YAML Error: Inconsistent indentation level
 +++ yaml

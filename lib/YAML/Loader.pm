@@ -250,7 +250,17 @@ sub _parse_explicit {
     my $self = shift;
     my ($node, $explicit) = @_;
     my ($type, $class);
-    if ($explicit =~ /^perl\/(undef|glob|regexp|code|ref)\:(\w(\w|\:\:)*)?$/) {
+    if ($explicit =~ /^\!perl\/(hash|array|scalar)\:(\w(\w|\:\:)*)?$/) {
+        ($type, $class) = (($1 || ''), ($2 || ''));
+        if (ref $node) {
+            return CORE::bless $node, $class;
+        }
+        else {
+            return CORE::bless \$node, $class;
+        }
+    }
+    if ($explicit =~
+        /^\!?perl\/(undef|glob|regexp|code|ref)\:(\w(\w|\:\:)*)?$/) {
         ($type, $class) = (($1 || ''), ($2 || ''));
         my $type_class = "YAML::Type::$type";
         no strict 'refs';
@@ -261,6 +271,7 @@ sub _parse_explicit {
             $self->die('YAML_LOAD_ERR_NO_CONVERT', 'XXX', $explicit);
         }
     }
+    # This !perl/@Foo and !perl/$Foo are deprecated but still parsed
     elsif ($YAML::TagClass->{$explicit} ||
            $explicit =~ m{^perl/(\@|\$)?([a-zA-Z](\w|::)+)$}
           ) {

@@ -1,4 +1,4 @@
-#line 1 "inc/Test/More.pm - /Users/ingy/local/lib/perl5/5.8.6/Test/More.pm"
+#line 1
 package Test::More;
 
 use 5.004;

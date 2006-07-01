@@ -1,4 +1,4 @@
-#line 1 "inc/Test/Base/Filter.pm - /Users/ingy/local/lib/perl5/site_perl/5.8.6/Test/Base/Filter.pm"
+#line 1
 #. TODO:
 #.
 

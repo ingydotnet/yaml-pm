@@ -14,5 +14,5 @@ like $yaml_from_file, qr{^---\ncheckout: !perl/Data::Hierarchy\n},
 
 my $yaml_from_node = Dump($node);
 
-is $yaml_from_node, $yaml_from_file,
+is Dump(Load($yaml_from_node)), Dump(Load($yaml_from_file)),
     "svk data roundtrips!";;

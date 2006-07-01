@@ -33,7 +33,7 @@ $YAML::DumpCode = 1;
 package main;
 sub { print "Hello, world\n"; }
 +++ yaml
---- !perl/code: |
+--- !!perl/code: |
 {
     use warnings;
     use strict 'refs';
@@ -43,13 +43,13 @@ sub { print "Hello, world\n"; }
 === Scalar Reference
 +++ perl: \ 'Goodbye'
 +++ yaml
---- !perl/ref:
+--- !!perl/ref:
 =: Goodbye
 
 === Regular Expression
 +++ perl: qr{perfect match};
 +++ yaml
---- !perl/regexp:
+--- !!perl/regexp:
 REGEXP: perfect match
 
 === Scalar Glob
@@ -57,7 +57,7 @@ REGEXP: perfect match
 $::var = 'Hola';
 *::var;
 +++ yaml
---- !perl/glob:
+--- !!perl/glob:
 PACKAGE: main
 NAME: var
 SCALAR: Hola
@@ -67,7 +67,7 @@ SCALAR: Hola
 @::var2 = (qw(xxx yyy zzz));
 *::var2;
 +++ yaml
---- !perl/glob:
+--- !!perl/glob:
 PACKAGE: main
 NAME: var2
 ARRAY:
@@ -82,10 +82,10 @@ package main;
 sub main::var3 { print "Hello, world\n"; }
 *var3;
 +++ yaml
---- !perl/glob:
+--- !!perl/glob:
 PACKAGE: main
 NAME: var3
-CODE: !perl/code: |
+CODE: !!perl/code: |
   {
       use warnings;
       use strict 'refs';
@@ -95,24 +95,24 @@ CODE: !perl/code: |
 === Blessed Empty Hash
 +++ perl: bless {}, 'A::B::C';
 +++ yaml
---- !perl/A::B::C {}
+--- !!perl/hash:A::B::C {}
 
 === Blessed Populated Hash
 +++ perl: bless {qw(foo bar bar foo)}, 'A::B::C';
 +++ yaml
---- !perl/A::B::C
+--- !!perl/hash:A::B::C
 bar: foo
 foo: bar
 
 === Blessed Empty Array
 +++ perl: bless [], 'A::B::C';
 +++ yaml
---- !perl/@A::B::C []
+--- !!perl/array:A::B::C []
 
 === Blessed Populated Array
 +++ perl: bless [qw(foo bar bar foo)], 'A::B::C';
 +++ yaml
---- !perl/@A::B::C
+--- !!perl/array:A::B::C
 - foo
 - bar
 - bar
@@ -121,25 +121,25 @@ foo: bar
 === Blessed Empty String
 +++ perl: my $e = ''; bless \ $e, 'A::B::C';
 +++ yaml
---- !perl/$A::B::C ''
+--- !!perl/scalar:A::B::C ''
 
 === Blessed Populated String
 +++ perl: my $fbbf = 'foo bar bar foo'; bless \ $fbbf, 'A::B::C';
 +++ yaml
---- !perl/$A::B::C foo bar bar foo
+--- !!perl/scalar:A::B::C foo bar bar foo
 
 === Blessed Regular Expression
 +++ SKIP
 +++ perl: bless qr{perfect match}, 'A::B::C';
 +++ yaml
---- !perl/regexp:
+--- !!perl/regexp:
 REGEXP: perfect match
 
 === Blessed Glob
 +++ SKIP
 +++ perl: $::x = 42; bless \ *::x, 'A::B::C';
 +++ yaml
---- !perl/glob:A::B::C
+--- !!perl/glob:A::B::C
 PACKAGE: main
 NAME: x
 SCALAR: 42

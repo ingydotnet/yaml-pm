@@ -9,7 +9,7 @@ __DATA__
 +++ skip_unless_modules: FileHandle
 +++ perl: FileHandle->new( ">/tmp/$$" );
 +++ yaml
---- !perl/FileHandle
+--- !!perl/io:FileHandle
 - xxx
 
 === Ticket #105-B YAML doesn't serialize odd objects very well
@@ -17,7 +17,7 @@ __DATA__
 +++ no_round_trip
 +++ perl: URI->new( "http://localhost/" )
 +++ yaml
---- !perl/$URI::http http://localhost/
+--- !!perl/scalar:URI::http http://localhost/
 
 === Ticket #105-C YAML doesn't serialize odd objects very well
 +++ skip_unless_modules: URI
@@ -33,7 +33,7 @@ names:
 +++ skip_unless_modules: CGI
 +++ perl: CGI->new()
 +++ yaml
---- !perl/CGI
+--- !!perl/hash:CGI
 .charset: ISO-8859-1
 .fieldnames: {}
 .parameters: []
@@ -46,7 +46,7 @@ sub new { return bless ['one','two','three'], $_[0]; }
 package main;
 MyObj::Class->new();
 +++ yaml
---- !perl/@MyObj::Class
+--- !!perl/array:MyObj::Class
 - one
 - two
 - three
@@ -132,7 +132,7 @@ text: "Bla:\n\n- Foo\n- Bar\n"
 === Ticket #6139 0.35 can't deserialize blessed scalars
 +++ perl: my $x = "abc"; bless \ $x, "ABCD";
 +++ yaml
---- !perl/$ABCD abc
+--- !!perl/scalar:ABCD abc
 
 
 
@@ -146,14 +146,14 @@ Can't get this to work yet.
 
 
 
-=== Ticket #8795 !perl/code blocks are evaluated in package main
+=== Ticket #8795 !!perl/code: blocks are evaluated in package main
 +++ skip_this_for_now
 This test passes but not sure if this totally represents what was being
 reported. Check back later.
 +++ perl: $YAML::UseCode = 1; package Food; sub { 42; }
 +++ no_round_trip
 +++ yaml
---- perl/code: |
+--- !!perl/code: |
 sub {
     package Food;
     use warnings;
@@ -206,7 +206,7 @@ serializing yourself, but this doesn't work.
     $ perl -MYAML -we '
         $YAML::DumpCode = sub { return "dumped code $_[0]", "test" };
         print Dump(sub { "foo" });'
-    --- !perl/code: "{\n    'foo';\n}\n"
+    --- !!perl/code: "{\n    'foo';\n}\n"
     $ _
 
 YAML::Transfer::code::yaml_dump() doesn't look to have any code to

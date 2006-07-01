@@ -18,7 +18,7 @@ my $stringy_dump = <<'';
 --- Hello mate!
 
 my $object_dump = <<'';
---- !perl/Foo
+--- !!perl/hash:Foo
 Hello: mate!
 
 my $yaml;

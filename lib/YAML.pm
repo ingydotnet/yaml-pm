@@ -4,39 +4,12 @@ use YAML::Base;
 use base 'YAML::Base';
 use YAML::Node;         # XXX This is a temp fix for Module::Build
 use 5.006001;
-our $VERSION = '0.58';
+our $VERSION = '0.60';
 our @EXPORT = qw'Dump Load';
 our @EXPORT_OK = qw'freeze thaw DumpFile LoadFile Bless Blessed';
 
 # XXX This VALUE nonsense needs to go.
 use constant VALUE => "\x07YAML\x07VALUE\x07";
-
-# Global Options are an idea taken from Data::Dumper. Really they are just
-# sugar on top of real OO properties. They make the simple Dump/Load API
-# easy to configure.
-#
-# These options are no longer set by YAML.pm into globals. The action
-# modules will check the globals, set by the user.
-
-# New global options
-# our $SpecVersion = '1.0';
-# our $LoaderClass = '';
-# our $DumperClass = '';
-
-# Legacy global options
-# our $Indent         = 2;
-# our $UseHeader      = 1;
-# our $UseVersion     = 0;
-# our $SortKeys       = 1;
-# our $AnchorPrefix   = '';
-# our $UseCode        = 0;
-# our $DumpCode       = '';
-# our $LoadCode       = '';
-# our $UseBlock       = 0;
-# our $UseFold        = 0;
-# our $CompressSeries = 1;
-# our $UseAliases     = 1;
-# our $Stringify      = 0;
 
 # YAML Object Properties
 field dumper_class => 'YAML::Dumper';
@@ -69,23 +42,35 @@ sub Load {
 }
 
 sub DumpFile {
+    my $OUT;
     my $filename = shift;
-    local $/ = "\n"; # reset special to "sane"
-    my $mode = '>';
-    if ($filename =~ /^\s*(>{1,2})\s*(.*)$/) {
-        ($mode, $filename) = ($1, $2);
+    if (ref $filename) {
+        $OUT = $filename;
     }
-    open my $OUT, $mode, $filename
-      or YAML::Base->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, $!);
+    else {
+        my $mode = '>';
+        if ($filename =~ /^\s*(>{1,2})\s*(.*)$/) {
+            ($mode, $filename) = ($1, $2);
+        }
+        open $OUT, $mode, $filename
+          or YAML::Base->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, $!);
+    }  
+    local $/ = "\n"; # reset special to "sane"
     print $OUT Dump(@_);
 }
 
 sub LoadFile {
+    my $IN;
     my $filename = shift;
-    open my $IN, $filename
-      or YAML::Base->die('YAML_LOAD_ERR_FILE_INPUT', $filename, $!);
+    if (ref $filename) {
+        $IN = $filename;
+    }
+    else {
+        open $IN, $filename
+          or YAML::Base->die('YAML_LOAD_ERR_FILE_INPUT', $filename, $!);
+    }
     return Load(do { local $/; <$IN> });
-}   
+}
 
 sub init_action_object {
     my $self = shift;

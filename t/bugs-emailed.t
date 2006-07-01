@@ -49,7 +49,7 @@ key1: '|value'
 +++ subject: Argument "E5" isn't numeric in multiplication (*)
 +++ function: load_passes
 +++ yaml
---- #YAML:1.0 !perl/Blam::Game                                                  
+--- #YAML:1.0 !!perl/Blam::Game                                                  
 board:                                                                          
   E5: R1                                                                        
 history:                                                                        
@@ -154,7 +154,7 @@ fontsize_banner: '16px' # title
 === Date: Mon, 07 Nov 2005 15:49:07
 +++ perl: \ '|something'
 +++ yaml
---- !perl/ref:
+--- !!perl/ref:
 =: '|something'
 
 

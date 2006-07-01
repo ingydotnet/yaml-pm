@@ -4,7 +4,6 @@ filters {
     perl => [qw'eval yaml_dump'],
 };
 
-no_diff;
 run_is;
 
 __DATA__

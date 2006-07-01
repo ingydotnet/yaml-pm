@@ -12,7 +12,7 @@ local $YAML::DumpCode = 1;
 package main;
 return sub { 'Something at least 30 chars' };
 +++ yaml
---- !perl/code: |
+--- !!perl/code: |
 {
     use warnings;
     use strict 'refs';
@@ -28,7 +28,7 @@ my $joe_random_global = sub { 'Something at least 30 chars' };
 [$joe_random_global, $joe_random_global, $joe_random_global];
 +++ yaml
 ---
-- &1 !perl/code: |
+- &1 !!perl/code: |
   {
       use warnings;
       use strict 'refs';
@@ -43,7 +43,7 @@ local $YAML::DumpCode = 0;
 +++ perl
 sub { 'Something at least 30 chars' }
 +++ yaml
---- !perl/code: '{ "DUMMY" }'
+--- !!perl/code: '{ "DUMMY" }'
 
 === blessed code ref
 +++ config
@@ -53,7 +53,7 @@ package main;
 bless sub { 'Something at least 30 chars' }, "Foo::Bar";
 +++ no_round_trip
 +++ yaml
---- !perl/code:Foo::Bar |
+--- !!perl/code:Foo::Bar |
 {
     use warnings;
     use strict 'refs';

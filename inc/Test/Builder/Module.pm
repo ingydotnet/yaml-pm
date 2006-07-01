@@ -1,4 +1,4 @@
-#line 1 "inc/Test/Builder/Module.pm - /Users/ingy/local/lib/perl5/5.8.6/Test/Builder/Module.pm"
+#line 1
 package Test::Builder::Module;
 
 use Test::Builder;
@@ -6,7 +6,7 @@ use Test::Builder;
 require Exporter;
 @ISA = qw(Exporter);
 
-$VERSION = '0.03';
+$VERSION = '0.02';
 
 use strict;
 

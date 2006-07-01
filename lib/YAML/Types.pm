@@ -7,19 +7,25 @@ use YAML::Node;
 # but at least they work for now.
 #-------------------------------------------------------------------------------
 package YAML::Type::blessed;
-my %sigil = (HASH => '', ARRAY => '@', SCALAR => '$');
+use YAML::Base; # XXX
 sub yaml_dump {
     my $self = shift;
     my ($value) = @_;
     my ($class, $type) = YAML::Base->node_info($value);
     no strict 'refs';
+    my $kind = lc($type) . ':';
     my $tag = ${$class . '::ClassTag'} ||
-              "perl/$sigil{$type}$class";
-    if ($type eq 'SCALAR') {
+              "!perl/$kind$class";
+    if ($type eq 'REF') {
+        YAML::Node->new(
+            {(&YAML::VALUE, ${$_[0]})}, $tag
+        );
+    }
+    elsif ($type eq 'SCALAR') {
         $_[1] = $$value;
-        YAML::Node->new($_[1], $tag)
+        YAML::Node->new($_[1], $tag);
     } else {
-        YAML::Node->new($value, $tag)
+        YAML::Node->new($value, $tag);
     }
 }
 
@@ -37,7 +43,7 @@ sub yaml_load {
 package YAML::Type::glob;
 sub yaml_dump {
     my $self = shift;
-    my $ynode = YAML::Node->new({}, 'perl/glob:');
+    my $ynode = YAML::Node->new({}, '!perl/glob:');
     for my $type (qw(PACKAGE NAME SCALAR ARRAY HASH CODE IO)) {
         my $value = *{$_[0]}{$type};
         $value = $$value if $type eq 'SCALAR';
@@ -111,7 +117,7 @@ sub yaml_dump {
     my ($dumpflag, $value) = @_;
     my ($class, $type) = YAML::Base->node_info($value);
     $class ||= '';
-    my $tag = "perl/code:$class";
+    my $tag = "!perl/code:$class";
     if (not $dumpflag) {
         $code = $default;
     }
@@ -159,7 +165,7 @@ sub yaml_load {
 package YAML::Type::ref;
 sub yaml_dump {
     my $self = shift;
-    YAML::Node->new({(&YAML::VALUE, ${$_[0]})}, 'perl/ref:')
+    YAML::Node->new({(&YAML::VALUE, ${$_[0]})}, '!perl/ref:')
 }
 
 sub yaml_load {
@@ -184,7 +190,7 @@ sub yaml_dump {
     else {
         $dumper->die('YAML_DUMP_ERR_BAD_REGEXP', $node);
     }
-    my $tag = 'perl/regexp:';
+    my $tag = '!perl/regexp:';
     $tag .= $class if $class;
     my $ynode = YAML::Node->new({}, $tag);
     $ynode->{REGEXP} = $regexp; 

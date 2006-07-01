@@ -1,4 +1,13 @@
 ---
+version: 0.60
+date:    Fri Jun 30 21:55:55 CDT 2006
+changes:
+- Changed object tag format in non backwards compatible way
+- Removed support for folded scalar emission
+- Added new tests
+- Sync with YAML::Syck
+
+---
 version: 0.58
 date:    Tue Feb 14 12:42:34 PST 2006
 changes:

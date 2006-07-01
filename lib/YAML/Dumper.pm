@@ -14,7 +14,6 @@ use constant VALUE => "\x07YAML\x07VALUE\x07";
 
 # Common YAML character sets
 my $ESCAPE_CHAR = '[\\x00-\\x08\\x0b-\\x0d\\x0e-\\x1f]';
-my $FOLD_CHAR = '>';
 my $LIT_CHAR = '|';    
 
 #==============================================================================
@@ -437,18 +436,12 @@ sub _emit_str {
             $self->_emit_block($LIT_CHAR, $_[0]),
             $self->_emit($eb), last
               if $self->use_block;
-            $self->_emit($sb),
-            $self->_emit_block($FOLD_CHAR, $_[0]),
-            $self->_emit($eb), last
+              Carp::cluck "[YAML] \$UseFold is no longer supported"
               if $self->use_fold;
             $self->_emit($sf),
             $self->_emit_double($_[0]),
             $self->_emit($ef), last
               if length $_[0] <= 30;
-            $self->_emit($sb),
-            $self->_emit_block($FOLD_CHAR, $_[0]),
-            $self->_emit($eb), last
-              if $_[0] =~ /^\S[^\n]{76}/m;
             $self->_emit($sf),
             $self->_emit_double($_[0]),
             $self->_emit($ef), last
@@ -490,7 +483,6 @@ sub is_valid_plain {
     return 1;
 }
 
-# A nested scalar is either block or folded 
 sub _emit_block {
     my $self = shift;
     my ($indicator, $value) = @_;
@@ -500,10 +492,6 @@ sub _emit_block {
     $value = '~' if not defined $value;
     $self->{stream} .= $chomp;
     $self->{stream} .= $self->indent_width if $value =~ /^\s/;
-    if ($indicator eq $FOLD_CHAR) {
-        $value = $self->fold($value);
-        chop $value unless $chomp eq '+';
-    }
     $self->{stream} .= $self->indent($value);
 }
 
@@ -542,28 +530,6 @@ sub indent {
     $text =~ s/^/$indent/gm;
     $text = "\n$text";
     return $text;
-}
-
-# Fold a paragraph to fit within a certain columnar restraint.
-sub fold {
-    my $self = shift;
-    my ($text) = @_;
-    my $folded = '';
-    $text =~ s/^(\S.*)\n(?=\S)/$1\n\n/gm;
-    while (length $text > 0) {
-        if ($text =~ s/^([^\n]{0,76})(\n|\Z)//) {
-            $folded .= $1;
-        }
-        elsif ($text =~ s/^(.{0,76})\s//) { 
-            $folded .= $1;
-        }
-        else {
-            $self->die("bad news") unless $text =~ s/(.*?)(\s|\Z)//;
-            $folded .= $1;
-        }
-        $folded .= "\n";
-    }
-    return $folded;
 }
 
 # Escapes for unprintable characters
