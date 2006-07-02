@@ -30,8 +30,14 @@ names:
   - duncan
 
 === Ticket #105-D YAML doesn't serialize odd objects very well
-+++ skip_unless_modules: CGI
-+++ perl: CGI->new()
++++ perl
+# CGI->new()
+bless {
+    '.charset' => 'ISO-8859-1',
+    '.fieldnames' => {},
+    '.parameters' => [],
+    escape => 1,
+}, 'CGI';
 +++ yaml
 --- !!perl/hash:CGI
 .charset: ISO-8859-1

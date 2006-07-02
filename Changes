@@ -1,4 +1,10 @@
 ---
+version: 0.61
+date:    Sun Jul  2 15:25:08 CDT 2006
+changes:
+- New CGI.pm made test fail.
+
+---
 version: 0.60
 date:    Fri Jun 30 21:55:55 CDT 2006
 changes:
