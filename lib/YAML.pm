@@ -4,7 +4,7 @@ use YAML::Base;
 use base 'YAML::Base';
 use YAML::Node;         # XXX This is a temp fix for Module::Build
 use 5.006001;
-our $VERSION = '0.61';
+our $VERSION = '0.62';
 our @EXPORT = qw'Dump Load';
 our @EXPORT_OK = qw'freeze thaw DumpFile LoadFile Bless Blessed';
 
@@ -44,7 +44,7 @@ sub Load {
 sub DumpFile {
     my $OUT;
     my $filename = shift;
-    if (ref $filename) {
+    if (ref $filename eq 'GLOB') {
         $OUT = $filename;
     }
     else {
@@ -62,7 +62,7 @@ sub DumpFile {
 sub LoadFile {
     my $IN;
     my $filename = shift;
-    if (ref $filename) {
+    if (ref $filename eq 'GLOB') {
         $IN = $filename;
     }
     else {

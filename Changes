@@ -1,4 +1,10 @@
 ---
+version: 0.62
+date:    Mon Jul  3 15:41:20 PDT 2006
+changes:
+- Patch from rgs for Catalyst users
+
+---
 version: 0.61
 date:    Sun Jul  2 15:25:08 CDT 2006
 changes:

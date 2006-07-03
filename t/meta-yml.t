@@ -21,7 +21,7 @@ __DATA__
                 },
   'generated_by' => 'Module::Install version 0.61',
   'distribution_type' => 'module',
-  'version' => '0.61',
+  'version' => '0.62',
   'name' => 'YAML',
   'author' => 'Ingy döt Net <ingy@cpan.org>',
   'license' => 'perl',
