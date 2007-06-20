@@ -18,13 +18,13 @@ __DATA__
 
 ===
 +++ perl
-{name => 'Brian Ingerson',
+{name => 'Ingy dot Net',
  rank => 'JAPH',
  'serial number' => '8675309',
 };
 +++ yaml
 ---
-name: Brian Ingerson
+name: Ingy dot Net
 rank: JAPH
 serial number: 8675309
 
@@ -187,7 +187,7 @@ no strict;
 package main;
 \*joe_random_global
 +++ yaml
---- !!perl/ref:
+--- !!perl/ref
 =: !!perl/glob:
   PACKAGE: main
   NAME: joe_random_global
@@ -272,13 +272,13 @@ my $joe_random_global = \\\\\\\'42';
 ]
 +++ yaml 
 ---
-- &1 !!perl/ref:
-  =: !!perl/ref:
-    =: !!perl/ref:
-      =: &2 !!perl/ref:
-        =: !!perl/ref:
-          =: !!perl/ref:
-            =: &3 !!perl/ref:
+- &1 !!perl/ref
+  =: !!perl/ref
+    =: !!perl/ref
+      =: &2 !!perl/ref
+        =: !!perl/ref
+          =: !!perl/ref
+            =: &3 !!perl/ref
               =: 42
 - *2
 - *1
@@ -311,9 +311,7 @@ sake) this test doesn't roundtrip even though the values are equivalent.
 [qr{bozo$}i]
 +++ yaml
 ---
-- !!perl/regexp:
-  REGEXP: bozo$
-  MODIFIERS: i
+- !!perl/regexp (?i-xsm:bozo$)
 
 ===
 +++ perl
@@ -361,26 +359,26 @@ $a = \\\\\\\\"foo"; $b = $$$$$a;
 ([$a, $b], [$b, $a])
 +++ yaml
 ---
-- !!perl/ref:
-  =: !!perl/ref:
-    =: !!perl/ref:
-      =: !!perl/ref:
-        =: &1 !!perl/ref:
-          =: !!perl/ref:
-            =: !!perl/ref:
-              =: !!perl/ref:
+- !!perl/ref
+  =: !!perl/ref
+    =: !!perl/ref
+      =: !!perl/ref
+        =: &1 !!perl/ref
+          =: !!perl/ref
+            =: !!perl/ref
+              =: !!perl/ref
                 =: foo
 - *1
 ---
-- &1 !!perl/ref:
-  =: !!perl/ref:
-    =: !!perl/ref:
-      =: !!perl/ref:
+- &1 !!perl/ref
+  =: !!perl/ref
+    =: !!perl/ref
+      =: !!perl/ref
         =: foo
-- !!perl/ref:
-  =: !!perl/ref:
-    =: !!perl/ref:
-      =: !!perl/ref:
+- !!perl/ref
+  =: !!perl/ref
+    =: !!perl/ref
+      =: !!perl/ref
         =: *1
 
 ===

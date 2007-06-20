@@ -8,22 +8,22 @@ __DATA__
 === A scalar ref
 +++ perl: \ 42
 +++ yaml
---- !!perl/ref:
+--- !!perl/ref
 =: 42
 
 === A ref to a scalar ref
 +++ perl: \\ "yellow"
 +++ yaml
---- !!perl/ref:
-=: !!perl/ref:
+--- !!perl/ref
+=: !!perl/ref
   =: yellow
 
 === A ref to a ref to a scalar ref
 +++ perl: \\\ 123
 +++ yaml
---- !!perl/ref:
-=: !!perl/ref:
-  =: !!perl/ref:
+--- !!perl/ref
+=: !!perl/ref
+  =: !!perl/ref
     =: 123
 
 === A blessed container reference

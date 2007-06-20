@@ -1,4 +1,4 @@
-use t::TestYAML tests => 16;
+use t::TestYAML tests => 28;
 
 run {
     my $block = shift;
@@ -21,8 +21,9 @@ run {
         \@expect,
         $block->description,
     ) or do {
-        diag("Wanted: ".Dumper(\@expect));
-        diag("Got: ".Dumper(\@result));
+        require Data::Dumper;
+        diag("Wanted: ".Data::Dumper::Dumper(\@expect));
+        diag("Got: ".Data::Dumper::Dumper(\@result));
     }
 };
 
@@ -326,3 +327,72 @@ undef
 - ''
 +++ perl
 [undef,undef,'']
+=== !!perl/array
++++ yaml
+--- !!perl/array
+- 1
++++ perl
+[ 1 ]
+=== !!perl/array:
++++ yaml
+--- !!perl/array:
+- 1
++++ perl
+[ 1 ]
+=== !!perl/array:moose
++++ yaml
+--- !!perl/array:moose
+- 1
++++ perl
+bless([ 1 ], "moose")
+=== foo
++++ yaml
+--- !!perl/hash
+foo: bar
++++ perl
+{ foo => "bar" }
+=== foo
++++ yaml
+--- !!perl/hash:
+foo: bar
++++ perl
+{ foo => "bar" }
+=== foo
++++ yaml
+--- !!perl/array:moose
+foo: bar
++++ perl
+bless({ foo => "bar" }, "moose")
+=== foo
++++ yaml
+--- !!perl/ref
+=: 1
++++ perl
+\1
+=== foo
++++ yaml
+--- !!perl/ref:
+=: 1
++++ perl
+\1
+=== foo
++++ yaml
+--- !!perl/ref:moose
+=: 1
++++ perl
+bless(do { my $x = 1; \$x}, "moose")
+=== foo
++++ yaml
+--- !!perl/scalar 1
++++ perl
+1
+=== foo
++++ yaml
+--- !!perl/scalar: 1
++++ perl
+1
+=== foo
++++ yaml
+--- !!perl/scalar:moose 1
++++ perl
+bless(do { my $x = 1; \$x}, "moose")

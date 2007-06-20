@@ -1,7 +1,7 @@
 abstract: YAML Ain't Markup Language (tm)
 author: "Ingy d\xC3\xB6t Net <ingy@cpan.org>"
 distribution_type: module
-generated_by: Module::Install version 0.61
+generated_by: Module::Install version 0.64
 license: perl
 name: YAML
 no_index: 
@@ -10,4 +10,4 @@ no_index:
     - t
 requires: 
   perl: 5.6.1
-version: 0.62
+version: 0.63

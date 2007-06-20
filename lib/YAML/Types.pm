@@ -116,8 +116,8 @@ sub yaml_dump {
     my $code;
     my ($dumpflag, $value) = @_;
     my ($class, $type) = YAML::Base->node_info($value);
-    $class ||= '';
-    my $tag = "!perl/code:$class";
+    my $tag = "!perl/code";
+    $tag .= ":$class" if defined $class;
     if (not $dumpflag) {
         $code = $default;
     }
@@ -165,7 +165,7 @@ sub yaml_load {
 package YAML::Type::ref;
 sub yaml_dump {
     my $self = shift;
-    YAML::Node->new({(&YAML::VALUE, ${$_[0]})}, '!perl/ref:')
+    YAML::Node->new({(&YAML::VALUE, ${$_[0]})}, '!perl/ref')
 }
 
 sub yaml_load {
@@ -180,49 +180,19 @@ sub yaml_load {
 package YAML::Type::regexp;
 # XXX Be sure to handle blessed regexps (if possible)
 sub yaml_dump {
-    my $self = shift;
-    my ($node, $class, $dumper) = @_;
-    my ($regexp, $modifiers);
-    if ("$node" =~ /^\(\?(\w*)(?:\-\w+)?\:(.*)\)$/) {
-        $regexp = $2;
-        $modifiers = $1 || '';
-    }
-    else {
-        $dumper->die('YAML_DUMP_ERR_BAD_REGEXP', $node);
-    }
-    my $tag = '!perl/regexp:';
-    $tag .= $class if $class;
-    my $ynode = YAML::Node->new({}, $tag);
-    $ynode->{REGEXP} = $regexp; 
-    $ynode->{MODIFIERS} = $modifiers if $modifiers; 
-    return $ynode;
+    die "YAML::Type::regexp::yaml_dump not currently implemented";
 }
 
 sub yaml_load {
     my $self = shift;
     my ($node, $class, $loader) = @_;
-    my ($regexp, $modifiers);
-    if (defined $node->{REGEXP}) {
-        $regexp = $node->{REGEXP};
-        delete $node->{REGEXP};
-    }
-    else {
-        $loader->warn('YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP');
-        return undef;
-    }
-    if (defined $node->{MODIFIERS}) {
-        $modifiers = $node->{MODIFIERS};
-        delete $node->{MODIFIERS};
-    }
-    else {
-        $modifiers = '';
-    }
-    for my $elem (sort keys %$node) {
-        $loader->warn('YAML_LOAD_WARN_BAD_REGEXP_ELEM', $elem);
-    }
-    my $qr = $regexp;
-    $qr = "(?$modifiers:$qr)";
-    return qr{$qr};
+    return qr{$node} unless $node =~ /^\(\?([\-xism]*):(.*)\)\z/s;
+    my ($flags, $re) = ($1, $2);
+    return qr// unless $loader->load_code;
+    $flags =~ s/\-.*//;
+    my $qr = eval "qr/$re/$flags";
+    bless $qr, $class if $class;
+    return $qr;
 }
 
 1;
@@ -231,7 +201,7 @@ __END__
 
 =head1 NAME
 
-YAML::Transfer - Marshall Perl internal data types to/from YAML
+YAML::Types - Marshall Perl internal data types to/from YAML
 
 =head1 SYNOPSIS
 

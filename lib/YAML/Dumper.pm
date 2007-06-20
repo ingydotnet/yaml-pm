@@ -80,8 +80,6 @@ sub _prewalk {
 
     # Handle regexps
     if (ref($_[0]) eq 'Regexp') {  
-        $self->transferred->{$node_id} =
-          YAML::Type::regexp->yaml_dump($_[0], $class, $self);
         return;
     }
 
@@ -209,7 +207,12 @@ sub _emit_node {
     my $self = shift;
     my ($type, $node_id);
     my $ref = ref($_[0]);
-    if ($ref and $ref ne 'Regexp') {
+    if ($ref) {
+        if ($ref eq 'Regexp') {
+            $self->_emit(' !!perl/regexp');
+            $self->_emit_str("$_[0]");
+            return;
+        }
         (undef, $type, $node_id) = $self->node_info($_[0], $self->stringify);
     }
     else {

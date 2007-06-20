@@ -1,4 +1,4 @@
-use t::TestYAML tests => 37;
+use t::TestYAML tests => 35;
 $^W = 1;
 
 use YAML::Error;
@@ -223,7 +223,7 @@ Actually this should load into a ynode...
 +++ error: YAML_LOAD_ERR_NO_DEFAULT_VALUE
 +++ yaml
 ---
-- !perl/ref:
+- !perl/ref
   foo: bar
 #---
 #error: YAML_LOAD_ERR_NON_EMPTY_STRING
@@ -327,20 +327,20 @@ foo: bar
 #    ---
 #    foo: *bar
 
-=== YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP 
-+++ error: YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP 
-+++ yaml
----
-- !perl/regexp:
-  foo: bar
-
-=== YAML_LOAD_WARN_BAD_REGEXP_ELEM 
-+++ error: YAML_LOAD_WARN_BAD_REGEXP_ELEM 
-+++ yaml
----
-- !perl/regexp:
-  REGEXP: foo
-  foo: bar
+# === YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP 
+# +++ error: YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP 
+# +++ yaml
+# ---
+# - !perl/regexp:
+#   foo: bar
+# 
+# === YAML_LOAD_WARN_BAD_REGEXP_ELEM 
+# +++ error: YAML_LOAD_WARN_BAD_REGEXP_ELEM 
+# +++ yaml
+# ---
+# - !perl/regexp:
+#   REGEXP: foo
+#   foo: bar
 
 === YAML_LOAD_WARN_GLOB_NAME 
 +++ error: YAML_LOAD_WARN_GLOB_NAME 
@@ -356,7 +356,7 @@ foo: bar
 #error: YAML_LOAD_WARN_CODE_DEPARSE 
 #load: |
 #    ---
-#    - !perl/code: |
+#    - !perl/code |
 #      sub { "foo" }
 #---
 #error: xYAML_EMIT_ERR_BAD_LEVEL 

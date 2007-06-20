@@ -250,17 +250,31 @@ sub _parse_explicit {
     my $self = shift;
     my ($node, $explicit) = @_;
     my ($type, $class);
-    if ($explicit =~ /^\!perl\/(hash|array|scalar)\:(\w(\w|\:\:)*)?$/) {
+    if ($explicit =~ /^\!?perl\/(hash|array|ref|scalar)(?:\:(\w(\w|\:\:)*)?)?$/) {
         ($type, $class) = (($1 || ''), ($2 || ''));
-        if (ref $node) {
-            return CORE::bless $node, $class;
+
+        # FIXME # die unless uc($type) eq ref($node) ?
+
+        if ( $type eq "ref" ) {
+            $self->die('YAML_LOAD_ERR_NO_DEFAULT_VALUE', 'XXX', $explicit)
+            unless exists $node->{VALUE()} and scalar(keys %$node) == 1;
+
+            my $value = $node->{VALUE()};
+            $node = \$value;
         }
-        else {
-            return CORE::bless \$node, $class;
+        
+        if ( $type eq "scalar" and length($class) and !ref($node) ) {
+            my $value = $node;
+            $node = \$value;
         }
+
+        if ( length($class) ) {
+            CORE::bless($node, $class);
+        }
+
+        return $node;
     }
-    if ($explicit =~
-        /^\!?perl\/(undef|glob|regexp|code|ref)\:(\w(\w|\:\:)*)?$/) {
+    if ($explicit =~ m{^!?perl/(glob|regexp|code)(?:\:(\w(\w|\:\:)*)?)?$}) {
         ($type, $class) = (($1 || ''), ($2 || ''));
         my $type_class = "YAML::Type::$type";
         no strict 'refs';

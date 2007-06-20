@@ -1,4 +1,4 @@
-use t::TestYAML tests => 15;
+use t::TestYAML tests => 16;
 
 filters { perl => ['eval', 'yaml_dump'] };
 
@@ -33,7 +33,7 @@ $YAML::DumpCode = 1;
 package main;
 sub { print "Hello, world\n"; }
 +++ yaml
---- !!perl/code: |
+--- !!perl/code |
 {
     use warnings;
     use strict 'refs';
@@ -43,14 +43,20 @@ sub { print "Hello, world\n"; }
 === Scalar Reference
 +++ perl: \ 'Goodbye'
 +++ yaml
---- !!perl/ref:
+--- !!perl/ref
 =: Goodbye
 
 === Regular Expression
 +++ perl: qr{perfect match};
 +++ yaml
---- !!perl/regexp:
-REGEXP: perfect match
+--- !!perl/regexp (?-xism:perfect match)
+
+=== Regular Expression with newline
++++ perl
+qr{perfect
+match}x;
++++ yaml
+--- !!perl/regexp "(?x-ism:perfect\nmatch)"
 
 === Scalar Glob
 +++ perl
@@ -85,7 +91,7 @@ sub main::var3 { print "Hello, world\n"; }
 --- !!perl/glob:
 PACKAGE: main
 NAME: var3
-CODE: !!perl/code: |
+CODE: !!perl/code |
   {
       use warnings;
       use strict 'refs';
@@ -132,8 +138,7 @@ foo: bar
 +++ SKIP
 +++ perl: bless qr{perfect match}, 'A::B::C';
 +++ yaml
---- !!perl/regexp:
-REGEXP: perfect match
+--- !!perl/regexp:A::B::C perfect match
 
 === Blessed Glob
 +++ SKIP

@@ -60,11 +60,13 @@ t/load-slides.t
 t/load-spec.t
 t/load-tests.t
 t/load-works.t
+t/long-quoted-value.yaml
 t/marshall.t
 t/meta-yml.t
 t/node-info.t
 t/pugs-objects.t
 t/references.t
+t/regexp.t
 t/svk-config.yaml
 t/svk.t
 t/test.t

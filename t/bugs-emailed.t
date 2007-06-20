@@ -154,7 +154,7 @@ fontsize_banner: '16px' # title
 === Date: Mon, 07 Nov 2005 15:49:07
 +++ perl: \ '|something'
 +++ yaml
---- !!perl/ref:
+--- !!perl/ref
 =: '|something'
 
 

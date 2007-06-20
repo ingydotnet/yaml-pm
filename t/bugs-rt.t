@@ -152,14 +152,14 @@ Can't get this to work yet.
 
 
 
-=== Ticket #8795 !!perl/code: blocks are evaluated in package main
+=== Ticket #8795 !!perl/code blocks are evaluated in package main
 +++ skip_this_for_now
 This test passes but not sure if this totally represents what was being
 reported. Check back later.
 +++ perl: $YAML::UseCode = 1; package Food; sub { 42; }
 +++ no_round_trip
 +++ yaml
---- !!perl/code: |
+--- !!perl/code |
 sub {
     package Food;
     use warnings;
@@ -212,7 +212,7 @@ serializing yourself, but this doesn't work.
     $ perl -MYAML -we '
         $YAML::DumpCode = sub { return "dumped code $_[0]", "test" };
         print Dump(sub { "foo" });'
-    --- !!perl/code: "{\n    'foo';\n}\n"
+    --- !!perl/code "{\n    'foo';\n}\n"
     $ _
 
 YAML::Transfer::code::yaml_dump() doesn't look to have any code to
