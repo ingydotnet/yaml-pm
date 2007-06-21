@@ -1,4 +1,10 @@
 ---
+version: 0.64
+date:    Thu Jun 21 14:31:20 PDT 2007
+changes:
+- Better support for loading regexps. audreyt++
+
+---
 version: 0.63
 date:    Wed Jun 20 16:03:22 PDT 2007
 changes:

@@ -185,13 +185,28 @@ sub yaml_dump {
 
 sub yaml_load {
     my $self = shift;
-    my ($node, $class, $loader) = @_;
+    my ($node, $class) = @_;
     return qr{$node} unless $node =~ /^\(\?([\-xism]*):(.*)\)\z/s;
     my ($flags, $re) = ($1, $2);
-    return qr// unless $loader->load_code;
-    $flags =~ s/\-.*//;
-    my $qr = eval "qr/$re/$flags";
-    bless $qr, $class if $class;
+    my $qr = 
+        $flags =~/-xism/ ? qr{$re} :
+        $flags =~/x-ism/ ? qr{$re}x :
+        $flags =~/i-xsm/ ? qr{$re}i :
+        $flags =~/s-xim/ ? qr{$re}s :
+        $flags =~/m-xis/ ? qr{$re}m :
+        $flags =~/ix-sm/ ? qr{$re}ix :
+        $flags =~/sx-im/ ? qr{$re}sx :
+        $flags =~/mx-is/ ? qr{$re}mx :
+        $flags =~/si-xm/ ? qr{$re}si :
+        $flags =~/mi-xs/ ? qr{$re}mi :
+        $flags =~/ms-xi/ ? qr{$re}sm :
+        $flags =~/six-m/ ? qr{$re}six :
+        $flags =~/mix-s/ ? qr{$re}mix :
+        $flags =~/msx-i/ ? qr{$re}msx :
+        $flags =~/msi-x/ ? qr{$re}msi :
+        $flags =~/msix/ ? qr{$re}msix :
+        qr{$re};
+    bless $qr, $class if length $class;
     return $qr;
 }
 
