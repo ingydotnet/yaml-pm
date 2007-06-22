@@ -183,29 +183,32 @@ sub yaml_dump {
     die "YAML::Type::regexp::yaml_dump not currently implemented";
 }
 
+use constant _QR_TYPES => {
+    '' => sub { qr{$_[0]} },
+    x => sub { qr{$_[0]}x },
+    i => sub { qr{$_[0]}i },
+    s => sub { qr{$_[0]}s },
+    m => sub { qr{$_[0]}m },
+    ix => sub { qr{$_[0]}ix },
+    sx => sub { qr{$_[0]}sx },
+    mx => sub { qr{$_[0]}mx },
+    si => sub { qr{$_[0]}si },
+    mi => sub { qr{$_[0]}mi },
+    ms => sub { qr{$_[0]}sm },
+    six => sub { qr{$_[0]}six },
+    mix => sub { qr{$_[0]}mix },
+    msx => sub { qr{$_[0]}msx },
+    msi => sub { qr{$_[0]}msi },
+    msix => sub { qr{$_[0]}msix },
+};
 sub yaml_load {
     my $self = shift;
     my ($node, $class) = @_;
     return qr{$node} unless $node =~ /^\(\?([\-xism]*):(.*)\)\z/s;
     my ($flags, $re) = ($1, $2);
-    my $qr = 
-        $flags =~/-xism/ ? qr{$re} :
-        $flags =~/x-ism/ ? qr{$re}x :
-        $flags =~/i-xsm/ ? qr{$re}i :
-        $flags =~/s-xim/ ? qr{$re}s :
-        $flags =~/m-xis/ ? qr{$re}m :
-        $flags =~/ix-sm/ ? qr{$re}ix :
-        $flags =~/sx-im/ ? qr{$re}sx :
-        $flags =~/mx-is/ ? qr{$re}mx :
-        $flags =~/si-xm/ ? qr{$re}si :
-        $flags =~/mi-xs/ ? qr{$re}mi :
-        $flags =~/ms-xi/ ? qr{$re}sm :
-        $flags =~/six-m/ ? qr{$re}six :
-        $flags =~/mix-s/ ? qr{$re}mix :
-        $flags =~/msx-i/ ? qr{$re}msx :
-        $flags =~/msi-x/ ? qr{$re}msi :
-        $flags =~/msix/ ? qr{$re}msix :
-        qr{$re};
+    $flags =~ s/-.*//;
+    my $sub = _QR_TYPES->{$flags} || sub { qr{$_[0]} };
+    my $qr = &$sub($re);
     bless $qr, $class if length $class;
     return $qr;
 }

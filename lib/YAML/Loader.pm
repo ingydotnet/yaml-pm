@@ -729,7 +729,7 @@ sub _parse_next_line {
 # Printable characters for escapes
 my %unescapes = 
   (
-   z => "\x00", a => "\x07", t => "\x09",
+   0 => "\x00", a => "\x07", t => "\x09",
    n => "\x0a", v => "\x0b", f => "\x0c",
    r => "\x0d", e => "\x1b", '\\' => '\\',
   );
@@ -738,7 +738,7 @@ my %unescapes =
 sub _unescape {
     my $self = shift;
     my ($node) = @_;
-    $node =~ s/\\([never\\fartz]|x([0-9a-fA-F]{2}))/
+    $node =~ s/\\([never\\fart0]|x([0-9a-fA-F]{2}))/
               (length($1)>1)?pack("H2",$2):$unescapes{$1}/gex;
     return $node;
 }

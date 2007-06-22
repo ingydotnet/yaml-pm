@@ -141,11 +141,11 @@ bless \$a, 'Foo::Bark';
 +++ yaml    
 --- !!perl/scalar:Foo::Bark ''
 
-===
+=== Strings with nulls
 +++ perl
 "foo\0bar"
 +++ yaml
---- "foo\zbar"
+--- "foo\0bar"
 
 ===
 +++ no_round_trip

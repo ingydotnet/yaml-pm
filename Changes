@@ -1,4 +1,11 @@
 ---
+version: 0.65
+date:    Thu Jun 21 17:37:32 PDT 2007
+changes:
+- \z is really \0
+- Speed up regexp loading. audreyt++
+
+---
 version: 0.64
 date:    Thu Jun 21 14:31:20 PDT 2007
 changes:
