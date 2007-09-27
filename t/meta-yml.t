@@ -19,7 +19,7 @@ __DATA__
                                    't'
                                  ]
                 },
-  'generated_by' => 'Module::Install version 0.64',
+  'generated_by' => 'Module::Install version 0.67',
   'distribution_type' => 'module',
   'version' => '0.63',
   'name' => 'YAML',
@@ -28,5 +28,9 @@ __DATA__
   'requires' => {
                   'perl' => '5.6.1'
                 },
-  'abstract' => 'YAML Ain\'t Markup Language (tm)'
+  'abstract' => 'YAML Ain\'t Markup Language (tm)',
+  'meta-spec' => {
+    'url' => 'http://module-build.sourceforge.net/META-spec-v1.3.html',
+    'version' => '1.3',
+  },
 };

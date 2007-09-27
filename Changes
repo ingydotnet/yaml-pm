@@ -1,4 +1,10 @@
 ---
+version: 0.66
+date:    Thu Sep 27 01:37:16 PDT 2007
+changes:
+- Blessed code refs with LoadCode=0 still get blessed. rafl++
+
+---
 version: 0.65
 date:    Thu Jun 21 17:37:32 PDT 2007
 changes:

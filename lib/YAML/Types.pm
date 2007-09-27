@@ -157,6 +157,7 @@ sub yaml_load {
         }
     }
     else {
+        return CORE::bless sub {}, $class if $class;
         return sub {};
     }
 }
