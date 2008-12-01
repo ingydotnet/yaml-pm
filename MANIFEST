@@ -1,5 +1,4 @@
 Changes
-COMPATIBILITY
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -7,7 +6,6 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
-inc/Module/Install/Scripts.pm
 inc/Module/Install/TestBase.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
@@ -19,6 +17,7 @@ inc/Test/Builder/Module.pm
 inc/Test/More.pm
 lib/Test/YAML.pm
 lib/YAML.pm
+lib/YAML/Any.pm
 lib/YAML/Base.pm
 lib/YAML/Dumper.pm
 lib/YAML/Dumper/Base.pm
@@ -71,4 +70,3 @@ t/svk-config.yaml
 t/svk.t
 t/test.t
 t/TestYAML.pm
-ysh

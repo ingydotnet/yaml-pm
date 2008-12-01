@@ -4,7 +4,7 @@ use YAML::Base;
 use base 'YAML::Base';
 use YAML::Node;         # XXX This is a temp fix for Module::Build
 use 5.006001;
-our $VERSION = '0.66';
+our $VERSION = '0.67';
 our @EXPORT = qw'Dump Load';
 our @EXPORT_OK = qw'freeze thaw DumpFile LoadFile Bless Blessed';
 
@@ -99,9 +99,31 @@ sub global_object { $global }
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 YAML - YAML Ain't Markup Language (tm)
+
+=head1 NOTE
+
+This module has been released to CPAN as YAML::Old, and soon YAML.pm
+will be changed to just be a frontend interface module for all the
+various Perl YAML implementation modules, including YAML::Old.
+
+If you want robust and fast YAML processing using the normal Dump/Load
+API, please consider switching to YAML::XS. It is by far the best Perl
+module for YAML at this time. It requires that you have a C compiler,
+since it is written in C.
+
+If you really need to use this version of YAML.pm it will always be
+available as YAML::Old.
+
+If you don't care which YAML module use, as long as it's the best one
+installed on your system, use YAML::Any.
+
+The rest of this documentation is left unchanged, until YAML.pm is
+switched over to the new UI-only version.
 
 =head1 SYNOPSIS
 
@@ -776,9 +798,9 @@ have added help along the way.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, 2006. Ingy döt Net. All rights reserved.
+Copyright (c) 2005, 2006, 2008. Ingy döt Net.
 
-Copyright (c) 2001, 2002, 2005. Brian Ingerson. All rights reserved.
+Copyright (c) 2001, 2002, 2005. Brian Ingerson.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

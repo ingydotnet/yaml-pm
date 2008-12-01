@@ -1,4 +1,12 @@
 ---
+version: 0.67
+date:    Mon Dec  1 02:34:21 PST 2008
+changes:
+- Add YAML::Any
+- Move ysh to YAML::Shell
+- Add doc section explaining YAML::Old
+
+---
 version: 0.66
 date:    Thu Sep 27 01:37:16 PDT 2007
 changes:
