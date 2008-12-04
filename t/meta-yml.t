@@ -26,7 +26,8 @@ __DATA__
   'author' => ['Ingy döt Net <ingy@cpan.org>'],
   'license' => 'perl',
   'requires' => {
-                  'perl' => '5.6.1'
+                  'perl' => '5.6.1',
+                  'Filter::Util::Call' => '0',
                 },
   'abstract' => 'YAML Ain\'t Markup Language (tm)',
   'meta-spec' => {

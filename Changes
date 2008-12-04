@@ -1,4 +1,10 @@
 ---
+version: 0.68
+date:    Thu Dec  4 01:00:44 PST 2008
+changes:
+- Used update Test::Base to ensure Filter::Util::Call
+
+---
 version: 0.67
 date:    Mon Dec  1 02:34:21 PST 2008
 changes:
