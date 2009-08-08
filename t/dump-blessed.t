@@ -1,7 +1,10 @@
 use t::TestYAML tests => 2;
 
 package Foo::Bar;
-use base 't::Base';
+
+use t::Base;
+
+our @ISA = 't::Base';
 
 sub yaml_dump {
     my $self = shift;

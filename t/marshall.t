@@ -1,10 +1,14 @@
 use t::TestYAML tests => 10;
+
 use strict;
 use warnings;
 
 #-------------------------------------------------------------------------------
 package Foo::Bar;
-use base 't::Base';
+BEGIN {
+	require t::Base;
+	@Foo::Bar::ISA = 't::Base';
+}
 use YAML::Marshall;
 
 sub yaml_dump {
@@ -26,12 +30,18 @@ sub yaml_load {
 
 #-------------------------------------------------------------------------------
 package Bar::Baz;
-use base 't::Base';
+BEGIN {
+	require t::Base;
+	@Bar::Baz::ISA = 't::Base';
+}
 use YAML::Marshall 'random/object:bar.baz';
 
 #-------------------------------------------------------------------------------
 package Baz::Foo;
-use base 't::Base';
+BEGIN {
+	require t::Base;
+	@Bar::Foo::ISA = 't::Base';
+}
 use YAML::Marshall;
 
 sub yaml_dump {

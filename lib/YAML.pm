@@ -1,12 +1,15 @@
 package YAML;
-use strict; use warnings;
-use YAML::Base;
-use base 'YAML::Base';
-use YAML::Node;         # XXX This is a temp fix for Module::Build
+
 use 5.006001;
-our $VERSION = '0.68';
-our @EXPORT = qw'Dump Load';
-our @EXPORT_OK = qw'freeze thaw DumpFile LoadFile Bless Blessed';
+use strict;
+use warnings;
+use YAML::Base;
+use YAML::Node; # XXX This is a temp fix for Module::Build
+
+our $VERSION   = '0.69';
+our @ISA       = 'YAML::Base';
+our @EXPORT    = qw{ Dump Load };
+our @EXPORT_OK = qw{ freeze thaw DumpFile LoadFile Bless Blessed };
 
 # XXX This VALUE nonsense needs to go.
 use constant VALUE => "\x07YAML\x07VALUE\x07";

@@ -19,6 +19,7 @@ ok -e $file,
 
 open IN, $file or die $!;
 my $yaml = join '', <IN>;
+close IN;
 
 is $yaml, <<'...', 'DumpFile YAML is correct';
 ---

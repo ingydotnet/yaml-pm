@@ -1,4 +1,11 @@
 ---
+version: 0.69
+date:    Sun Jul  9 02:01:12 AEST 2009
+changes:
+- Added $VERSION to all modules
+- Removed the use of use base
+
+---
 version: 0.68
 date:    Thu Dec  4 01:00:44 PST 2008
 changes:
