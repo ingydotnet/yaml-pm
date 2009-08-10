@@ -1,4 +1,10 @@
 ---
+version: 0.69_02
+date:    Mon Aug 10 22:37:37 AEST 2009
+changes:
+- Developer $VERSION now has eval correction
+
+---
 version: 0.69_01
 date:    Sun Jul  9 02:01:12 AEST 2009
 changes:

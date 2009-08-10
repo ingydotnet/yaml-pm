@@ -5,6 +5,7 @@ use strict;
 use Exporter ();
 
 $YAML::Any::VERSION   = '0.69_01';
+$YAML::Any::VERSION   = eval $YAML::Any::VERSION;
 @YAML::Any::ISA       = 'Exporter';
 @YAML::Any::EXPORT    = qw(Dump Load);
 @YAML::Any::EXPORT_OK = qw(DumpFile LoadFile);
