@@ -6,7 +6,7 @@ use warnings;
 use YAML::Base;
 use YAML::Tag;
 
-our $VERSION = '0.69';
+our $VERSION = '0.69_01';
 our @ISA     = 'YAML::Base';
 our @EXPORT  = qw(ynode);
 

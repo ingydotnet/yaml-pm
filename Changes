@@ -1,9 +1,10 @@
 ---
-version: 0.69
+version: 0.69_01
 date:    Sun Jul  9 02:01:12 AEST 2009
 changes:
 - Added $VERSION to all modules
 - Removed the use of use base
+- Imported into the svn.ali.as repo
 
 ---
 version: 0.68

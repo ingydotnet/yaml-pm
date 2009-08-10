@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use YAML::Node ();
 
-our $VERSION = '0.69';
+our $VERSION = '0.69_01';
 
 sub import {
     my $class = shift;

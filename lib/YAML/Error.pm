@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use YAML::Base;
 
-our $VERSION = '0.69';
+our $VERSION = '0.69_01';
 our @ISA     = 'YAML::Base';
 
 field 'code';
