@@ -6,8 +6,7 @@ use YAML::Base;
 use YAML::Loader::Base;
 use YAML::Types;
 
-our $VERSION   = '0.69_02';
-    $VERSION   = eval $VERSION;
+our $VERSION = '0.69_02';
 our @ISA     = 'YAML::Loader::Base';
 
 # Context constants

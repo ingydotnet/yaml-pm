@@ -1,4 +1,13 @@
 ---
+version: 0.70
+date:    Tue Aug 11 02:52:10 AEST 2009
+changes:
+- Updated Module::Install dependency to 0.91
+- Bumping dependency to 5.8.0 but I think it's only in the test suite.
+  However, I can't prove it. So if anyone wants 5.6 compatibility back
+  you need to fix or rewrite the test suite.
+
+---
 version: 0.69_02
 date:    Mon Aug 10 22:37:37 AEST 2009
 changes:
