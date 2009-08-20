@@ -1,4 +1,10 @@
 ---
+version:
+date:
+changes:
+- Set file encoding to UTF-8 in LoadFile/DumpFile (RT#25434) by Olivier Mengué
+
+---
 version: 0.70
 date:    Tue Aug 11 02:52:10 AEST 2009
 changes:
