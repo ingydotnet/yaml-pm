@@ -26,11 +26,13 @@ ok -e $file,
     'Output file exists';
 
 open IN, '<:utf8', $file or die $!;
-my $yaml = join '', <IN>;
+my $yaml = do { local $/; <IN> };
+close $file;
 
 is $yaml, "--- $data\n", 'DumpFile YAML encoding is correct';
 
-unlink $file;
 
 my $read = LoadFile($file);
 is $read, $data, 'LoadFile is ok';
+
+unlink $file;
