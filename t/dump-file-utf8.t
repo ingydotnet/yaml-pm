@@ -27,7 +27,7 @@ ok -e $file,
 
 open IN, '<:utf8', $file or die $!;
 my $yaml = do { local $/; <IN> };
-close $file;
+close IN;
 
 is $yaml, "--- $data\n", 'DumpFile YAML encoding is correct';
 
