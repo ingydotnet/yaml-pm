@@ -265,9 +265,9 @@ YAML specification in pure Perl. This may not be the fastest or most
 stable module though. Currently, YAML.pm has lots of known bugs. It is
 mostly a great tool for dumping Perl data structures to a readable form.
 
-=item YAML::Lite
+=item YAML::Tiny
 
-The point of YAML::Lite is to strip YAML down to the 90% that people
+The point of YAML::Tiny is to strip YAML down to the 90% that people
 use most and offer that in a small, fast, stable, pure Perl form.
 YAML::Lite will simply die when it is asked to do something it can't.
 
