@@ -269,7 +269,7 @@ mostly a great tool for dumping Perl data structures to a readable form.
 
 The point of YAML::Tiny is to strip YAML down to the 90% that people
 use most and offer that in a small, fast, stable, pure Perl form.
-YAML::Lite will simply die when it is asked to do something it can't.
+YAML::Tiny will simply die when it is asked to do something it can't.
 
 =item YAML::Syck
 
