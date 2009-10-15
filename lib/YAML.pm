@@ -58,7 +58,7 @@ sub DumpFile {
         open $OUT, $mode, $filename
           or YAML::Base->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, $!);
     }
-    binmode $OUT, ':utf8';
+    binmode $OUT, ':utf8';  # if $Config{useperlio} eq 'define';
     local $/ = "\n"; # reset special to "sane"
     print $OUT Dump(@_);
 }
@@ -73,7 +73,7 @@ sub LoadFile {
         open $IN, '<', $filename
           or YAML::Base->die('YAML_LOAD_ERR_FILE_INPUT', $filename, $!);
     }
-    binmode $IN, ':utf8';
+    binmode $IN, ':utf8';  # if $Config{useperlio} eq 'define';
     return Load(do { local $/; <$IN> });
 }
 
