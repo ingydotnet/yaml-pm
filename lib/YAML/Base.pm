@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Exporter ();
 
-our $VERSION = '0.70';
+our $VERSION = '0.71';
 our @ISA     = 'Exporter';
 our @EXPORT  = qw(field XXX);
 

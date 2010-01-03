@@ -1,8 +1,10 @@
 ---
-version:
-date:
+version: 0.71
+date:    Sun Jan 3 12:25:00 AEST 2010
 changes:
 - Set file encoding to UTF-8 in LoadFile/DumpFile (RT#25434) by Olivier Mengué
+- We shouldn't have to care about 5.8.0. Since it's causing CPAN Testers
+  failures, bump the minimum Perl to 5.8.1
 
 ---
 version: 0.70
