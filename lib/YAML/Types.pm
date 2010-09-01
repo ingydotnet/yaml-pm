@@ -5,7 +5,7 @@ use warnings;
 use YAML::Base;
 use YAML::Node;
 
-our $VERSION = '0.71';
+our $VERSION = '0.72';
 our @ISA     = 'YAML::Base';
 
 # XXX These classes and their APIs could still use some refactoring,

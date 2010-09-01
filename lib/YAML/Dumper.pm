@@ -7,7 +7,7 @@ use YAML::Dumper::Base;
 use YAML::Node;
 use YAML::Types;
 
-our $VERSION = '0.71';
+our $VERSION = '0.72';
 our @ISA     = 'YAML::Dumper::Base';
 
 # Context constants

@@ -24,6 +24,4 @@ sub use_test_base {
 
 1;
 
-=encoding utf8
-
-#line 70
+#line 68

@@ -1,4 +1,12 @@
 ---
+version: 0.72
+date:    Wed Sep 1 11:54:00 AEST 2010
+changes:
+- Upgrade to Module::Install 1.00
+- Upgraded author tests via new ADAMK release automation
+- Normalise Ingy's name to ASCII in Makefile.PL so that we don't have Unicode in our own META.yml
+
+---
 version: 0.71
 date:    Sun Jan 3 12:25:00 AEST 2010
 changes:
