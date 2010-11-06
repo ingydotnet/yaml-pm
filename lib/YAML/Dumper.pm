@@ -6,6 +6,7 @@ use YAML::Base;
 use YAML::Dumper::Base;
 use YAML::Node;
 use YAML::Types;
+use YAML qw(); #used as YAML->global_object
 
 our $VERSION = '0.72';
 our @ISA     = 'YAML::Dumper::Base';

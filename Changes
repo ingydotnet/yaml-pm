@@ -1,3 +1,6 @@
+- Error in YAML::Dumper in case YAML was not loaded earlier (CHORNY, RT#19838)
+
+
 ---
 version: 0.72
 date:    Wed Sep 1 11:54:00 AEST 2010
