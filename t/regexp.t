@@ -2,16 +2,22 @@ use t::TestYAML tests => 11;
 use YAML();
 no warnings 'once';
 
+my $m_xis = "m-xis";
+my $_xism = "-xism";
+if (qr/x/ =~ /\(\?\^/){
+  $m_xis = "^m";
+  $_xism = "^";
+}
 my @blocks = blocks;
 
 my $block = $blocks[0];
 
 $YAML::UseCode = 1;
 my $hash = YAML::Load($block->yaml);
-is $hash->{key}, '(?m-xis:foo$)', 'Regexps load';
-is YAML::Dump(eval $block->perl), <<'...', 'Regexps dump';
+is $hash->{key}, "(?$m_xis:foo\$)", 'Regexps load';
+is YAML::Dump(eval $block->perl), <<"...", 'Regexps dump';
 ---
-key: !!perl/regexp (?m-xis:foo$)
+key: !!perl/regexp (?$m_xis:foo\$)
 ...
 
 my $re = $hash->{key};
@@ -25,13 +31,13 @@ like "Hello\nBarfoo", $re, 'The regexp works';
 $block = $blocks[1];
 
 $hash = YAML::Load($block->yaml);
-is $hash->{key}, '(?m-xis:foo$)', 'Regexps load';
+is $hash->{key}, "(?$m_xis:foo\$)", 'Regexps load';
 
 # XXX Dumper can't detect a blessed regexp
 
-# is YAML::Dump(eval $block->perl), <<'...', 'Regexps dump';
+# is YAML::Dump(eval $block->perl), <<"...", 'Regexps dump';
 # ---
-# key: !!perl/regexp (?m-xis:foo$)
+# key: !!perl/regexp (?$m_xis:foo\$)
 # ...
 
 $re = $hash->{key};
@@ -48,11 +54,11 @@ ok(("Hello\nBarfoo" =~ $re), 'The regexp works');
 $block = $blocks[2];
 
 $hash = YAML::Load($block->yaml);
-is $hash->{key}, '(?-xism:foo$)', 'Regexps load';
+is $hash->{key}, "(?$_xism:foo\$)", 'Regexps load';
 
-is YAML::Dump(eval $block->perl), <<'...', 'Regexps dump';
+is YAML::Dump(eval $block->perl), <<"...", 'Regexps dump';
 ---
-key: !!perl/regexp (?-xism:foo$)
+key: !!perl/regexp (?$_xism:foo\$)
 ...
 
 $re = $hash->{key};

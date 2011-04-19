@@ -1,4 +1,4 @@
-use t::TestYAML tests => 58;
+use t::TestYAML tests => 57;
 
 no_diff();
 run_roundtrip_nyn('dumper');
@@ -302,16 +302,6 @@ local $YAML::Indent = 4;
 ---
 - bar: 44
   foo: 42
-
-===
-+++ no_round_trip
-Since we don't use eval for regexp reconstitution any more (for safety
-sake) this test doesn't roundtrip even though the values are equivalent.
-+++ perl
-[qr{bozo$}i]
-+++ yaml
----
-- !!perl/regexp (?i-xsm:bozo$)
 
 ===
 +++ perl

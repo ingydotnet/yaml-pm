@@ -22,8 +22,8 @@ NOTE
 
 SYNOPSIS
         use YAML;
-        
-    # Load a YAML stream of 3 YAML documents into Perl data structures.
+    
+        # Load a YAML stream of 3 YAML documents into Perl data structures.
         my ($hashref, $arrayref, $string) = Load(<<'...');
         ---
         name: ingy
@@ -37,20 +37,20 @@ SYNOPSIS
         ---
         - Clark Evans
         - Oren Ben-Kiki
-        - Ingy döt Net
+        - Ingy dÃ¶t Net
         --- >
         You probably think YAML stands for "Yet Another Markup Language". It
         ain't! YAML is really a data serialization language. But if you want
         to think of it as a markup, that's OK with me. A lot of people try
         to use XML as a serialization format.
-        
-    "YAML" is catchy and fun to say. Try it. "YAML, YAML, YAML!!!"
+    
+        "YAML" is catchy and fun to say. Try it. "YAML, YAML, YAML!!!"
         ...
-        
-    # Dump the Perl data structures back into YAML.
+    
+        # Dump the Perl data structures back into YAML.
         print Dump($string, $arrayref, $hashref);
-        
-    # YAML::Dump is used the same way you'd use Data::Dumper::Dumper
+    
+        # YAML::Dump is used the same way you'd use Data::Dumper::Dumper
         use Data::Dumper;
         print Dumper($string, $arrayref, $hashref);
 
@@ -611,16 +611,16 @@ SEE ALSO
     See YAML::Syck. Fast!
 
 AUTHOR
-    Ingy döt Net <ingy@cpan.org>
+    Ingy dÃ¶t Net <ingy@cpan.org>
 
     is resonsible for YAML.pm.
 
     The YAML serialization language is the result of years of collaboration
-    between Oren Ben-Kiki, Clark Evans and Ingy döt Net. Several others have
+    between Oren Ben-Kiki, Clark Evans and Ingy dÃ¶t Net. Several others have
     added help along the way.
 
 COPYRIGHT
-    Copyright (c) 2005, 2006, 2008. Ingy döt Net.
+    Copyright (c) 2005, 2006, 2008. Ingy dÃ¶t Net.
 
     Copyright (c) 2001, 2002, 2005. Brian Ingerson.
 

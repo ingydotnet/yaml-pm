@@ -22,7 +22,5 @@ requires:
   Filter::Util::Call: 0
   perl: 5.8.1
 resources:
-  ChangeLog: http://fisheye2.atlassian.com/changelog/cpan/trunk/YAML
   license: http://dev.perl.org/licenses/
-  repository: http://svn.ali.as/cpan/trunk/YAML
-version: 0.72
+version: 0.73
