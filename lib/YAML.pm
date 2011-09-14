@@ -9,7 +9,7 @@ use YAML::Node; # XXX This is a temp fix for Module::Build
 our $VERSION   = '0.73';
 our @ISA       = 'YAML::Base';
 our @EXPORT    = qw{ Dump Load };
-our @EXPORT_OK = qw{ freeze thaw DumpFile LoadFile Bless Blessed };
+our @EXPORT_OK = qw{ encode_yaml decode_yaml freeze thaw DumpFile LoadFile Bless Blessed };
 
 # XXX This VALUE nonsense needs to go.
 use constant VALUE => "\x07YAML\x07VALUE\x07";
@@ -35,6 +35,10 @@ sub Load {
         if $YAML::LoaderClass;
     return $yaml->loader_object->load(@_);
 }
+
+sub encode_yaml { return Dump @_; }
+
+sub decode_yaml { return Load @_; }
 
 {
     no warnings 'once';
