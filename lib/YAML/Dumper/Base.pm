@@ -5,7 +5,6 @@ use warnings;
 use YAML::Base;
 use YAML::Node;
 
-our $VERSION = '0.72';
 our @ISA     = 'YAML::Base';
 
 # YAML Dumping options

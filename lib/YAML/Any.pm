@@ -4,7 +4,6 @@ use 5.005003;
 use strict;
 use Exporter ();
 
-$YAML::Any::VERSION   = '0.72';
 @YAML::Any::ISA       = 'Exporter';
 @YAML::Any::EXPORT    = qw(Dump Load);
 @YAML::Any::EXPORT_OK = qw(DumpFile LoadFile);

@@ -1,4 +1,12 @@
 ---
+version: 0.74
+date:    Sun Sep 25 22:05:05 CEST 2011
+changes:
+- Switch to Module::Package
+- Removed extra $VERSION lines from submodules
+- Released from Liz++ and Wendy++'s Tool Basement!
+
+---
 version: 0.73
 date:    Tue Apr 19 20:14:59 EST 2011
 changes:

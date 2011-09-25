@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use YAML::Node ();
 
-our $VERSION = '0.72';
-
 sub import {
     my $class = shift;
     no strict 'refs';
