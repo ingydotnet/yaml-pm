@@ -75,7 +75,7 @@ sub blessed {
     my $self = shift;
     my ($ref) = @_;
     $ref = \$_[0] unless ref $ref;
-    my (undef, undef, $node_id) = YAML::Base->node_info($ref);
+    my (undef, undef, $node_id) = YAML::Mo::Object->node_info($ref);
     $self->{blessed_map}->{$node_id};
 }
     
@@ -84,7 +84,7 @@ sub bless {
     my ($ref, $blessing) = @_;
     my $ynode;
     $ref = \$_[0] unless ref $ref;
-    my (undef, undef, $node_id) = YAML::Base->node_info($ref);
+    my (undef, undef, $node_id) = YAML::Mo::Object->node_info($ref);
     if (not defined $blessing) {
         $ynode = YAML::Node->new($ref);
     }
