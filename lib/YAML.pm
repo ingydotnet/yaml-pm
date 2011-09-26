@@ -1,27 +1,30 @@
 use 5.008001;
-use strict;
-use warnings;
-
 package YAML;
+use YAML::Mo;
 
-use YAML::Base;
-use YAML::Node; # XXX This is a temp fix for Module::Build
+our $VERSION   = '0.75';
 
-our $VERSION   = '0.74';
-our @ISA       = 'YAML::Base';
+use Exporter;
+push @YAML::ISA, 'Exporter';
 our @EXPORT    = qw{ Dump Load };
 our @EXPORT_OK = qw{ freeze thaw DumpFile LoadFile Bless Blessed };
+
+use YAML::Node; # XXX This is a temp fix for Module::Build
 
 # XXX This VALUE nonsense needs to go.
 use constant VALUE => "\x07YAML\x07VALUE\x07";
 
 # YAML Object Properties
-field dumper_class => 'YAML::Dumper';
-field loader_class => 'YAML::Loader';
-field dumper_object =>
-    -init => '$self->init_action_object("dumper")';
-field loader_object =>
-    -init => '$self->init_action_object("loader")';
+has dumper_class => default => sub {'YAML::Dumper'};
+has loader_class => default => sub {'YAML::Loader'};
+has dumper_object => default => sub {$_[0]->init_action_object("dumper")};
+has loader_object => default => sub {$_[0]->init_action_object("loader")};
+
+sub import {
+    __PACKAGE__->export_to_level(1, @_);
+    splice(@_,1);
+    goto &YAML::Mo::import;
+}
 
 sub Dump {
     my $yaml = YAML->new;
@@ -57,7 +60,7 @@ sub DumpFile {
             ($mode, $filename) = ($1, $2);
         }
         open $OUT, $mode, $filename
-          or YAML::Base->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, $!);
+          or YAML::Mo::Object->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, $!);
     }
     binmode $OUT, ':utf8';  # if $Config{useperlio} eq 'define';
     local $/ = "\n"; # reset special to "sane"
@@ -72,7 +75,7 @@ sub LoadFile {
     }
     else {
         open $IN, '<', $filename
-          or YAML::Base->die('YAML_LOAD_ERR_FILE_INPUT', $filename, $!);
+          or YAML::Mo::Object->die('YAML_LOAD_ERR_FILE_INPUT', $filename, $!);
     }
     binmode $IN, ':utf8';  # if $Config{useperlio} eq 'define';
     return Load(do { local $/; <$IN> });

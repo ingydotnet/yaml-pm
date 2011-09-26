@@ -1,4 +1,10 @@
 ---
+version: 0.75
+date:    Tue Sep 27 00:46:19 CEST 2011
+changes:
+- Switch to Mo for OO (YAML::Mo)
+- use_test_base in Makefile.PL.
+---
 version: 0.74
 date:    Sun Sep 25 22:05:05 CEST 2011
 changes:

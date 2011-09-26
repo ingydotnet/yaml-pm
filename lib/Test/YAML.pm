@@ -119,13 +119,6 @@ sub dumper() {
     return Data::Dumper::Dumper(@_);
 }
 
-{
-    no warnings;
-    sub XXX {
-        YAML::Base::XXX(@_);
-    }
-}
-
 sub _count_tests() {
     my $block = shift or die "Bad call to _count_tests";
     no strict 'refs';
