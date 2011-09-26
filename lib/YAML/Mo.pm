@@ -16,20 +16,7 @@ my $import = \&import;
     goto &$import;
 };
 
-my ($_new_error);
-
-$_new_error = sub {
-    require Carp;
-    my $self = shift;
-    require YAML::Error;
-
-    my $code = shift || 'unknown error';
-    my $error = YAML::Error->new(code => $code);
-    $error->line($self->line) if $self->can('line');
-    $error->document($self->document) if $self->can('document');
-    $error->arguments([@_]);
-    return $error;
-};
+my ($_new_error, $_info, $_scalar_info);
 
 *{$K.'Object::die'} = sub {
     my $self = shift;
@@ -44,6 +31,59 @@ $_new_error = sub {
     my $error = $self->$_new_error(@_);
     $error->type('Warning');
     Carp::cluck($error->format_message);
+};
+
+# This code needs to be refactored to be simpler and more precise, and no,
+# Scalar::Util doesn't DWIM.
+#
+# Can't handle:
+# * blessed regexp
+*{$K.'Object::node_info'} = sub {
+    my $self = shift;
+    my $stringify = $_[1] || 0;
+    my ($class, $type, $id) =
+        ref($_[0])
+        ? $stringify
+          ? &$_info("$_[0]")
+          : do {
+              require overload;
+              my @info = &$_info(overload::StrVal($_[0]));
+              if (ref($_[0]) eq 'Regexp') {
+                  @info[0, 1] = (undef, 'REGEXP');
+              }
+              @info;
+          }
+        : &$_scalar_info($_[0]);
+    ($class, $type, $id) = &$_scalar_info("$_[0]")
+        unless $id;
+    return wantarray ? ($class, $type, $id) : $id;
+};
+
+#-------------------------------------------------------------------------------
+$_info = sub {
+    return (($_[0]) =~ qr{^(?:(.*)\=)?([^=]*)\(([^\(]*)\)$}o);
+};
+
+$_scalar_info = sub {
+    my $id = 'undef';
+    if (defined $_[0]) {
+        \$_[0] =~ /\((\w+)\)$/o or CORE::die();
+        $id = "$1-S";
+    }
+    return (undef, undef, $id);
+};
+
+$_new_error = sub {
+    require Carp;
+    my $self = shift;
+    require YAML::Error;
+
+    my $code = shift || 'unknown error';
+    my $error = YAML::Error->new(code => $code);
+    $error->line($self->line) if $self->can('line');
+    $error->document($self->document) if $self->can('document');
+    $error->arguments([@_]);
+    return $error;
 };
 
 1;

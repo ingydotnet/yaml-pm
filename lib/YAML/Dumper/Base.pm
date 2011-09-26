@@ -1,39 +1,35 @@
 package YAML::Dumper::Base;
+use YAML::Mo;
 
-use strict;
-use warnings;
-use YAML::Base;
 use YAML::Node;
 
-our @ISA     = 'YAML::Base';
-
 # YAML Dumping options
-field spec_version    => '1.0';
-field indent_width    => 2;
-field use_header      => 1;
-field use_version     => 0;
-field sort_keys       => 1;
-field anchor_prefix   => '';
-field dump_code       => 0;
-field use_block       => 0;
-field use_fold        => 0;
-field compress_series => 1;
-field inline_series   => 0;
-field use_aliases     => 1;
-field purity          => 0;
-field stringify       => 0;
+has spec_version    => default => sub {'1.0'};
+has indent_width    => default => sub {2};
+has use_header      => default => sub {1};
+has use_version     => default => sub {0};
+has sort_keys       => default => sub {1};
+has anchor_prefix   => default => sub {''};
+has dump_code       => default => sub {0};
+has use_block       => default => sub {0};
+has use_fold        => default => sub {0};
+has compress_series => default => sub {1};
+has inline_series   => default => sub {0};
+has use_aliases     => default => sub {1};
+has purity          => default => sub {0};
+has stringify       => default => sub {0};
 
 # Properties
-field stream      => '';
-field document    => 0;
-field transferred => {};
-field id_refcnt   => {};
-field id_anchor   => {};
-field anchor      => 1;
-field level       => 0;
-field offset      => [];
-field headless    => 0;
-field blessed_map => {};
+has stream      => default => sub {''};
+has document    => default => sub {0};
+has transferred => default => sub {{}};
+has id_refcnt   => default => sub {{}};
+has id_anchor   => default => sub {{}};
+has anchor      => default => sub {1};
+has level       => default => sub {0};
+has offset      => default => sub {[]};
+has headless    => default => sub {0};
+has blessed_map => default => sub {{}};
 
 # Global Options are an idea taken from Data::Dumper. Really they are just
 # sugar on top of real OO properties. They make the simple Dump/Load API
