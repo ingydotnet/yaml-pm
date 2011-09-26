@@ -2,7 +2,6 @@ package YAML::Loader;
 use YAML::Mo;
 extends 'YAML::Loader::Base';
 
-use YAML::Base;
 use YAML::Loader::Base;
 use YAML::Types;
 
