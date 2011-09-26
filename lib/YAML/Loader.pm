@@ -1,12 +1,10 @@
 package YAML::Loader;
+use YAML::Mo;
+extends 'YAML::Loader::Base';
 
-use strict;
-use warnings;
 use YAML::Base;
 use YAML::Loader::Base;
 use YAML::Types;
-
-our @ISA     = 'YAML::Loader::Base';
 
 # Context constants
 use constant LEAF       => 1;
