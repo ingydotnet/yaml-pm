@@ -2,7 +2,7 @@ use 5.008001;
 package YAML;
 use YAML::Mo;
 
-our $VERSION   = '0.75';
+our $VERSION   = '0.76';
 
 use Exporter;
 push @YAML::ISA, 'Exporter';
@@ -19,12 +19,6 @@ has dumper_class => default => sub {'YAML::Dumper'};
 has loader_class => default => sub {'YAML::Loader'};
 has dumper_object => default => sub {$_[0]->init_action_object("dumper")};
 has loader_object => default => sub {$_[0]->init_action_object("loader")};
-
-sub import {
-    __PACKAGE__->export_to_level(1, @_);
-    splice(@_,1);
-    goto &YAML::Mo::import;
-}
 
 sub Dump {
     my $yaml = YAML->new;

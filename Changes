@@ -1,4 +1,9 @@
 ---
+version: 0.76
+date:    Wed Sep 28 12:05:08 CEST 2011
+changes:
+- Removed YAML::import per mst.
+---
 version: 0.75
 date:    Tue Sep 27 00:46:19 CEST 2011
 changes:
