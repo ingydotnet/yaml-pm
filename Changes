@@ -1,4 +1,10 @@
 ---
+version: 0.77
+date:    Thu Sep 29 18:28:25 CEST 2011
+changes:
+- Add $VERSION back to all modules.
+- Released from Liz++ and Wendy++ garage attic!
+---
 version: 0.76
 date:    Wed Sep 28 12:05:08 CEST 2011
 changes:

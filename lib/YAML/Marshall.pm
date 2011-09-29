@@ -1,7 +1,9 @@
-package YAML::Marshall;
-
 use strict;
 use warnings;
+package YAML::Marshall;
+
+our $VERSION = '0.77';
+
 use YAML::Node ();
 
 sub import {

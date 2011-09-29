@@ -1,6 +1,8 @@
 package YAML::Types;
 use YAML::Mo;
 
+our $VERSION = '0.77';
+
 use YAML::Node;
 
 # XXX These classes and their APIs could still use some refactoring,

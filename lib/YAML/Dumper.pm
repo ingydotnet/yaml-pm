@@ -2,6 +2,8 @@ package YAML::Dumper;
 use YAML::Mo;
 extends 'YAML::Dumper::Base';
 
+our $VERSION = '0.77';
+
 use YAML::Dumper::Base;
 use YAML::Node;
 use YAML::Types;

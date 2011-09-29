@@ -2,11 +2,11 @@ use 5.008001;
 package YAML;
 use YAML::Mo;
 
-our $VERSION   = '0.76';
+our $VERSION = '0.77';
 
 use Exporter;
 push @YAML::ISA, 'Exporter';
-our @EXPORT    = qw{ Dump Load };
+our @EXPORT = qw{ Dump Load };
 our @EXPORT_OK = qw{ freeze thaw DumpFile LoadFile Bless Blessed };
 
 use YAML::Node; # XXX This is a temp fix for Module::Build
