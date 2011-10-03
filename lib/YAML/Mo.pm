@@ -6,26 +6,24 @@
 # copyright: 2011
 
 package YAML::Mo; $VERSION = '0.77';
-# use Mo qw[builder default];
-no warnings;my$K=__PACKAGE__."::";*{$K.'Object::new'}=sub{my$c=shift;my$s=bless{@_},$c;my@B;do{@B=($c.'::BUILD',@B)}while($c)=@{$c.'::ISA'};exists&$_&&&$_($s)for@B;$s};*{$K.'import'}=sub{import warnings;$^H|=1538;my$P=caller."::";my%e=(extends=>sub{eval"no $_[0]()";@{$P.'ISA'}=$_[0]},has=>sub{my$n=shift;*{$P.$n}=sub{$#_?$_[0]{$n}=$_[1]:$_[0]{$n}}},);for(@_[1..$#_]){eval"require Mo::$_;1";%e=&{$K."${_}::e"}($P=>%e)}*{$P.$_}=$e{$_}for keys%e;@{$P.'ISA'}=$K.'Object'};*{$K.'builder::e'}=sub{my$P=shift;my%e=@_;my$o=$e{has};$e{has}=sub{my($n,%a)=@_;my$b=$a{builder};*{$P.$n}=$b?sub{$#_?$_[0]{$n}=$_[1]:!exists$_[0]{$n}?$_[0]{$n}=$_[0]->$b:$_[0]{$n}}:$o->(@_)};%e};*{$K.'default::e'}=sub{my$P=shift;my%e=@_;my$o=$e{has};$e{has}=sub{my($n,%a)=@_;my$d=$a{default};*{$P.$n}=$d?sub{$#_?$_[0]{$n}=$_[1]:!exists$_[0]{$n}?$_[0]{$n}=$_[0]->$d:$_[0]{$n}}:$o->(@_)};%e};use strict;use warnings;
-no strict 'refs'; no warnings 'redefine';
+# use Mo qw[builder default xxx import];
+#   The following line of code was produced from the previous line by
+#   Mo::Inline version 0.25
+no warnings;my$M=__PACKAGE__.::;*{$M.Object::new}=sub{bless{@_[1..$#_]},$_[0]};*{$M.import}=sub{import warnings;$^H|=1538;my($P,%e,%o)=caller.::;shift;eval"no Mo::$_",&{$M.$_.::e}($P,\%e,\%o)for@_;%e=(extends,sub{eval"no $_[0]()";@{$P.ISA}=$_[0]},has,sub{my$n=shift;my$m=sub{$#_?$_[0]{$n}=$_[1]:$_[0]{$n}};$m=$o{$_}->($m,$n,@_)for sort keys%o;*{$P.$n}=$m},%e,);*{$P.$_}=$e{$_}for keys%e;@{$P.ISA}=$M.Object};*{$M.'builder::e'}=sub{my($P,$e,$o)=@_;$o->{builder}=sub{my($m,$n,%a)=@_;my$b=$a{builder}or return$m;sub{$#_?$m->(@_):!exists$_[0]{$n}?$_[0]{$n}=$_[0]->$b:$m->(@_)}}};*{$M.'default::e'}=sub{my($P,$e,$o)=@_;$o->{default}=sub{my($m,$n,%a)=@_;$a{default}or return$m;sub{$#_?$m->(@_):!exists$_[0]{$n}?$_[0]{$n}=$a{default}->(@_):$m->(@_)}}};use constant XXX_skip=>1;${$M.'::DumpModule'}='YAML::XS';*{$M.'xxx::e'}=sub{my($P,$e)=@_;$e->{WWW}=sub{require XXX;local$XXX::DumpModule=${$M.DumpModule};XXX::WWW(@_)};$e->{XXX}=sub{require XXX;local$XXX::DumpModule=${$M.DumpModule};XXX::XXX(@_)};$e->{YYY}=sub{require XXX;local$XXX::DumpModule=${$M.DumpModule};XXX::YYY(@_)};$e->{ZZZ}=sub{require XXX;local$XXX::DumpModule=${$M.DumpModule};XXX::ZZZ(@_)}};my$i=\&import;*{$M.import}=sub{(@_==2 and not $_[1])?pop@_:@_==1        ?push@_,grep!/import/,@f:();goto&$i};@f=qw[builder default xxx import];use strict;use warnings;
 
-my $import = \&import;
-*import = sub {
-    push @_, qw[builder default];
-    goto &$import;
-};
+our $DumperModule = 'Data::Dumper';
 
 my ($_new_error, $_info, $_scalar_info);
 
-*{$K.'Object::die'} = sub {
+no strict 'refs';
+*{$M.'Object::die'} = sub {
     my $self = shift;
     my $error = $self->$_new_error(@_);
     $error->type('Error');
     Carp::croak($error->format_message);
 };
 
-*{$K.'Object::warn'} = sub {
+*{$M.'Object::warn'} = sub {
     my $self = shift;
     return unless $^W;
     my $error = $self->$_new_error(@_);
@@ -38,7 +36,7 @@ my ($_new_error, $_info, $_scalar_info);
 #
 # Can't handle:
 # * blessed regexp
-*{$K.'Object::node_info'} = sub {
+*{$M.'Object::node_info'} = sub {
     my $self = shift;
     my $stringify = $_[1] || 0;
     my ($class, $type, $id) =
