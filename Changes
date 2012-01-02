@@ -1,4 +1,9 @@
 ---
+version: 0.78
+date:    Sun Jan  1 23:53:57 PST 2012
+changes:
+- Apply patch from ANDK++ to deal with B::Deparse changes.
+---
 version: 0.77
 date:    Thu Sep 29 18:28:25 CEST 2011
 changes:

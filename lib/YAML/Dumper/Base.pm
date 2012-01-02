@@ -1,7 +1,7 @@
 package YAML::Dumper::Base;
 use YAML::Mo;
 
-our $VERSION = '0.77';
+our $VERSION = '0.78';
 
 use YAML::Node;
 

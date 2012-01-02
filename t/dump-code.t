@@ -1,5 +1,13 @@
 use t::TestYAML tests => 7;
 
+use B::Deparse;
+if (new B::Deparse -> coderef2text ( sub { no strict; 1; use strict; 1; })
+    =~ 'refs') {
+ local $/;
+ (my $data = <DATA>) =~ s/use strict/use strict 'refs'/g;
+ open DATA, '<', \$data;
+}
+
 no_diff;
 run_roundtrip_nyn('dumper');
 
@@ -15,7 +23,7 @@ return sub { 'Something at least 30 chars' };
 --- !!perl/code |
 {
     use warnings;
-    use strict 'refs';
+    use strict;
     'Something at least 30 chars';
 }
 
@@ -31,7 +39,7 @@ my $joe_random_global = sub { 'Something at least 30 chars' };
 - &1 !!perl/code |
   {
       use warnings;
-      use strict 'refs';
+      use strict;
       'Something at least 30 chars';
   }
 - *1
@@ -56,6 +64,6 @@ bless sub { 'Something at least 30 chars' }, "Foo::Bar";
 --- !!perl/code:Foo::Bar |
 {
     use warnings;
-    use strict 'refs';
+    use strict;
     'Something at least 30 chars';
 }

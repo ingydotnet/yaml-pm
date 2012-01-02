@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package YAML::Node;
 
-our $VERSION = '0.77';
+our $VERSION = '0.78';
 
 use YAML::Tag;
 require YAML::Mo;
