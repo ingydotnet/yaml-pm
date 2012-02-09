@@ -1,7 +1,7 @@
 package YAML::Types;
 use YAML::Mo;
 
-our $VERSION = '0.78';
+our $VERSION = '0.79';
 
 use YAML::Node;
 

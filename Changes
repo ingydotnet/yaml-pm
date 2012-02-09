@@ -1,4 +1,10 @@
 ---
+version: 0.79
+date:    Wed Feb  8 17:25:55 PST 2012
+changes:
+- Peter Scott and others noticed Mo::xxx causing problems on newer perls.
+  Removed xxx for now.
+---
 version: 0.78
 date:    Sun Jan  1 23:53:57 PST 2012
 changes:
