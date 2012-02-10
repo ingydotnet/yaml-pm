@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package YAML::Tag;
 
-our $VERSION = '0.79';
+our $VERSION = '0.80';
 
 use overload '""' => sub { ${$_[0]} };
 

@@ -5,6 +5,9 @@ if (new B::Deparse -> coderef2text ( sub { no strict; 1; use strict; 1; })
     =~ 'refs') {
  local $/;
  (my $data = <DATA>) =~ s/use strict/use strict 'refs'/g;
+ if ($B::Deparse::VERSION < 0.71) {
+  $data =~ s/use warnings;/BEGIN {\${^WARNING_BITS} = "UUUUUUUUUUUU\\001"}/g;
+ }
  open DATA, '<', \$data;
 }
 

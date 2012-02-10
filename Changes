@@ -1,4 +1,8 @@
+---
+version: 0.80
+date:    Fri Feb 10 12:56:08 PST 2012
 changes:
+- Patch from https://rt.cpan.org/Ticket/Display.html?id=73702
 - Make YAML::Node subclass YAML::Mo::Object as well as Exporter (MSTROUT)
 ---
 version: 0.79
