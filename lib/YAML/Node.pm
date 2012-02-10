@@ -8,7 +8,7 @@ use YAML::Tag;
 require YAML::Mo;
 
 use Exporter;
-our @ISA     = 'Exporter';
+our @ISA     = qw(Exporter YAML::Mo::Object);
 our @EXPORT  = qw(ynode);
 
 sub ynode {
