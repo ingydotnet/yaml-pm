@@ -2,7 +2,7 @@ use 5.008001;
 package YAML;
 use YAML::Mo;
 
-our $VERSION = '0.80';
+our $VERSION = '0.81';
 
 use Exporter;
 push @YAML::ISA, 'Exporter';

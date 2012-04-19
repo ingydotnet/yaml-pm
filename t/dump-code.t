@@ -1,12 +1,13 @@
 use t::TestYAML tests => 7;
+use YAML ();   # [CPAN #74687] must load before B::Deparse for B::Deparse < 0.71
 
 use B::Deparse;
 if (new B::Deparse -> coderef2text ( sub { no strict; 1; use strict; 1; })
     =~ 'refs') {
  local $/;
- (my $data = <DATA>) =~ s/use strict/use strict 'refs'/g;
- if ($B::Deparse::VERSION < 0.71) {
-  $data =~ s/use warnings;/BEGIN {\${^WARNING_BITS} = "UUUUUUUUUUUU\\001"}/g;
+ (my $data = <DATA>) =~ s/use strict/use strict 'refs'/g if $] < 5.015;
+ if ($B::Deparse::VERSION > 0.67 and $B::Deparse::VERSION < 0.71) { # [CPAN #73702]
+   $data =~ s/use warnings;/BEGIN {\${^WARNING_BITS} = "UUUUUUUUUUUU\\001"}/g;
  }
  open DATA, '<', \$data;
 }
