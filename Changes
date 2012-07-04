@@ -1,3 +1,5 @@
+changes:
+- Test scalar @array rather than deprecated defined @array (Sebastian Stumpf)
 ---
 version: 0.81
 date:    Thu Apr 19 11:03:38 PDT 2012
