@@ -1,7 +1,7 @@
 package YAML::Loader::Base;
 use YAML::Mo;
 
-our $VERSION = '0.82';
+our $VERSION = '0.83';
 
 has load_code     => default => sub {0};
 has stream        => default => sub {''};

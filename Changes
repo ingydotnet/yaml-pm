@@ -1,5 +1,6 @@
 ---
 version: 0.83
+date:    Fri Jul 13 15:44:03 GMT 2012
 changes:
 - Only call stat() and tell() on a filehandle if fileno existed
 - Explicit tied() call on globs to avoid a 5.16 deprecation warning
