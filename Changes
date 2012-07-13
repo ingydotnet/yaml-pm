@@ -1,6 +1,7 @@
 ---
 version: 0.83
 changes:
+- Only call tell() on a filehandle if fileno existed
 - Explicit tied() call on globs to avoid a 5.16 deprecation warning
 ---
 version: 0.82
