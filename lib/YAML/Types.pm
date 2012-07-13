@@ -58,9 +58,9 @@ sub yaml_dump {
                                atime mtime ctime blksize blocks);
                 undef $value;
                 $value->{stat} = YAML::Node->new({});
-                map {$value->{stat}{shift @stats} = $_} stat(*{$_[0]});
                 if ($value->{fileno} = fileno(*{$_[0]})) {
                     local $^W;
+                    map {$value->{stat}{shift @stats} = $_} stat(*{$_[0]});
                     $value->{tell} = tell(*{$_[0]});
                 }
             }
