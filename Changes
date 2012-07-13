@@ -1,4 +1,8 @@
 ---
+version: 0.83
+changes:
+- Explicit tied() call on globs to avoid a 5.16 deprecation warning
+---
 version: 0.82
 date:    Thu Jul 12 18:49:45 GMT 2012
 changes:

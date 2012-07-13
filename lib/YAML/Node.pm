@@ -19,6 +19,9 @@ sub ynode {
     elsif (ref($_[0]) eq 'ARRAY') {
 	$self = tied(@{$_[0]});
     }
+    elsif (ref(\$_[0]) eq 'GLOB') {
+	$self = tied(*{$_[0]});
+    }
     else {
 	$self = tied($_[0]);
     }
