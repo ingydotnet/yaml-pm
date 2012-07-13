@@ -1,4 +1,9 @@
 ---
+version: 0.84
+date:    Fri Jul 13 18:17:27 GMT 2012
+changes:
+- Resolve distribution error that caused .git to be shipped in the .tar.gz
+---
 version: 0.83
 date:    Fri Jul 13 15:44:03 GMT 2012
 changes:
