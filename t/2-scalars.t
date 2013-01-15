@@ -23,8 +23,5 @@ is(Load("--- false\n"), "false");
 # is(Load("--- false\n"), '');
 
 # Large data tests. See also https://bugzilla.redhat.com/show_bug.cgi?id=192400.
-my $Data = 'äø<>"\'' x 40_000;
+my $Data = ' äø<> " \' " \'' x 40_000;
 is(Load(Dump($Data)), $Data);
-
-$Data ='a' x 50_000;
-is(Load("--- \"$Data\"\n"), $Data);
