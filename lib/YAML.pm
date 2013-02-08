@@ -305,7 +305,7 @@ import list:
 =item Dump(list-of-Perl-data-structures)
 
 Turn Perl data into YAML. This function works very much like
-Data::Dumper::Dumper(). It takes a list of Perl data strucures and
+Data::Dumper::Dumper(). It takes a list of Perl data structures and
 dumps them into a serialized form. It returns a string containing the
 YAML stream. The structures can be references or plain scalars.
 
@@ -572,7 +572,7 @@ Perl's Glob or Python's tuple, or Ruby's Bigint.
 
 =item stream
 
-A YAML stream is the full sequence of unicode characters that a YAML
+A YAML stream is the full sequence of Unicode characters that a YAML
 parser would read or a YAML emitter would write. A stream may contain
 one or more YAML documents separated by YAML headers.
 
@@ -610,7 +610,7 @@ information.
 
 =item node
 
-A YAML node is the representation of a particular data stucture. Nodes
+A YAML node is the representation of a particular data structure. Nodes
 may contain other nodes. (In Perl terms, nodes are like scalars.
 Strings, arrayrefs and hashrefs. But this refers to the serialized
 format, not the in-memory structure.)
@@ -793,7 +793,7 @@ See YAML::XS. Fast!
 
 Ingy döt Net <ingy@cpan.org>
 
-is resonsible for YAML.pm.
+is responsible for YAML.pm.
 
 The YAML serialization language is the result of years of collaboration
 between Oren Ben-Kiki, Clark Evans and Ingy döt Net. Several others
