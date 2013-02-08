@@ -755,6 +755,8 @@ sub _unescape {
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Loader - YAML class for loading Perl objects to YAML
