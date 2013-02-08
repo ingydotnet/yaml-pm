@@ -51,6 +51,8 @@ sub yaml_ynode {
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Marshall - YAML marshalling class you can mixin to your classes

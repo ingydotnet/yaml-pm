@@ -234,6 +234,10 @@ sub _perl_eval_result_error_warning {
 
 1;
 
+__END__
+
+=encoding UTF-8
+
 =head1 NAME
 
 Test::YAML - Testing Module for YAML Implementations

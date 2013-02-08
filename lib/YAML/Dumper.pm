@@ -557,6 +557,8 @@ sub escape {
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Dumper - YAML class for dumping Perl objects to YAML

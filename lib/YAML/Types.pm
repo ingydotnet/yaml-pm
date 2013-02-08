@@ -228,6 +228,8 @@ sub yaml_load {
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Types - Marshall Perl internal data types to/from YAML

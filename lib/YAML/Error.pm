@@ -193,6 +193,8 @@ our @ISA = 'YAML::Error';
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Error - Error formatting class for YAML modules

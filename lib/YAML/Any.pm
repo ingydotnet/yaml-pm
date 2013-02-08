@@ -118,6 +118,10 @@ sub croak {
 
 1;
 
+__END__
+
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Any - Pick a YAML implementation and use it.

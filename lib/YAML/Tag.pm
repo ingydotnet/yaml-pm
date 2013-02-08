@@ -23,6 +23,8 @@ sub canonical {
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Tag - Tag URI object class for YAML
