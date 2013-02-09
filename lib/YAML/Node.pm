@@ -222,6 +222,8 @@ sub EXISTS {
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Node - A generic data node that encapsulates YAML information

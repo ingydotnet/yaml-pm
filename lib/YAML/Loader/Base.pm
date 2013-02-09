@@ -35,6 +35,8 @@ sub load {
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
 YAML::Loader::Base - Base class for YAML Loader classes
