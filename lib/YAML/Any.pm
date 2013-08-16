@@ -29,6 +29,7 @@ my @dump_options = qw(
 my @load_options = qw(
     UseCode
     LoadCode
+    KeyOrder
 );
 
 my @implementations = qw(
