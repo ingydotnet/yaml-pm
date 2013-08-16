@@ -4,6 +4,7 @@ use YAML::Mo;
 our $VERSION = '0.84';
 
 has load_code     => default => sub {0};
+has key_order     => default => sub {0};
 has stream        => default => sub {''};
 has document      => default => sub {0};
 has line          => default => sub {0};
@@ -25,6 +26,7 @@ sub set_global_options {
     my $self = shift;
     $self->load_code($YAML::LoadCode || $YAML::UseCode)
       if defined $YAML::LoadCode or defined $YAML::UseCode;
+    $self->key_order($YAML::KeyOrder) if defined $YAML::KeyOrder
 }
 
 sub load {
