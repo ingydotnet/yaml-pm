@@ -359,6 +359,25 @@ sub _parse_mapping {
         if (exists $mapping->{$key}) {
             $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY');
         }
+        # Manage Merge Key specification
+        elsif ($key eq '<<') {
+            # If this is an anchor, merging keys
+            if (ref($value) eq 'HASH') {
+                @$mapping{keys %$value} = values %$value;
+            }
+            # If this is a list of anchors, merging keys of each anchor
+            elsif (ref($value) eq 'ARRAY') {
+                foreach (@$value) {
+                    # Each values must be an anchor.
+                    $self->die('YAML_LOAD_ERR_BAD_MERGE_ELEMENT')
+                        if (ref($_) ne 'HASH');
+                    @$mapping{keys %$_} = values %$_;
+                }
+            }
+            else {
+                $self->die('YAML_LOAD_ERR_BAD_MERGE_ELEMENT');
+            }
+        }
         else {
             $mapping->{$key} = $value;
         }
