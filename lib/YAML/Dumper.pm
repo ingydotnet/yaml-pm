@@ -144,6 +144,7 @@ sub _prewalk {
     }
 
     # Handle YAML Blessed things
+    require YAML;
     if (defined YAML->global_object()->{blessed_map}{$node_id}) {
         $value = YAML->global_object()->{blessed_map}{$node_id};
         $self->transferred->{$node_id} = $value;
