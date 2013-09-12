@@ -1,4 +1,9 @@
 ---
+version: 0.85
+date:    Tue Sep 10 09:27:10 GMT 2013
+changes:
+- Fix for https://rt.cpan.org/Ticket/Display.html?id=19838 where synopsis in YAML::Dumper doesn't work as exptected.
+---
 version: 0.84
 date:    Fri Jul 13 18:17:27 GMT 2012
 changes:
