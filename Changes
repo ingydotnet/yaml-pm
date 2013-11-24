@@ -4,6 +4,7 @@ date:
 changes:
 - Fix for https://rt.cpan.org/Ticket/Display.html?id=19838 where synopsis in YAML::Dumper doesn't work as exptected.
 - Thorsten++ https://rt.cpan.org/Public/Bug/Display.html?id=90593
+- Upgrade to latest Mo
 ---
 version: 0.84
 date:    Fri Jul 13 18:17:27 GMT 2012
