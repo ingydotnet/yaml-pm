@@ -801,7 +801,7 @@ have added help along the way.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, 2006, 2008, 2011-2012. Ingy döt Net.
+Copyright (c) 2005, 2006, 2008, 2011-2013. Ingy döt Net.
 
 Copyright (c) 2001, 2002, 2005. Brian Ingerson.
 
