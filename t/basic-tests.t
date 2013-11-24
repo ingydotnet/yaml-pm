@@ -1,5 +1,5 @@
 use t::TestYAML tests => 4;
- 
+
 filters {
     yaml => [yaml => 'dumper'],
     perl => [strict => eval => 'dumper'],

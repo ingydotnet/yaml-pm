@@ -22,7 +22,7 @@ NOTE
 
 SYNOPSIS
         use YAML;
-    
+
         # Load a YAML stream of 3 YAML documents into Perl data structures.
         my ($hashref, $arrayref, $string) = Load(<<'...');
         ---

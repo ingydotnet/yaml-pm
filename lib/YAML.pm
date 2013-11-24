@@ -131,7 +131,7 @@ switched over to the new UI-only version.
 =head1 SYNOPSIS
 
     use YAML;
-    
+
     # Load a YAML stream of 3 YAML documents into Perl data structures.
     my ($hashref, $arrayref, $string) = Load(<<'...');
     ---
@@ -152,13 +152,13 @@ switched over to the new UI-only version.
     ain't! YAML is really a data serialization language. But if you want
     to think of it as a markup, that's OK with me. A lot of people try
     to use XML as a serialization format.
-    
+
     "YAML" is catchy and fun to say. Try it. "YAML, YAML, YAML!!!"
     ...
-    
+
     # Dump the Perl data structures back into YAML.
     print Dump($string, $arrayref, $hashref);
-    
+
     # YAML::Dump is used the same way you'd use Data::Dumper::Dumper
     use Data::Dumper;
     print Dumper($string, $arrayref, $hashref);
@@ -539,7 +539,7 @@ Compresses the formatting of arrays of hashes:
 
     -
       foo: bar
-    - 
+    -
       bar: foo
 
 becomes:
@@ -694,7 +694,7 @@ This is a multiline scalar which begins on the next line. It is
 indicated by a single right angle bracket. It is unescaped like the
 single quoted scalar. Line folding is also performed.
 
-    - > 
+    - >
      This is a multiline scalar which begins on
      the next line. It is indicated by a single
      carat. It is unescaped like the single

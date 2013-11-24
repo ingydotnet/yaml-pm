@@ -18,6 +18,6 @@ is(Load("--- true\n"), "true");
 is(Load("--- false\n"), "false");
 
 # $YAML::Syck::ImplicitTyping = $YAML::Syck::ImplicitTyping = 1;
-# 
+#
 # is(Load("--- true\n"), 1);
 # is(Load("--- false\n"), '');

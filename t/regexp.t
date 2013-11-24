@@ -23,7 +23,7 @@ key: !!perl/regexp (?$m_xis:foo\$)
 my $re = $hash->{key};
 
 is ref($re), 'Regexp', 'The regexp is a Regexp';
- 
+
 like "Hello\nBarfoo", $re, 'The regexp works';
 
 #-------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ is $hash->{key}, "(?$m_xis:foo\$)", 'Regexps load';
 $re = $hash->{key};
 
 is ref($re), 'Classy', 'The regexp is a Classy :(';
- 
+
 # XXX Test more doesn't think a blessed regexp is a regexp (for like)
 
 # like "Hello\nBarfoo", $re, 'The regexp works';
@@ -64,12 +64,12 @@ key: !!perl/regexp (?$_xism:foo\$)
 $re = $hash->{key};
 
 is ref($re), 'Regexp', 'The regexp is a Regexp';
- 
+
 like "Barfoo", $re, 'The regexp works';
 
 
 __END__
-=== A regexp with flag 
+=== A regexp with flag
 +++ yaml
 ---
 key: !!perl/regexp (?m-xis:foo$)
@@ -83,7 +83,7 @@ key: !!perl/regexp:Classy (?m-xis:foo$)
 +++ perl
 +{key => bless(qr/foo$/m, 'Classy')}
 
-=== A regexp with no flag 
+=== A regexp with no flag
 +++ yaml
 ---
 key: !!perl/regexp (?-xism:foo$)

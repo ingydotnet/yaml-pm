@@ -1,5 +1,5 @@
 use Test::YAML();
-BEGIN { 
+BEGIN {
     @Test::YAML::EXPORT =
         grep { not /^(Dump|Load)(File)?$/ } @Test::YAML::EXPORT;
 }

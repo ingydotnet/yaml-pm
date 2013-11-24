@@ -49,11 +49,11 @@ key1: '|value'
 +++ subject: Argument "E5" isn't numeric in multiplication (*)
 +++ function: load_passes
 +++ yaml
---- #YAML:1.0 !!perl/Blam::Game                                                  
-board:                                                                          
-  E5: R1                                                                        
-history:                                                                        
-  - 1E5                                                                         
+--- #YAML:1.0 !!perl/Blam::Game
+board:
+  E5: R1
+history:
+  - 1E5
 
 
 
@@ -78,29 +78,29 @@ history:
 === Date: Thu, 12 May 2005 14:57:20
 +++ function: load_passes
 +++ yaml
---- #YAML:1.0                                                                   
-                                                                                
-WilsonSereno1998:                                                               
-    authors:                                                                    
-        - Wilson, Jeffrey. A                                                    
-        - Paul C. Sereno                                                        
-    title: Early evolution and Higher-level phylogeny of sauropod dinosaurs     
-    year: 1998                                                                  
-    journal: Journal of Vertebrate Paleontology, memoir                         
-    volume: 5                                                                   
-    pages: 1-68                                                                 
-                                                                                
-WedelEtAl2000:                                                                  
-    authors:                                                                    
-        - Wedel, M. J.                                                          
-        - R. L. Cifelli                                                         
-        - R. K. Sanders                                                         
-    year: 2000                                                                  
-    title: _Sauroposeidon proteles_, a new sauropod from the Early Cretaceous of Oklahoma.                                                                      
-    journal: Journal of Vertebrate Paleontology                                 
-    volume: 20                                                                  
-    issue: 1                                                                    
-    pages: 109-114                                                              
+--- #YAML:1.0
+
+WilsonSereno1998:
+    authors:
+        - Wilson, Jeffrey. A
+        - Paul C. Sereno
+    title: Early evolution and Higher-level phylogeny of sauropod dinosaurs
+    year: 1998
+    journal: Journal of Vertebrate Paleontology, memoir
+    volume: 5
+    pages: 1-68
+
+WedelEtAl2000:
+    authors:
+        - Wedel, M. J.
+        - R. L. Cifelli
+        - R. K. Sanders
+    year: 2000
+    title: _Sauroposeidon proteles_, a new sauropod from the Early Cretaceous of Oklahoma.
+    journal: Journal of Vertebrate Paleontology
+    volume: 20
+    issue: 1
+    pages: 109-114
 
 
 
@@ -115,19 +115,19 @@ test: '|testing'
 === Date: Mon, 22 Aug 2005 16:52:47
 +++ skip_this_for_now
 +++ perl
-  my $y = {                                                                     
-                                                                                
-    ok_list_of_hashes => [                                                      
-      {one => 1},                                                               
-      {two => 2},                                                               
-    ],                                                                          
-                                                                                
-    error_list_of_hashes => [                                                   
-      {-one => 1},                                                              
-      {-two => 2},                                                              
-    ],                                                                          
-                                                                                
-  };                                                                            
+  my $y = {
+
+    ok_list_of_hashes => [
+      {one => 1},
+      {two => 2},
+    ],
+
+    error_list_of_hashes => [
+      {-one => 1},
+      {-two => 2},
+    ],
+
+  };
 +++ yaml
 ---
 error_list_of_hashes:
@@ -143,11 +143,11 @@ ok_list_of_hashes:
 +++ skip_this_for_now
 +++ function: load_passes
 +++ yaml
-fontsize_small:  '9px'  # labelsmall                                            
-fontsize:        '11px' # maintext, etc                                         
-fontsize_big:    '12px' # largetext, button                                     
-fontsize_header: '13px' # sectionheaders                                        
-fontsize_banner: '16px' # title                                                 
+fontsize_small:  '9px'  # labelsmall
+fontsize:        '11px' # maintext, etc
+fontsize_big:    '12px' # largetext, button
+fontsize_header: '13px' # sectionheaders
+fontsize_banner: '16px' # title
 
 
 
@@ -170,9 +170,9 @@ zzz: ''
 
 === Date: Sat, 3 Dec 2005 14:26:23
 +++ perl
-my @keys = qw/001 002 300 400 500/;                                             
-my $h = {};                                                                     
-map {$h->{$_} = 1} @keys;                                                       
+my @keys = qw/001 002 300 400 500/;
+my $h = {};
+map {$h->{$_} = 1} @keys;
 $h;
 +++ yaml
 ---

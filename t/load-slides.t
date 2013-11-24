@@ -26,7 +26,7 @@ scripting languages:
 standards:
   - RFC0822 (MAIL)
   - RFC1866 (HTML)
-  - RFC2045 (MIME) 
+  - RFC2045 (MIME)
   - RFC2396 (URI)
 others:
   - SOAP
@@ -75,7 +75,7 @@ Household:
   - 7
 -
   - 0
-  - 0 
+  - 0
   - 7
 -
   - 9
@@ -117,7 +117,7 @@ Household:
 ---
 simple: look ma, no quotes
 quoted:
-  - 'Single quoted. Like Perl, no escapes'              
+  - 'Single quoted. Like Perl, no escapes'
   - "Double quotes.\nLike Perl, has escapes"
   - |
     A YAML block scalar.
@@ -205,7 +205,7 @@ The YAML Specification starts out by saying: >
 
      YAML documents are very readable by humans.
      YAML interacts well with scripting languages.
-     YAML uses host languages' native data structures. 
+     YAML uses host languages' native data structures.
 
   Please join us, the mailing list is at SourceForge.
 
@@ -258,13 +258,13 @@ recurse: *1
 #- [9, 1, 1]
 #
 ## Above is equal to below
-#--- [[3, 5, 7], [0, 0, 7], [9, 1, 1]] 
+#--- [[3, 5, 7], [0, 0, 7], [9, 1, 1]]
 #
 ## A 3D Matrix
-#--- 
-#- [[3, 5, 7], [0, 0, 7], [9, 1, 1]] 
-#- [[0, 0, 7], [9, 1, 1], [3, 5, 7]] 
-#- [[9, 1, 1], [3, 5, 7], [0, 0, 7]] 
+#---
+#- [[3, 5, 7], [0, 0, 7], [9, 1, 1]]
+#- [[0, 0, 7], [9, 1, 1], [3, 5, 7]]
+#- [[9, 1, 1], [3, 5, 7], [0, 0, 7]]
 
 ===
 +++ yaml

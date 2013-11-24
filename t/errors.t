@@ -327,59 +327,59 @@ foo: bar
 #    ---
 #    foo: *bar
 
-# === YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP 
-# +++ error: YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP 
+# === YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP
+# +++ error: YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP
 # +++ yaml
 # ---
 # - !perl/regexp:
 #   foo: bar
-# 
-# === YAML_LOAD_WARN_BAD_REGEXP_ELEM 
-# +++ error: YAML_LOAD_WARN_BAD_REGEXP_ELEM 
+#
+# === YAML_LOAD_WARN_BAD_REGEXP_ELEM
+# +++ error: YAML_LOAD_WARN_BAD_REGEXP_ELEM
 # +++ yaml
 # ---
 # - !perl/regexp:
 #   REGEXP: foo
 #   foo: bar
 
-=== YAML_LOAD_WARN_GLOB_NAME 
-+++ error: YAML_LOAD_WARN_GLOB_NAME 
+=== YAML_LOAD_WARN_GLOB_NAME
++++ error: YAML_LOAD_WARN_GLOB_NAME
 +++ yaml
 ---
 - !perl/glob:
   foo: bar
 #---
-#error: xYAML_LOAD_WARN_PARSE_CODE 
+#error: xYAML_LOAD_WARN_PARSE_CODE
 #load: |
 #    ---
 #---
-#error: YAML_LOAD_WARN_CODE_DEPARSE 
+#error: YAML_LOAD_WARN_CODE_DEPARSE
 #load: |
 #    ---
 #    - !perl/code |
 #      sub { "foo" }
 #---
-#error: xYAML_EMIT_ERR_BAD_LEVEL 
+#error: xYAML_EMIT_ERR_BAD_LEVEL
 #code:
 #    #
 #---
-#error: YAML_PARSE_WARN_AMBIGUOUS_TAB 
+#error: YAML_PARSE_WARN_AMBIGUOUS_TAB
 #load: |
 #    ---
 #    - |
 #     foo
-#    	bar 
+#    	bar
 
-=== YAML_LOAD_WARN_BAD_GLOB_ELEM 
-+++ error: YAML_LOAD_WARN_BAD_GLOB_ELEM 
+=== YAML_LOAD_WARN_BAD_GLOB_ELEM
++++ error: YAML_LOAD_WARN_BAD_GLOB_ELEM
 +++ yaml
 ---
 - !perl/glob:
   NAME: foo
   bar: SHAME
 
-=== YAML_PARSE_ERR_ZERO_INDENT 
-+++ error: YAML_PARSE_ERR_ZERO_INDENT 
+=== YAML_PARSE_ERR_ZERO_INDENT
++++ error: YAML_PARSE_ERR_ZERO_INDENT
 +++ yaml
 ---
 - |0

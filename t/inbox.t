@@ -7,7 +7,7 @@ SKIP: {
 }
 
 __END__
-03:14 < audreyt> ingy: 
+03:14 < audreyt> ingy:
 03:14 < audreyt> use YAML; my $x; print Dump bless(\$x);
 03:14 < audreyt> is erroneous
 03:14 < audreyt> then

@@ -30,12 +30,12 @@ national:
 
 ===
 +++ yaml
-- 
+-
   name: Mark McGwire
   hr:   65
   avg:  0.278
   rbi:  147
-- 
+-
   name: Sammy Sosa
   hr:   63
   avg:  0.288
@@ -546,7 +546,7 @@ kept: |+
 #third: 'a single quote '' must be escaped.'
 #span: 'this contains
 #      six spaces
-#      
+#
 #      and one
 #      line break'
 

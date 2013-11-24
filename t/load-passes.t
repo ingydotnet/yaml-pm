@@ -7,9 +7,9 @@ __DATA__
 === Bug reported by Rich Morin
 +++ SKIP
 +++ yaml
-foo:                                                                          
-  -   >                                                                       
-    This is a test.                                                           
+foo:
+  -   >
+    This is a test.
 
 === Bug reported by audreyt
 +++ SKIP

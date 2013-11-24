@@ -10,7 +10,7 @@ run {
         # $error1 =~ s{line: (\d+)}{"line: $1   ($0:".($1+$test->{lines}{yaml}-1).")"}e;
     }
     my @expect = eval $block->perl;
-    my $error2 = $@ || ''; 
+    my $error2 = $@ || '';
     if (my $errors = $error1 . $error2) {
         fail($block->description
               . $errors);
@@ -152,7 +152,7 @@ my $f = [];
 my $g = {};
 my $h = {'09:00:00' => 'Breakfast', '12:00:00' => 'lunch time'};
 my $i = bless {small => 'object'}, 'XYZ';
-my $j = bless [bless([qw(a b c)], 'DEF'), 
+my $j = bless [bless([qw(a b c)], 'DEF'),
             bless({do => 're', mi => 'fa', so => 'la', ti => 'do'}, 'GHI'),
           ], 'ABC';
 my $k = [];
@@ -214,8 +214,8 @@ foo                  :        bar
           #Final
          #Comment
 +++ perl
-([2,3,4,5], 
- {foo => 'bar', boo => 'far'}, 
+([2,3,4,5],
+ {foo => 'bar', boo => 'far'},
  ["# Not a comment; #Not a comment\n"],
  42)
 === several docs, some empty
@@ -251,7 +251,7 @@ foo                  :        bar
 - ! "12:00:00"
 - !time '01:23:45'
 +++ perl
-['1964-03-25', 
+['1964-03-25',
  '1975-04-17',
  '2001-09-11',
  '12:34:00',
@@ -310,7 +310,7 @@ foo                  :        bar
 - 2001-12-15T02:59:43.1Z
 - 2001-12-14T21:59:43.25-05:00
 +++ perl
-[44, -45, 4.6, -4.7, '3e+2', ['-4e+3', '5e-4'], '-6e-10', 
+[44, -45, 4.6, -4.7, '3e+2', ['-4e+3', '5e-4'], '-6e-10',
  '2001-12-15', '2001-12-15T02:59:43.1Z', '2001-12-14T21:59:43.25-05:00',
 ]
 === an empty string top level doc

@@ -42,7 +42,7 @@ sub new {
 	yaml_scalar->new($self, $_[1]);
 	return \ $_[1];
     }
-    my $package = "yaml_" . $self->{KIND};    
+    my $package = "yaml_" . $self->{KIND};
     $package->new($self)
 }
 
@@ -131,8 +131,8 @@ sub undone {
     die "Not implemented yet"; # XXX
 }
 
-*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS = 
-*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS = 
+*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS =
+*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS =
 *undone; # XXX Must implement before release
 
 #==============================================================================
@@ -142,7 +142,7 @@ package yaml_mapping;
 
 sub new {
     my ($class, $self) = @_;
-    @{$self->{KEYS}} = sort keys %{$self->{NODE}}; 
+    @{$self->{KEYS}} = sort keys %{$self->{NODE}};
     my $new;
     tie %$new, $class, $self;
     $new
@@ -156,7 +156,7 @@ sub TIEHASH {
 sub FETCH {
     my ($self, $key) = @_;
     if (exists $self->{NODE}{$key}) {
-	return (grep {$_ eq $key} @{$self->{KEYS}}) 
+	return (grep {$_ eq $key} @{$self->{KEYS}})
 	       ? $self->{NODE}{$key} : undef;
     }
     return $self->{HASH}{$key};
@@ -232,7 +232,7 @@ YAML::Node - A generic data node that encapsulates YAML information
 
     use YAML;
     use YAML::Node;
-    
+
     my $ynode = YAML::Node->new({}, 'ingerson.com/fruit');
     %$ynode = qw(orange orange apple red grape green);
     print Dump $ynode;
@@ -273,7 +273,7 @@ keys() works like this:
 
     use YAML;
     use YAML::Node;
-    
+
     %$node = qw(orange orange apple red grape green);
     $ynode = YAML::Node->new($node);
     ynode($ynode)->keys(['grape', 'apple']);

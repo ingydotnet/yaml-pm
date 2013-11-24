@@ -21,7 +21,7 @@ local $YAML::UseAliases = 0
 +++ perl
 my $ref = {foo => 'bar'};
 [$ref, $ref]
-+++ yaml    
++++ yaml
 ---
 - foo: bar
 - foo: bar
