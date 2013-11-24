@@ -2,7 +2,7 @@ package YAML::Loader;
 use YAML::Mo;
 extends 'YAML::Loader::Base';
 
-our $VERSION = '0.84';
+our $VERSION = '0.85';
 
 use YAML::Loader::Base;
 use YAML::Types;
