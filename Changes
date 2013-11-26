@@ -1,4 +1,9 @@
 ---
+version: 0.86
+date:    
+changes:
+- Revert YAML::Mo for https://rt.cpan.org/Public/Bug/Display.html?id=90817
+---
 version: 0.85
 date:    Sun Nov 24 07:43:13 PST 2013
 changes:

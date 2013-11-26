@@ -1,6 +1,6 @@
 package YAML::Any;
 
-our $VERSION = '0.85';
+our $VERSION = '0.86';
 
 use strict;
 use Exporter ();

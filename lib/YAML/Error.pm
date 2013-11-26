@@ -1,7 +1,7 @@
 package YAML::Error;
 use YAML::Mo;
 
-our $VERSION = '0.85';
+our $VERSION = '0.86';
 
 has 'code';
 has 'type' => default => sub {'Error'};
