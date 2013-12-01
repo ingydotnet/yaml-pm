@@ -1,4 +1,9 @@
 ---
+version: 0.87
+date:    
+changes:
+- Using latest Test::Builder tp fix: https://rt.cpan.org/Public/Bug/Display.html?id=90847
+---
 version: 0.86
 date:    Tue Nov 26 16:43:27 UTC 2013
 changes:
