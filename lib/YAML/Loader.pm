@@ -515,7 +515,7 @@ sub _parse_inline_double_quoted {
     my $self = shift;
     my $node;
     # https://rt.cpan.org/Public/Bug/Display.html?id=90593
-    if ($self->inline =~ /^"((?:(?:\\"|[^"]){0,32766}+){0,32766}+)"\s*(.*)$/) {
+    if ($self->inline =~ /^"((?:(?:\\"|[^"]){0,32766}){0,32766})"\s*(.*)$/) {
         $node = $1;
         $self->inline($2);
         $node =~ s/\\"/"/g;
