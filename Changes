@@ -1,4 +1,10 @@
 ---
+version: 0.88
+date:    Tue Dec  3 05:29:34 UTC 2013
+changes:
+- Fixed YAML loading on perl 5.8 (broken in YAML 0.85) by removing
+  5.10-specific regex construct. -- hobbs++
+---
 version: 0.87
 date:    Sat Nov 30 21:51:48 PST 2013
 changes:

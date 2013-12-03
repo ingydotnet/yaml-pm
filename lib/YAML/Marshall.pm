@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package YAML::Marshall;
 
-our $VERSION = '0.87';
+our $VERSION = '0.88';
 
 use YAML::Node ();
 

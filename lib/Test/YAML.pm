@@ -3,7 +3,7 @@ package Test::YAML;
 use Test::Base 0.47 -Base;
 use lib 'lib';
 
-our $VERSION = '0.87';
+our $VERSION = '0.88';
 
 our $YAML    = 'YAML';
 our @EXPORT  = qw(
