@@ -2,7 +2,7 @@
 use Test::More tests => 2;
 
 use YAML;
-use constant LENGTH => 33000;
+use constant LENGTH => 3000;
 
 $SIG{__WARN__} = sub { die @_ };
 
