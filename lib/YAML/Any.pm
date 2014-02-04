@@ -190,6 +190,58 @@ C<require>. If no implementation is found, an error will be thrown.
 
 =back
 
+=head1 EXAMPLES
+
+=head2 DumpFile and LoadFile
+
+Here is an example for DumpFile() :
+
+    #!/usr/bin/perl
+
+    use strict;
+    use warnings;
+
+    use YAML::Any qw(DumpFile);
+
+    my $ds =
+    {
+        array => [5,6,100],
+        string => "Hello",
+    };
+
+    DumpFile("hello.yml", $ds);
+
+When run, this creates a file called F<hello.yml> in the current working
+directory, with the following contents.
+
+    ---
+    array:
+    - 5
+    - 6
+    - 100
+    string: Hello
+
+In turn, the following LoadFile() example, loads the contents from there and
+accesses them:
+
+    #!/usr/bin/perl
+
+    use strict;
+    use warnings;
+
+    use YAML::Any qw(LoadFile);
+
+    my ($ds) = LoadFile("hello.yml");
+
+    print "String == '", $ds->{string}, "'\n";
+
+Assuming F<hello.yml> exists, and is as created by the DumpFile()
+example, it prints:
+
+    $ perl load.pl
+    String == 'Hello'
+    $
+
 =head1 AUTHOR
 
 Ingy döt Net <ingy@cpan.org>
