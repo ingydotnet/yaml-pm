@@ -10,7 +10,7 @@ use YAML 'DumpFile';
 ok defined &DumpFile,
     'Dumpfile exported';
 
-my $file = 't/dump.yaml';
+my $file = "t/dump-file-$$.yaml";
 
 DumpFile($file, [1..3]);
 

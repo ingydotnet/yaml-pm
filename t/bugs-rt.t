@@ -7,7 +7,7 @@ __DATA__
 === Ticket #105-A YAML doesn't serialize odd objects very well
 +++ skip_this_for_now
 +++ skip_unless_modules: FileHandle
-+++ perl: FileHandle->new( ">/tmp/$$" );
++++ perl: FileHandle->new( ">/tmp/yaml_bugs_rt_$$" );
 +++ yaml
 --- !!perl/io:FileHandle
 - xxx
