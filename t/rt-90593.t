@@ -1,5 +1,12 @@
 # https://rt.cpan.org/Public/Bug/Display.html?id=90593
-use Test::More tests => 2;
+use Test::More;
+
+if ($] < 5.010000) {
+    plan skip_all => "Skip old perls";
+}
+else {
+    plan tests => 2;
+}
 
 use YAML;
 use constant LENGTH => 1000000;
