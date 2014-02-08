@@ -3,6 +3,7 @@ version: 0.89
 date:
 changes:
 - Fixed tests to work under parallel testing -- kentnl
+- Switched to dzil release process
 ---
 version: 0.88
 date:    Tue Dec  3 05:29:34 UTC 2013
