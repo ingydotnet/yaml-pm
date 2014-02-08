@@ -1,9 +1,8 @@
 # This test modified from YAML::Syck suite
 use strict;
-use Test::More tests => 9;
+use Test::More tests => 8;
 
 require YAML;
-ok(YAML->VERSION);
 YAML->import;
 
 is(Dump(42),    "--- 42\n");

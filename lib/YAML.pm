@@ -1,8 +1,7 @@
 use 5.008001;
 package YAML;
-use YAML::Mo;
 
-our $VERSION = '0.88';
+use YAML::Mo;
 
 use Exporter;
 push @YAML::ISA, 'Exporter';
@@ -99,8 +98,6 @@ sub Blessed {
 sub global_object { $global }
 
 1;
-
-__END__
 
 =encoding UTF-8
 
@@ -801,7 +798,7 @@ have added help along the way.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, 2006, 2008, 2011-2013. Ingy döt Net.
+Copyright (c) 2005, 2006, 2008, 2011-2014. Ingy döt Net.
 
 Copyright (c) 2001, 2002, 2005. Brian Ingerson.
 

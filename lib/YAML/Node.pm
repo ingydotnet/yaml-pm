@@ -1,8 +1,5 @@
-use strict;
-use warnings;
+use strict; use warnings;
 package YAML::Node;
-
-our $VERSION = '0.88';
 
 use YAML::Tag;
 require YAML::Mo;
@@ -220,8 +217,6 @@ sub EXISTS {
 
 1;
 
-__END__
-
 =encoding UTF-8
 
 =head1 NAME
@@ -299,7 +294,7 @@ Ingy döt Net <ingy@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2006, 2011-2013. Ingy döt Net. All rights reserved.
+Copyright (c) 2006, 2011-2014. Ingy döt Net. All rights reserved.
 
 Copyright (c) 2002. Brian Ingerson. All rights reserved.
 

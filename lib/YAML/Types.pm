@@ -1,14 +1,13 @@
 package YAML::Types;
+
 use YAML::Mo;
-
-our $VERSION = '0.88';
-
 use YAML::Node;
 
 # XXX These classes and their APIs could still use some refactoring,
 # but at least they work for now.
 #-------------------------------------------------------------------------------
 package YAML::Type::blessed;
+
 use YAML::Mo; # XXX
 
 sub yaml_dump {
@@ -226,8 +225,6 @@ sub yaml_load {
 
 1;
 
-__END__
-
 =encoding UTF-8
 
 =head1 NAME
@@ -253,7 +250,7 @@ Ingy döt Net <ingy@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2006, 2011-2013. Ingy döt Net. All rights reserved.
+Copyright (c) 2006, 2011-2014. Ingy döt Net. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

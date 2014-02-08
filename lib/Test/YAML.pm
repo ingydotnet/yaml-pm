@@ -1,9 +1,7 @@
 package Test::YAML;
 
-use Test::Base 0.47 -Base;
+use Test::Base -Base;
 use lib 'lib';
-
-our $VERSION = '0.88';
 
 our $YAML    = 'YAML';
 our @EXPORT  = qw(
@@ -234,8 +232,6 @@ sub _perl_eval_result_error_warning {
 
 1;
 
-__END__
-
 =encoding UTF-8
 
 =head1 NAME
@@ -258,7 +254,7 @@ Ingy döt Net <ingy@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2006, 2011-2013. Ingy döt Net.
+Copyright (c) 2006, 2011-2014. Ingy döt Net.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
