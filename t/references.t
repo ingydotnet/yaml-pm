@@ -1,3 +1,4 @@
+use lib 'inc';
 use Test::YAML tests => 10;
 
 no_diff;

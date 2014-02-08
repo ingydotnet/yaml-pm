@@ -1,3 +1,4 @@
+use lib 'inc';
 use Test::YAML();
 BEGIN {
     @Test::YAML::EXPORT =

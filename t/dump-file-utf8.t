@@ -1,4 +1,5 @@
 use utf8;
+use lib 'inc';
 use Test::YAML();
 BEGIN {
     @Test::YAML::EXPORT =
