@@ -8,7 +8,7 @@ changes:
 version: 0.87
 date:    Sat Nov 30 21:51:48 PST 2013
 changes:
-- Using latest Test::Builder tp fix: https://rt.cpan.org/Public/Bug/Display.html?id=90847
+- Using latest Test::Builder tp fix https://rt.cpan.org/Public/Bug/Display.html?id=90847
 ---
 version: 0.86
 date:    Tue Nov 26 16:43:27 UTC 2013
@@ -103,7 +103,7 @@ changes:
 version: 0.71
 date:    Sun Jan 3 12:25:00 AEST 2010
 changes:
-- Set file encoding to UTF-8 in LoadFile/DumpFile (RT#25434) by Olivier Mengué
+- Set file encoding to UTF-8 in LoadFile/DumpFile (RT#25434) by Olivier Mengue
 - We shouldn't have to care about 5.8.0. Since it's causing CPAN Testers
   failures, bump the minimum Perl to 5.8.1
 
@@ -208,38 +208,38 @@ changes:
 ---
 version: 0.56
 date:    Mon Jan 30 10:26:33 PST 2006
-change:
+changes:
 - Add Module::Install::TestBase support
 
 ---
 version: 0.55
 date:    Sun Jan 29 19:03:35 PST 2006
-change:
+changes:
 - Load YAML::Node because Module::Build expects it to be loaded.
   We can undo this when Module::Build starts loading it for itself.
 
 ---
 version: 0.54
 date:    Sun Jan 29 17:28:46 PST 2006
-change:
+changes:
 - Remove dependency on Class::Spiffy (and/or Spiffy).
 
 ---
 version: 0.53
 date:    Thu Jan 19 06:03:17 PST 2006
-change:
+changes:
 - Depend on Class::Spiffy instead of Spiffy. No source filtering.
 
 ---
 version: 0.52
 date:    Wed Jan 18 14:25:24 PST 2006
-change:
+changes:
 - Error in Spiffy-0.26 causing problems. Require 0.27
 
 ---
 version: 0.51
 date:    Sat Jan 14 17:09:09 GMT 2006
-change:
+changes:
 - Tests pass on win32 and cygwin
 - Don't gpg sign the distribution tarball
 
@@ -294,228 +294,71 @@ changes:
 ---
 version: 0.32
 date:    Sat May 11 19:54:52 EDT 2002
-changes: Moved error handling into YAML::Error
-
----
-version: 0.32
-date:    Mon May  6 13:42:44 EDT 2002
-changes: Enabled UseAliases=0 to mean skip Dump checking of alias nodes.
-
----
-version: 0.32
-date:    Mon May  6 13:42:44 EDT 2002
-changes: Changed Defaults. Indent=2. CompressSeries=1.
-
----
-version: 0.32
-date:    Mon May  6 13:42:44 EDT 2002
-changes: Deprecated Store() in favor of Dump()
-
----
-version: 0.32
-date:    Mon Apr 22 00:57:21 EDT 2002
-changes: Refactored test suite
-
----
-version: 0.32
-date:    Mon Apr 22 00:57:21 EDT 2002
-changes: Added key list to SortKeys
-
----
-version: 0.32
-date:    Mon Apr 22 00:57:21 EDT 2002
-changes: Added ForceBlock option
-
----
-version: 0.32
-date:    Sat Feb 16 17:56:27 PST 2002
-changes: CONTROL-D can be used to terminate ysh. Ryan King will be happy.
-
----
-version: 0.32
-date:    Sun Feb 10 22:38:32 PST 2002
-change:  Added the ability to direct STDIN to the ysh.
+changes:
+- Moved error handling into YAML::Error
+- Enabled UseAliases=0 to mean skip Dump checking of alias nodes.
+- Changed Defaults. Indent=2. CompressSeries=1.
+- Deprecated Store() in favor of Dump()
+- Refactored test suite
+- Added key list to SortKeys
+- Added ForceBlock option
+- CONTROL-D can be used to terminate ysh. Ryan King will be happy.
+- Added the ability to direct STDIN to the ysh.
 
 ---
 version: 0.27
 date:    Tue Jan 15 01:46:18 PST 2002
-change:  Make '-' chomp all trailing newlines
-
----
-version: 0.27
-date:    Tue Jan 15 01:46:18 PST 2002
-change:  Change folded indicator from '^' to ']'.
-
----
-version: 0.27
-date:    Mon Jan 14 20:30:21 PST 2002
-change:  YAC-010 Allow a map as a sequence entry to be collapsed to one line.
-
----
-version: 0.27
-date:    Mon Jan 14 16:52:27 PST 2002
-change:  >
-  Changed the nextline scalar indicators. '^' means folded, and escaping
+changes:
+- Make '-' chomp all trailing newlines
+- Change folded indicator from '^' to ']'.
+- YAC-010 Allow a map as a sequence entry to be collapsed to one line.
+- Changed the nextline scalar indicators. '^' means folded, and escaping
   ('\') can be applied to folded or blocks. Chomping is now '-'.
-
----
-version: 0.27
-date:    Mon Jan 14 16:52:27 PST 2002
-change:  >
-    YAC-013. Generic indentation. This change was big, ugly, hard and it
-    really made my brain hurt. But look. It works! :)
-
----
-version: 0.27
-date:    Mon Jan 14 16:52:27 PST 2002
-change:  >
- YAC-012. Added ability to put comments anywhere, at any
- indentation level.
-
----
-version: 0.27
-date:    Fri Jan 11 16:04:31 PST 2002
-change:  Added $YAML::UseBlock and $YAML::UseFold
-
----
-version: 0.27
-date:    Fri Jan 11 16:04:31 PST 2002
-change:  Changed $YAML::PerlCode to $YAML::UseCode
-
----
-version: 0.27
-date:    Fri Jan 11 16:04:31 PST 2002
-change:  Added $YAML::Indent config option
-
----
-version: 0.27
-date:    Thu Jan 10 15:50:06 PST 2002
-change:  >
- YAC-012. Handled all Throwaway Issues. Blank lines and comments can be
- used anywhere, and they will work appropriately.
-
----
-version: 0.27
-date:    Thu Jan 10 11:46:05 PST 2002
-change:  Converted Changes file (this file) to use YAML
-
----
-version: 0.27
-date:    Thu Jan 10 11:36:48 PST 2002
-change:  >
- YAC-016. Support "assumed header" (--- #YAML:1.0) if no header.
-
----
-version: 0.27
-date:    Thu Jan 10 11:36:48 PST 2002
-change:  Added $YAML::UseBlock option
-
----
-version: 0.27
-date:    Thu Jan 10 03:26:02 PST 2002
-change:  YAC-015. Support Top Level Inline nodes
-
----
-version: 0.27
-date:    Thu Jan 10 01:38:52 PST 2002
-change:  >
- Added testing for Store to test suite. (Now there's no excuse not to
- create lot's of new tests. :)
+- YAC-013. Generic indentation. This change was big, ugly, hard and it really
+  made my brain hurt. But look. It works! :)
+- YAC-012. Added ability to put comments anywhere, at any indentation level.
+- Added $YAML::UseBlock and $YAML::UseFold
+- Changed $YAML::PerlCode to $YAML::UseCode
+- Added $YAML::Indent config option
+- YAC-012. Handled all Throwaway Issues. Blank lines and comments can be used
+  anywhere, and they will work appropriately.
+- Converted Changes file (this file) to use YAML
+- AC-016. Support "assumed header" (--- #YAML:1.0) if no header.
+- Added $YAML::UseBlock option
+- YAC-015. Support Top Level Inline nodes
+- Added testing for Store to test suite. (Now there's no excuse not to
+  create lot's of new tests. :)
 
 ---
 version: 0.26
 date:    Wed Jan  9 21:13:45 PST 2002
-change:  Detect implicit scalars more correctly
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Refactor test suite
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Proofed documentation
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Fix ysh doc. Document flags in the pod.
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Move test code out of YAML.pm and into testlib
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Change directives to use #
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Parse regexes
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  YAC-017. Change !perl/ syntax
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Emit regexes
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  support 'ysh -v' and 'ysh -V' and 'ysh -h'
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Support blessed globs
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Make ysh installable
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Parse CODE leaves
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Support blessed scalars
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Test warnings as well as errors
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Use B::Deparse to serialize code
-
----
-version: 0.26
-date:    Wed Jan  9 21:13:45 PST 2002
-change:  Change 'implicit' to 'simple'
+changes:
+- Detect implicit scalars more correctly
+- Refactor test suite
+- Proofed documentation
+- Fix ysh doc. Document flags in the pod.
+- Move test code out of YAML.pm and into testlib
+- Change directives to use #
+- Parse regexes
+- YAC-017. Change !perl/ syntax
+- Emit regexes
+- support 'ysh -v' and 'ysh -V' and 'ysh -h'
+- Support blessed globs
+- Make ysh installable
+- Parse CODE leaves
+- Support blessed scalars
+- Test warnings as well as errors
+- Use B::Deparse to serialize code
+- Change 'implicit' to 'simple'
 
 ---
 version: 0.25
 date:    Wed Dec 19 02:34:38 PST 2001
-change:  Initial module shipped to CPAN
+changes:
+- Initial module shipped to CPAN
 
 ---
 version: 0.01
 date:    Mon Oct 15 19:18:49 2001
-change:  original version; created by h2xs 1.19
-
-
-
-# The End (Or is it the beginning?)
+changes:
+- original version; created by h2xs 1.19
