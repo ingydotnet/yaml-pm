@@ -10,6 +10,8 @@ perl:
 install:
 - git clone --depth=1 --branch=master
   git://github.com/ingydotnet/test-base-pm ../test-base-pm
+- cpanm --quiet --notest
+  Devel::Cover::Report::Coveralls
 
 script:
 - PERL5OPT=-MDevel::Cover=-coverage,statement,branch,condition,path,subroutine
