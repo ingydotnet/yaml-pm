@@ -1,6 +1,11 @@
 ---
+version: 0.90
+date:    Mon Feb 10 08:42:31 PST 2014
+changes:
+- Revert Mo from 0.38 to 0.31 - zefram++ reported it breaking cpan client
+---
 version: 0.89
-date:
+date:    Sat Nov  8 12:51:48 PST 2014
 changes:
 - Fixed tests to work under parallel testing -- kentnl
 - Switched to dzil release process
