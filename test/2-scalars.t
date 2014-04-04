@@ -1,6 +1,6 @@
 # This test modified from YAML::Syck suite
 use strict;
-use Test::More tests => 8;
+use Test::More tests => 10;
 
 require YAML;
 YAML->import;
@@ -20,3 +20,14 @@ is(Load("--- false\n"), "false");
 #
 # is(Load("--- true\n"), 1);
 # is(Load("--- false\n"), '');
+
+my $Data = {
+	Test => '
+	Test Drive D:\\',
+};
+
+is_deeply(Load(Dump($Data)), $Data);
+
+# Large data tests. See also https://bugzilla.redhat.com/show_bug.cgi?id=192400.
+$Data = ' äø<> " \' " \'' x 40_000;
+is(Load(Dump($Data)), $Data);
