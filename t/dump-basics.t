@@ -1,4 +1,4 @@
-use t::TestYAML tests => 6;
+use t::TestYAML tests => 7;
 
 filters {
     perl => [qw'eval yaml_dump'],
@@ -66,3 +66,8 @@ sub foo {
     return "Don't eat the foo";
 }
 
+=== Single Dash
++++ perl: {foo => '-'}
++++ yaml
+---
+foo: '-'
