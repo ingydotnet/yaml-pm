@@ -1,4 +1,9 @@
 ---
+version: 0.91
+date:    Tue May 27 17:14:12 EDT 2014
+changes:
+- https://github.com/ingydotnet/yaml-pm/pull/22
+---
 version: 0.90
 date:    Mon Feb 10 08:42:31 PST 2014
 changes:
