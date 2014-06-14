@@ -1,4 +1,9 @@
 ---
+version: 0.94
+date:    Sat Jun 14 10:32:08 PDT 2014
+changes:
+- Skip a failing test on 5.8 introduced in 0.93
+---
 version: 0.93
 date:    Fri Jun 13 22:32:18 PDT 2014
 changes:
