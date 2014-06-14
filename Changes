@@ -1,4 +1,12 @@
 ---
+version: 0.93
+date:    Fri Jun 13 21:50:52 PDT 2014
+changes:
+- Switch to Zilla::Dist
+- Add badges to doc
+- @thorsteneckel++ fixed #18
+- @karenetheridge++ fixed #19
+---
 version: 0.92
 date:    Wed May 28 23:04:26 EDT 2014
 changes:

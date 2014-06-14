@@ -111,7 +111,7 @@ sub implementation {
 
 sub croak {
     require Carp;
-    Carp::Croak(@_);
+    Carp::croak(@_);
 }
 
 1;
