@@ -1,24 +1,26 @@
 language: perl
+
 perl:
-- 5.18
-- 5.16
-- 5.14
-- 5.12
-- 5.10
-- 5.8
+- '5.18'
+- '5.16'
+- '5.14'
+- '5.12'
+- '5.10'
+- '5.8'
 
 install:
-- git clone --depth=1 --branch=master
+- git clone --depth=1
   git://github.com/ingydotnet/test-base-pm ../test-base-pm
 - cpanm --quiet --notest
-  Spiffy
   Devel::Cover::Report::Coveralls
+  Spiffy
 
 script:
 - PERL5OPT=-MDevel::Cover=-coverage,statement,branch,condition,path,subroutine
   PERL5LIB=../test-base-pm/lib
-  prove -lv t/
+  prove -lv test/
 - cover
 
 after_success:
 - cover -report coveralls
+
