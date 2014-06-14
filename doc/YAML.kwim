@@ -3,6 +3,10 @@ YAML
 
 YAML Ain't Markup Language™
 
+<badge-travis ingydotnet/yaml-pm>
+
+<badge-coveralls ingydotnet/yaml-pm>
+
 = Note
 
 This module has been released to CPAN as [YAML::Old], and soon YAML.pm will be

@@ -10,6 +10,12 @@ See http://github.com/ingydotnet/kwim-pm#readme
 
 YAML - YAML Ain't Markup Language™
 
+=for html
+<a href="https://travis-ci.org/ingydotnet/yaml-pm"><img src="https://travis-ci.org/ingydotnet/yaml-pm.png" alt="yaml-pm"></a>
+
+=for html
+<a href="https://coveralls.io/r/ingydotnet/yaml-pm?branch=master"><img src="https://coveralls.io/repos/ingydotnet/yaml-pm/badge.png" alt="yaml-pm"></a>
+
 =head1 NOTE
 
 This module has been released to CPAN as L<YAML::Old>, and soon YAML.pm will
