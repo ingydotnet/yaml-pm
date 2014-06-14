@@ -3,9 +3,7 @@ YAML
 
 YAML Ain't Markup Language™
 
-<badge-travis ingydotnet/yaml-pm>
-
-<badge-coveralls ingydotnet/yaml-pm>
+<badge travis coveralls ingydotnet/yaml-pm>
 
 = Note
 
