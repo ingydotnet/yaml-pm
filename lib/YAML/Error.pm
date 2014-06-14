@@ -189,33 +189,3 @@ package YAML::Warning;
 our @ISA = 'YAML::Error';
 
 1;
-
-=encoding UTF-8
-
-=head1 NAME
-
-YAML::Error - Error formatting class for YAML modules
-
-=head1 SYNOPSIS
-
-    $self->die('YAML_PARSE_ERR_NO_ANCHOR', $alias);
-    $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY');
-
-=head1 DESCRIPTION
-
-This module provides a C<die> and a C<warn> facility.
-
-=head1 AUTHOR
-
-Ingy döt Net <ingy@cpan.org>
-
-=head1 COPYRIGHT
-
-Copyright (c) 2006, 2011-2014. Ingy döt Net. All rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-See L<http://www.perl.com/perl/misc/Artistic.html>
-
-=cut

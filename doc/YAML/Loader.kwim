@@ -1,0 +1,30 @@
+YAML::Loader
+============
+
+YAML class for loading Perl objects to YAML
+
+= Synopsis
+
+  use YAML::Loader;
+  my $loader = YAML::Loader->new;
+  my $hash = $loader->load(<<'...');
+  foo: bar
+  ...
+
+= Description
+
+YAML::Loader is the module that YAML.pm used to deserialize YAML to Perl
+objects. It is fully object oriented and usable on its own.
+
+= Author
+
+Ingy döt Net <ingy@cpan.org>
+
+= Copyright
+
+Copyright 2001-2014. Ingy döt Net
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html

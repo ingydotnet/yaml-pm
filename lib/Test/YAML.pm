@@ -254,10 +254,10 @@ Ingy döt Net <ingy@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2006, 2011-2014. Ingy döt Net.
+Copyright 2001-2014. Ingy döt Net.
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
 
 See L<http://www.perl.com/perl/misc/Artistic.html>
 

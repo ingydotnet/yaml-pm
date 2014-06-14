@@ -1,0 +1,29 @@
+YAML::Types
+===========
+
+Marshall Perl internal data types to/from YAML
+
+= Synopsis
+
+  $::foo = 42;
+  print YAML::Dump(*::foo);
+
+  print YAML::Dump(qr{match me});
+
+= Description
+
+This module has the helper classes for transferring objects, subroutines,
+references, globs, regexps and file handles to and from YAML.
+
+= Author
+
+ingy döt Net <ingy@cpan.org>
+
+= Copyright
+
+Copyright 2001-2014. Ingy döt Net
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html

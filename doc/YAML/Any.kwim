@@ -1,0 +1,82 @@
+YAML::Any
+=========
+
+Pick a YAML implementation and use it.
+
+= Status
+
+WARNING: This module will soon be deprecated. The plan is that YAML.pm itself
+will act like an /Any/ module.
+
+= Synopsis
+
+  use YAML::Any;
+  $YAML::Indent = 3;
+  my $yaml = Dump(@objects);
+
+= Description
+
+There are several YAML implementations that support the Dump/Load API. This
+module selects the best one available and uses it.
+
+= Order
+
+Currently, YAML::Any will choose the first one of these YAML implementations
+that is installed on your system:
+
+* YAML::XS
+* YAML::Syck
+* YAML::Old
+* YAML
+* YAML::Tiny
+
+= Options
+
+If you specify an option like:
+
+  $YAML::Indent = 4;
+
+And YAML::Any is using YAML::XS, it will use the proper variable:
+$YAML::XS::Indent.
+
+= Subroutines
+
+Like all the YAML modules that YAML::Any uses, the following subroutines are
+exported by default:
+
+* Dump
+* Load
+
+and the following subroutines are exportable by request:
+
+* DumpFile
+* LoadFile
+
+= Methods
+
+YAML::Any provides the following class methods.
+
+- `YAML::Any->order`
+
+  This method returns a list of the current possible implementations that
+  YAML::Any will search for.
+
+- `YAML::Any->implementation`
+
+  This method returns the implementation the YAML::Any will use. This result
+  is obtained by finding the first member of YAML::Any->order that is either
+  already loaded in `%INC` or that can be loaded using `require`. If no
+  implementation is found, an error will be thrown.
+
+= Author
+
+Ingy döt Net <ingy@cpan.org>
+
+= Copyright
+
+Copyright 2001-2014. Ingy döt Net
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html

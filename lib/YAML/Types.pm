@@ -224,37 +224,3 @@ sub yaml_load {
 }
 
 1;
-
-=encoding UTF-8
-
-=head1 NAME
-
-YAML::Types - Marshall Perl internal data types to/from YAML
-
-=head1 SYNOPSIS
-
-    $::foo = 42;
-    print YAML::Dump(*::foo);
-
-    print YAML::Dump(qr{match me});
-
-=head1 DESCRIPTION
-
-This module has the helper classes for transferring objects,
-subroutines, references, globs, regexps and file handles to and
-from YAML.
-
-=head1 AUTHOR
-
-Ingy döt Net <ingy@cpan.org>
-
-=head1 COPYRIGHT
-
-Copyright (c) 2006, 2011-2014. Ingy döt Net. All rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-See L<http://www.perl.com/perl/misc/Artistic.html>
-
-=cut
