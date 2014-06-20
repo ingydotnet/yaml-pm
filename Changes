@@ -1,4 +1,9 @@
 ---
+version: 0.95
+date:    Sat Jun 14 10:32:08 PDT 2014
+changes:
+- Fix dumping blessed globs. #26. mcast++
+---
 version: 0.94
 date:    Sat Jun 14 10:32:08 PDT 2014
 changes:
