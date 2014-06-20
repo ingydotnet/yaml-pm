@@ -26,6 +26,11 @@ sub yaml_dump {
     elsif ($type eq 'SCALAR') {
         $_[1] = $$value;
         YAML::Node->new($_[1], $tag);
+    }
+    elsif ($type eq 'GLOB') {
+        # blessed glob support is minimal, and will not round-trip
+        # initial aim: to not cause an error
+        return YAML::Type::glob->yaml_dump($value, $tag);
     } else {
         YAML::Node->new($value, $tag);
     }
@@ -47,7 +52,11 @@ package YAML::Type::glob;
 
 sub yaml_dump {
     my $self = shift;
-    my $ynode = YAML::Node->new({}, '!perl/glob:');
+    # $_[0] remains as the glob
+    my $tag = pop @_ if 2==@_;
+
+    $tag = '!perl/glob:' unless defined $tag;
+    my $ynode = YAML::Node->new({}, $tag);
     for my $type (qw(PACKAGE NAME SCALAR ARRAY HASH CODE IO)) {
         my $value = *{$_[0]}{$type};
         $value = $$value if $type eq 'SCALAR';
