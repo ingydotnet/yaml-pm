@@ -1,4 +1,10 @@
 ---
+version: 0.96
+date:    Sun Jul 13 22:54:08 PDT 2014
+changes:
+- Fix Metadata and add Contributing file
+- Change Kwim to Swim
+---
 version: 0.95
 date:    Sat Jun 14 10:32:08 PDT 2014
 changes:

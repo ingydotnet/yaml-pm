@@ -1,7 +1,7 @@
 =meta: 0.0.1
 
 name: YAML
-version: 0.95
+version: 0.96
 abstract: YAML Ain't Markup Language
 homepage: http://yaml.org
 
@@ -19,9 +19,9 @@ requires:
   perl: 5.8.1
 
 devel:
-  git: git@github.org/ingydotnet/yaml-pm
+  git: https://github.com/ingydotnet/yaml-pm
+  bug: https://github.com/ingydotnet/yaml-pm/issues
   irc: irc.freenode.net/yaml
-  bug: https://github.com/ingydotnet/yaml-pm/issues/
 
 =cpan:
   include_testbase: true
