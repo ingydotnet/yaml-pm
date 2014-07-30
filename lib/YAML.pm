@@ -1,6 +1,6 @@
 use 5.008001;
 package YAML;
-our $VERSION = '0.97';
+our $VERSION = '0.98';
 
 use YAML::Mo;
 

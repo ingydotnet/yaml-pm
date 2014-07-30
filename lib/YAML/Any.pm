@@ -1,6 +1,7 @@
+use strict; use warnings;
 package YAML::Any;
+our $VERSION = '0.98';
 
-use strict;
 use Exporter ();
 
 @YAML::Any::ISA       = 'Exporter';

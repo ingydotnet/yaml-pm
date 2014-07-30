@@ -1,4 +1,10 @@
 ---
+version: 0.98
+date:    Wed Jul 30 12:32:25 PDT 2014
+changes:
+- Fix indexing of YAML::Any
+- Change IRC to irc.perl.org#yaml
+---
 version: 0.97
 date:    Wed Jul 16 23:37:04 PDT 2014
 changes:
