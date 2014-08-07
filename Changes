@@ -1,4 +1,9 @@
 ---
+version: 1.01
+date:    Thu Aug  7 14:48:24 PDT 2014
+changes:
+- Dep on patched Test::YAML
+---
 version: 1.00
 date:    Thu Aug  7 00:35:21 PDT 2014
 changes:

@@ -1,7 +1,7 @@
 =meta: 0.0.1
 
 name: YAML
-version: 1.00
+version: 1.01
 abstract: YAML Ain't Markup Language
 homepage: http://yaml.org
 
@@ -20,7 +20,7 @@ requires:
 
 test:
   requires:
-    Test::YAML: 0.99
+    Test::YAML: 1.01
 
 devel:
   git: https://github.com/ingydotnet/yaml-pm
