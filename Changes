@@ -1,4 +1,9 @@
 ---
+version: 0.99
+date:    Wed Aug  6 17:55:42 PDT 2014
+changes:
+- Switch to external Test::Base
+---
 version: 0.98
 date:    Wed Jul 30 12:32:25 PDT 2014
 changes:

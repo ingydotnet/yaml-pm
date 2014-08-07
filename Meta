@@ -1,7 +1,7 @@
 =meta: 0.0.1
 
 name: YAML
-version: 0.98
+version: 0.99
 abstract: YAML Ain't Markup Language
 homepage: http://yaml.org
 
@@ -18,18 +18,15 @@ author:
 requires:
   perl: 5.8.1
 
+test:
+  requires:
+    Test::YAML: 0.99
+
 devel:
   git: https://github.com/ingydotnet/yaml-pm
   bug: https://github.com/ingydotnet/yaml-pm/issues
   irc: irc.perl.org#yaml
 
-=cpan:
-  include_testbase: true
-
 =travis:
   type: perl
   irc: irc.perl.org#yaml
-  testbase: true
-  test:
-    requires:
-      Spiffy: 0

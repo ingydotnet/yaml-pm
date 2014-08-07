@@ -8,7 +8,7 @@ See http://github.com/ingydotnet/swim-pm#readme
 
 =head1 NAME
 
-YAML - YAML Ain't Markup Language™
+YAML - YAML Ain't Markup Languageâ¢
 
 =for html
 <a href="https://travis-ci.org/ingydotnet/yaml-pm"><img src="https://travis-ci.org/ingydotnet/yaml-pm.png" alt="yaml-pm"></a>
@@ -49,7 +49,7 @@ over to the new UI-only version.
     ---
     - Clark Evans
     - Oren Ben-Kiki
-    - Ingy döt Net
+    - Ingy dÃ¶t Net
     --- >
     You probably think YAML stands for "Yet Another Markup Language". It
     ain't! YAML is really a data serialization language. But if you want
@@ -679,17 +679,17 @@ See L<YAML::XS>. Fast!
 
 =head1 AUTHOR
 
-Ingy döt Net <ingy@cpan.org>
+Ingy dÃ¶t Net <ingy@cpan.org>
 
 is responsible for YAML.pm.
 
 The YAML serialization language is the result of years of collaboration
-between Oren Ben-Kiki, Clark Evans and Ingy döt Net. Several others have
+between Oren Ben-Kiki, Clark Evans and Ingy dÃ¶t Net. Several others have
 added help along the way.
 
 =head1 COPYRIGHT
 
-Copyright 2001-2014. Ingy döt Net
+Copyright 2001-2014. Ingy dÃ¶t Net
 
 Some parts copyright 2009 - 2010 Adam Kennedy
 
