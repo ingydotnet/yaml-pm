@@ -1,7 +1,5 @@
 use strict;
-use File::Basename;
-use lib dirname(__FILE__);
-
+use lib -e 't' ? 't' : 'test';
 my $testdir = -e 'test' ? 'test' : 't';
 
 use lib 'inc';

@@ -1,7 +1,5 @@
 use strict;
-use File::Basename;
-use lib dirname(__FILE__);
-
+use lib -e 't' ? 't' : 'test';
 # This tests the slides I used for YAPC 2002
 use TestYAML tests => 28;
 

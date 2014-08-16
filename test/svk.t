@@ -1,11 +1,8 @@
 use strict;
-use File::Basename;
-use lib dirname(__FILE__);
-
+my $t; use lib ($t = -e 't' ? 't' : 'test');
 use TestYAML tests => 3;
-my $testdir = -e 'test' ? 'test' : 't';
 
-my $test_file = "$testdir/svk-config.yaml";
+my $test_file = "$t/svk-config.yaml";
 my $node = LoadFile($test_file);
 
 is ref($node), 'HASH',

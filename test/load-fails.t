@@ -1,7 +1,5 @@
 use strict;
-use File::Basename;
-use lib dirname(__FILE__);
-
+use lib -e 't' ? 't' : 'test';
 # This simply tests that a given piece of invalid YAML fails to parse
 use TestYAML tests => 4;
 
