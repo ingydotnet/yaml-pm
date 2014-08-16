@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-my $testdir = -e 'test' ? 'test' : 't';
+my $t = -e 't' ? 't' : 'test';
 
 use utf8;
 use lib 'inc';
@@ -19,7 +19,7 @@ ok defined &DumpFile,
 ok defined &LoadFile,
     'LoadFile exported';
 
-my $file = "$testdir/dump-file-utf8-$$.yaml";
+my $file = "$t/dump-file-utf8-$$.yaml";
 
 # A scalar containing non-ASCII characters
 my $data = 'Olivier Mengué';

@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-my $testdir = -e 'test' ? 'test' : 't';
+my $t = -e 't' ? 't' : 'test';
 
 use lib 'inc';
 use Test::YAML();
@@ -15,7 +15,7 @@ use YAML 'DumpFile';
 ok defined &DumpFile,
     'Dumpfile exported';
 
-my $file = "$testdir/dump-file-$$.yaml";
+my $file = "$t/dump-file-$$.yaml";
 
 DumpFile($file, [1..3]);
 
