@@ -206,7 +206,7 @@ foo: bar
 --- #YAML:1.0
 boo:                          far
   # a comment
-foo                  :        bar  
+foo                  :        bar
 ---
 - >
  # Not a comment;
