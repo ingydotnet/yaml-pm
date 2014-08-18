@@ -1,4 +1,9 @@
 ---
+version: 1.07
+date:    Mon Aug 18 08:40:01 PDT 2014
+changes:
+- Apply PR/8 from shlomif++. Add doc examples for YAML::Any.
+---
 version: 1.06
 date:    Sat Aug 16 16:51:08 PDT 2014
 changes:
