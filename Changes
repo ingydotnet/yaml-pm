@@ -1,4 +1,9 @@
 ---
+version: 1.08
+date:    Mon Aug 18 10:21:48 PDT 2014
+changes:
+- Dep on Test::YAML 1.05
+---
 version: 1.07
 date:    Mon Aug 18 08:40:01 PDT 2014
 changes:

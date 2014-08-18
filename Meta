@@ -1,7 +1,7 @@
 =meta: 0.0.2
 
 name: YAML
-version: 1.07
+version: 1.08
 abstract: YAML Ain't Markup Language
 homepage: http://yaml.org
 language: perl
@@ -26,4 +26,4 @@ requires:
 
 test:
   requires:
-    Test::YAML: 1.01
+    Test::YAML: 1.05
