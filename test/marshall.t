@@ -8,8 +8,8 @@ use warnings;
 #-------------------------------------------------------------------------------
 package Foo::Bar;
 BEGIN {
-	require TestYAMLBase;
-	@Foo::Bar::ISA = 'TestYAMLBase';
+    require TestYAMLBase;
+    @Foo::Bar::ISA = 'TestYAMLBase';
 }
 use YAML::Marshall;
 
@@ -33,16 +33,16 @@ sub yaml_load {
 #-------------------------------------------------------------------------------
 package Bar::Baz;
 BEGIN {
-	require TestYAMLBase;
-	@Bar::Baz::ISA = 'TestYAMLBase';
+    require TestYAMLBase;
+    @Bar::Baz::ISA = 'TestYAMLBase';
 }
 use YAML::Marshall 'random/object:bar.baz';
 
 #-------------------------------------------------------------------------------
 package Baz::Foo;
 BEGIN {
-	require TestYAMLBase;
-	@Bar::Foo::ISA = 'TestYAMLBase';
+    require TestYAMLBase;
+    @Bar::Foo::ISA = 'TestYAMLBase';
 }
 use YAML::Marshall;
 
