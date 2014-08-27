@@ -646,7 +646,7 @@ sub _parse_next_line {
         else {
             # First get rid of any comments.
             while (@{$self->lines} && ($self->lines->[0] =~ /^\s*#/)) {
-                $self->lines->[0] =~ /^( *)/ or die;
+                $self->lines->[0] =~ /^( *)/;
                 last unless length($1) <= $offset;
                 shift @{$self->lines};
                 $self->{line}++;
