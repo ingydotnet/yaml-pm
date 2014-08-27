@@ -671,7 +671,8 @@ sub _parse_next_line {
             return;
         }
         else {
-            $self->lines->[0] =~ /^( *)\S/ or die;
+            $self->lines->[0] =~ /^( *)\S/ or
+                die 'YAML_PARSE_ERR_NONSPACE_INDENTATION';
             if (length($1) > $offset) {
                 $self->offset->[$level+1] = length($1);
             }

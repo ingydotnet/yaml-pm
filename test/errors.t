@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 35;
+use TestYAML tests => 36;
 $^W = 1;
 
 use YAML::Error;
@@ -386,3 +386,11 @@ foo: bar
 ---
 - |0
  foo
+
+=== YAML_PARSE_ERR_NONSPACE_INDENTATION
++++ error: YAML_PARSE_ERR_NONSPACE_INDENTATION
++++ yaml
+---
+some:
+  	data-preceded-with-tab: abc
+
