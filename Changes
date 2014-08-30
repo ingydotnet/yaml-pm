@@ -1,4 +1,9 @@
 ---
+version: 1.11
+date:    Fri Aug 29 20:08:20 PDT 2014
+changes:
+- Apply PR/139. @ehuelsmann++
+---
 version: 1.10
 date:    Thu Aug 28 22:53:26 PDT 2014
 changes:
