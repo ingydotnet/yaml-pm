@@ -562,7 +562,7 @@ sub _parse_implicit {
     return $value if $value eq '';
     return undef if $value =~ /^~$/;
     return $value
-      unless $value =~ /^[\@\`\^]/ or
+      unless $value =~ /^[\@\`]/ or
              $value =~ /^[\-\?]\s/;
     $self->die('YAML_PARSE_ERR_BAD_IMPLICIT', $value);
 }
