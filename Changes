@@ -1,4 +1,10 @@
 ---
+version: 1.13
+date:    Sat Oct 11 18:05:45 CEST 2014
+changes:
+- Apply PR/140 from @nfg++
+- Disable some warnings in YAML::Any
+---
 version: 1.12
 date:    Mon Sep 22 08:24:43 PDT 2014
 changes:
