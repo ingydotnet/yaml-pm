@@ -61,6 +61,13 @@ sub DumpFile {
     binmode $OUT, ':utf8';  # if $Config{useperlio} eq 'define';
     local $/ = "\n"; # reset special to "sane"
     print $OUT Dump(@_);
+    unless (ref $filename eq 'GLOB') {
+        close $OUT
+          or do {
+              my $errsav = $!;
+              YAML::Mo::Object->die('YAML_DUMP_ERR_FILE_OUTPUT_CLOSE', $filename, $errsav);
+          }
+    }
 }
 
 sub LoadFile {
