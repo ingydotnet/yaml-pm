@@ -67,6 +67,8 @@ YAML_DUMP_ERR_FILE_CONCATENATE
   Can't concatenate to YAML file %s
 YAML_DUMP_ERR_FILE_OUTPUT
   Couldn't open %s for output:\n%s
+YAML_DUMP_ERR_FILE_OUTPUT_CLOSE
+  Error closing %s:\n%s
 YAML_DUMP_ERR_NO_HEADER
   With UseHeader=0, the node must be a plain hash or array
 YAML_DUMP_WARN_BAD_NODE_TYPE
