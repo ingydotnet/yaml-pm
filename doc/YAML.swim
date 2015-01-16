@@ -422,6 +422,16 @@ The current options are:
   Since this output is usually more desirable, this option is turned on by
   default.
 
+- QuoteNumericStrings
+
+  Default is 0. (false)
+
+  Adds detection mechanisms to encode strings that resemble numbers with
+  mandatory quoting.
+
+  This ensures leading that things like leading/trailing zeros and other
+  formatting are preserved.
+
 = YAML Terminology
 
 YAML is a full featured data serialization language, and thus has its own
