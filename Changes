@@ -1,6 +1,6 @@
 ---
 version: 1.14
-date:
+date:    Sat Jan 17 15:32:18 PST 2015
 changes:
 - Apply PR/145 from @kentnl++
 - Support for QuoteNumericStrings Global Setting

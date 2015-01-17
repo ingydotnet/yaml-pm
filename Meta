@@ -1,12 +1,12 @@
 =meta: 0.0.2
 
 name: YAML
-version: 1.13
-abstract: YAML Ain't Markup Language
+version: 1.14
+abstract: YAML Ain't Markup Language™
 homepage: http://yaml.org
 language: perl
 license: perl
-copyright: 2001-2014
+copyright: 2001-2015
 
 author:
   name: Ingy döt Net
@@ -27,3 +27,5 @@ requires:
 test:
   requires:
     Test::YAML: 1.05
+
+see: YAML::XS

@@ -1,9 +1,4 @@
-YAML
-====
-
-YAML Ain't Markup Language™
-
-<badge travis coveralls ingydotnet/yaml-pm>
+<<<cpan-head>>>
 
 = Note
 
@@ -652,31 +647,8 @@ This is where the language is discussed and designed.
 
 [http://www.yaml.org] is the official YAML website.
 
-[http://www.yaml.org/spec/] is the YAML 1.0 specification.
+[http://www.yaml.org/spec/] is the YAML 1.2 specification.
 
 [http://yaml.kwiki.org] is the official YAML wiki.
 
-= See Also
-
-See [YAML::XS]. Fast!
-
-= Author
-
-Ingy döt Net <ingy@cpan.org>
-
-is responsible for YAML.pm.
-
-The YAML serialization language is the result of years of collaboration
-between Oren Ben-Kiki, Clark Evans and Ingy döt Net. Several others have added
-help along the way.
-
-= Copyright
-
-Copyright 2001-2014. Ingy döt Net
-
-Some parts copyright 2009 - 2010 Adam Kennedy
-
-This program is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
-
-See http://www.perl.com/perl/misc/Artistic.html
+<<<cpan-tail +see>>>
