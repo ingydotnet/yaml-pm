@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 11;
+use TestYAML tests => 6;
 use YAML ();
 use YAML::Dumper;
 
