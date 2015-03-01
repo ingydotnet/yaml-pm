@@ -376,7 +376,15 @@ sub _parse_seq {
         else {
             $self->die('YAML_LOAD_ERR_BAD_SEQ_ELEMENT');
         }
-        if ($self->preface =~ /^(\s*)(\w.*\:(?: |$).*)$/) {
+
+        # Check whether the preface looks like a YAML mapping ("key: value").
+        # This is complicated because it has to account for the possibility
+        # that a key is a quoted string, which itself may contain escaped
+        # quotes.
+        my $preface = $self->preface;
+        if ( $preface =~ /^ (\s*) ( \w .*?               \: (?:\ |$).*) $/x  or
+             $preface =~ /^ (\s*) ((['"]) .*? (?<!\\) \3 \s* \: (?:\ |$).*) $/x
+           ) {
             $self->indent($self->offset->[$self->level] + 2 + length($1));
             $self->content($2);
             $self->level($self->level + 1);
