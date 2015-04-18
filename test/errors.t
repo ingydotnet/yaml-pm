@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 36;
+use TestYAML tests => 35;
 $^W = 1;
 
 use YAML::Error;
@@ -35,15 +35,6 @@ __DATA__
 - foo
 # The next line contains an escape character
 - bell -><%CNTL-G%><-
-
-=== YAML_PARSE_ERR_NO_FINAL_NEWLINE
-+++ error: YAML_PARSE_ERR_NO_FINAL_NEWLINE
-+++ yaml
-# Test msg_no_newline
----
-- one
-- two
-- three
 
 === YAML_PARSE_ERR_BAD_MAJOR_VERSION
 +++ error: YAML_PARSE_ERR_BAD_MAJOR_VERSION

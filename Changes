@@ -1,4 +1,10 @@
 ---
+version: 1.15
+date:    Sat Apr 18 17:03:09 CEST 2015
+changes:
+- Fix Issue #149.
+- Don't require newlines at end of YAML.
+---
 version: 1.14
 date:    Sat Jan 17 15:32:18 PST 2015
 changes:

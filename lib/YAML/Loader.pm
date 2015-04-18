@@ -34,9 +34,7 @@ sub _parse {
     $self->line(0);
     $self->die('YAML_PARSE_ERR_BAD_CHARS')
       if $self->stream =~ /$ESCAPE_CHAR/;
-    $self->die('YAML_PARSE_ERR_NO_FINAL_NEWLINE')
-      if length($self->stream) and
-         $self->{stream} !~ s/(.)\n\Z/$1/s;
+    $self->{stream} =~ s/(.)\n\Z/$1/s;
     $self->lines([split /\x0a/, $self->stream, -1]);
     $self->line(1);
     # Throw away any comments or blanks before the header (or start of
