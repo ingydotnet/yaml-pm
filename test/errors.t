@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 35;
+use TestYAML tests => 37;
 $^W = 1;
 
 use YAML::Error;
@@ -106,6 +106,12 @@ __DATA__
 ---
 - &X=y 42
 
+=== YAML_PARSE_ERR_BAD_ANCHOR
++++ error: YAML_PARSE_ERR_BAD_ANCHOR
++++ yaml
+---
+- &
+
 #---
 #error: YAML_PARSE_ERR_BAD_NODEX
 #load: |
@@ -197,6 +203,12 @@ Test::YAML::Dump({});
 +++ yaml
 ---
 - *foo=bar
+
+=== YAML_PARSE_ERR_BAD_ALIAS
++++ error: YAML_PARSE_ERR_BAD_ALIAS
++++ yaml
+---
+- *
 
 === YAML_PARSE_ERR_MANY_ALIAS
 +++ error: YAML_PARSE_ERR_MANY_ALIAS
