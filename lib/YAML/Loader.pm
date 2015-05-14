@@ -225,7 +225,7 @@ sub _parse_qualifiers {
             $self->die('YAML_PARSE_ERR_MANY_IMPLICIT') if $implicit;
             $implicit = 1;
         }
-        elsif ($preface =~ s/^\&([^ ,:]+)\s*//) {
+        elsif ($preface =~ s/^\&([^ ,:]*)\s*//) {
             $token = $1;
             $self->die('YAML_PARSE_ERR_BAD_ANCHOR')
               unless $token =~ /^[a-zA-Z0-9]+$/;
@@ -233,7 +233,7 @@ sub _parse_qualifiers {
             $self->die('YAML_PARSE_ERR_ANCHOR_ALIAS') if $alias;
             $anchor = $token;
         }
-        elsif ($preface =~ s/^\*([^ ,:]+)\s*//) {
+        elsif ($preface =~ s/^\*([^ ,:]*)\s*//) {
             $token = $1;
             $self->die('YAML_PARSE_ERR_BAD_ALIAS')
               unless $token =~ /^[a-zA-Z0-9]+$/;
