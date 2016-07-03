@@ -1,4 +1,10 @@
 ---
+version: 1.16
+date:    Sun Jul  3 10:53:06 PDT 2016
+changes:
+- Apply PR/158 by @bgruening++
+- Fix VERSION issue
+---
 version: 1.15
 date:    Sat Apr 18 17:03:09 CEST 2015
 changes:
