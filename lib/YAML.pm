@@ -1,5 +1,5 @@
 package YAML;
-our $VERSION = '1.16_002';
+our $VERSION = '1.17';
 
 use YAML::Mo;
 
