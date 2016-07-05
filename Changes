@@ -1,4 +1,9 @@
 ---
+version: 1.16_001
+date:    Tue Jul  5 20:04:10 UTC 2016
+changes:
+- Use Mo 0.40
+---
 version: 1.16
 date:    Sun Jul  3 10:53:06 PDT 2016
 changes:
