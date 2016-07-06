@@ -27,5 +27,6 @@ requires:
 test:
   requires:
     Test::YAML: 1.05
+    Test::More: 0
 
 see: YAML::XS
