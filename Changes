@@ -1,4 +1,9 @@
 ---
+version: 1.18
+date:    Fri Jul  8 14:52:26 UTC 2016
+changes:
+- Apply PR/161 @perlpunk++
+---
 version: 1.17
 date:    Tue Jul  5 20:20:55 UTC 2016
 changes:
