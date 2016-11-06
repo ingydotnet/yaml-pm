@@ -613,8 +613,8 @@ available at [http://www.yaml.org/spec/].
 
 = ysh - The YAML Shell
 
-The YAML distribution ships with a script called 'ysh', the YAML shell.  ysh
-provides a simple, interactive way to play with YAML. If you type in Perl
+The [YAML::Shell] distribution provides script called 'ysh', the YAML shell.
+ysh provides a simple, interactive way to play with YAML. If you type in Perl
 code, it displays the result in YAML. If you type in YAML it turns it into
 Perl code.
 
