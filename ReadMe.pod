@@ -645,8 +645,8 @@ available at L<http://www.yaml.org/spec/>.
 
 =head1 ysh - The YAML Shell
 
-The YAML distribution ships with a script called 'ysh', the YAML shell. ysh
-provides a simple, interactive way to play with YAML. If you type in Perl
+The L<YAML::Shell> distribution provides script called 'ysh', the YAML shell.
+ysh provides a simple, interactive way to play with YAML. If you type in Perl
 code, it displays the result in YAML. If you type in YAML it turns it into
 Perl code.
 
