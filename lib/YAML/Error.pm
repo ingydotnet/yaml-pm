@@ -32,7 +32,7 @@ sub error_messages {
     $error_messages;
 }
 
-%$error_messages = map {s/^\s+//;$_} split "\n", <<'...';
+%$error_messages = map {s/^\s+//; s/\\n/\n/g; $_} split "\n", <<'...';
 YAML_PARSE_ERR_BAD_CHARS
   Invalid characters in stream. This parser only supports printable ASCII
 YAML_PARSE_ERR_BAD_MAJOR_VERSION
