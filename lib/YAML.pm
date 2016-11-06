@@ -53,7 +53,7 @@ sub DumpFile {
             ($mode, $filename) = ($1, $2);
         }
         open $OUT, $mode, $filename
-          or YAML::Mo::Object->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, $!);
+          or YAML::Mo::Object->die('YAML_DUMP_ERR_FILE_OUTPUT', $filename, "$!");
     }
     binmode $OUT, ':utf8';  # if $Config{useperlio} eq 'define';
     local $/ = "\n"; # reset special to "sane"
@@ -75,7 +75,7 @@ sub LoadFile {
     }
     else {
         open $IN, '<', $filename
-          or YAML::Mo::Object->die('YAML_LOAD_ERR_FILE_INPUT', $filename, $!);
+          or YAML::Mo::Object->die('YAML_LOAD_ERR_FILE_INPUT', $filename, "$!");
     }
     binmode $IN, ':utf8';  # if $Config{useperlio} eq 'define';
     return Load(do { local $/; <$IN> });
