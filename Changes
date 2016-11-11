@@ -3,6 +3,7 @@ version: tba
 date: tba
 changes:
 - Apply PR/164
+- Apply PR/151 @bubaflub++
 ---
 version: 1.18
 date:    Fri Jul  8 14:52:26 UTC 2016
