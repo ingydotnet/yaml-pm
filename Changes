@@ -3,6 +3,7 @@ version: tba
 date:    tba
 changes:
 - Apply and amend #146 (quoted map keys) @preaction++
+- B::Deparse is loaded at runtime now
 ---
 version: 1.19
 date:    Fri Nov 18 19:46:44 CET 2016
