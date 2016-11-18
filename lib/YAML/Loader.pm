@@ -383,7 +383,8 @@ sub _parse_seq {
         # quotes.
         my $preface = $self->preface;
         if ( $preface =~ /^ (\s*) ( \w .*?               \: (?:\ |$).*) $/x  or
-             $preface =~ /^ (\s*) ((['"]) .*? (?<!\\) \3 \s* \: (?:\ |$).*) $/x
+             $preface =~ /^ (\s*) ((') (?:''|[^'])*? ' \s* \: (?:\ |$).*) $/x or
+             $preface =~ /^ (\s*) ((") (?:\\\\|[^"])*? " \s* \: (?:\ |$).*) $/x
            ) {
             $self->indent($self->offset->[$self->level] + 2 + length($1));
             $self->content($2);

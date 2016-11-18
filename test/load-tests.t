@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 29;
+use TestYAML tests => 30;
 
 run {
     my $block = shift;
@@ -403,3 +403,10 @@ bless(do { my $x = 1; \$x}, "moose")
 - ^foo
 +++ perl
 ['^foo']
+=== Quoted keys
++++ yaml
+- 'test - ': 23
+  'test '' ': 23
+  "test \\": 23
++++ perl
+[{ 'test - ' => 23, "test ' " => 23, 'test \\' => 23 }]
