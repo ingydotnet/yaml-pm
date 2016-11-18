@@ -12,7 +12,7 @@ YAML - YAML Ain't Markup Language™
 
 =head1 Version
 
-This document describes L<YAML> version B<1.18_001>.
+This document describes L<YAML> version B<1.19>.
 
 =head1 Note
 

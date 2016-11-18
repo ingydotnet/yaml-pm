@@ -1,13 +1,13 @@
 ---
-version: 1.18_001
-date:    Fri Nov 11 23:42:52 CET 2016
+version: 1.19
+date:    Fri Nov 18 19:46:44 CET 2016
 changes:
-- Apply PR/164
-- Apply PR/151 @bubaflub++
-- Apply PR/142 partially @werekraken++
-- Apply PR/162
-- Apply PR/163
-- Apply PR/154 @Varadinsky++
+- Apply PR/164 pod (link to YAML::Shell)
+- Apply PR/151 Fix infinite loop for aliases without a name @bubaflub++
+- Apply PR/142 Improve error messages @werekraken++
+- Apply PR/162 Improve error messages
+- Apply PR/163 Trailing spaces after inline seq/map work now
+- Apply PR/154 Add test case for trailing comments @Varadinsky++
 ---
 version: 1.18
 date:    Fri Jul  8 14:52:26 UTC 2016
