@@ -1,4 +1,9 @@
 ---
+version: tba
+date:    tba
+changes:
+- Apply and amend #146 (quoted map keys) @preaction++
+---
 version: 1.19
 date:    Fri Nov 18 19:46:44 CET 2016
 changes:
