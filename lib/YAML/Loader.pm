@@ -5,6 +5,7 @@ extends 'YAML::Loader::Base';
 
 use YAML::Loader::Base;
 use YAML::Types;
+use YAML::Node;
 
 # Context constants
 use constant LEAF       => 1;
@@ -318,7 +319,7 @@ sub _parse_explicit {
 sub _parse_mapping {
     my $self = shift;
     my ($anchor) = @_;
-    my $mapping = {};
+    my $mapping = $self->key_order ? YAML::Node->new({}) : {};
     $self->anchor2node->{$anchor} = $mapping;
     my $key;
     while (not $self->done and $self->indent == $self->offset->[$self->level]) {
