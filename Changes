@@ -1,10 +1,10 @@
 ---
-version: tba
-date:    tba
+version: 1.19_001
+date:    Sun Nov 27 21:26:44 CET 2016
 changes:
 - Apply and amend #146 (quoted map keys) @preaction++
 - B::Deparse is loaded at runtime now
-- New Feature: $YAML::Preserve (Apply PR/9 @fmenab++)
+- New Feature $YAML::Preserve (Apply PR/9 @fmenab++)
 ---
 version: 1.19
 date:    Fri Nov 18 19:46:44 CET 2016
