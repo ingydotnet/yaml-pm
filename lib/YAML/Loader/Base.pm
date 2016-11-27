@@ -3,7 +3,7 @@ package YAML::Loader::Base;
 use YAML::Mo;
 
 has load_code     => default => sub {0};
-has key_order     => default => sub {0};
+has preserve      => default => sub {0};
 has stream        => default => sub {''};
 has document      => default => sub {0};
 has line          => default => sub {0};
@@ -25,7 +25,7 @@ sub set_global_options {
     my $self = shift;
     $self->load_code($YAML::LoadCode || $YAML::UseCode)
       if defined $YAML::LoadCode or defined $YAML::UseCode;
-    $self->key_order($YAML::KeyOrder) if defined $YAML::KeyOrder
+    $self->preserve($YAML::Preserve) if defined $YAML::Preserve
 }
 
 sub load {

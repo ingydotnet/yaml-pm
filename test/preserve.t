@@ -2,7 +2,7 @@ use strict;
 use Test::More tests => 1;
 use YAML;
 
-local $YAML::KeyOrder = 1;
+local $YAML::Preserve = 1;
 
 my $yaml = <<'...';
 ---
@@ -36,7 +36,7 @@ a: a
 
 my $data = YAML::Load($yaml);
 my $dump = YAML::Dump($data);
-cmp_ok($dump, 'eq', $yaml, "Roundtrip with KeyOrder");
+cmp_ok($dump, 'eq', $yaml, "Roundtrip with Preserve option");
 
 done_testing;
 
