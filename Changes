@@ -2,7 +2,7 @@
 version: 1.19_001
 date:    Sun Nov 27 21:26:44 CET 2016
 changes:
-- Apply and amend #146 (quoted map keys) @preaction++
+- Apply and amend PR/146 (quoted map keys) @preaction++
 - B::Deparse is loaded at runtime now
 - New Feature $YAML::Preserve (Apply PR/9 @fmenabe++)
 ---
@@ -35,7 +35,7 @@ changes:
 version: 1.15
 date:    Sat Apr 18 17:03:09 CEST 2015
 changes:
-- Fix Issue #149.
+- Fix Issue 149.
 - Don't require newlines at end of YAML.
 ---
 version: 1.14
@@ -140,7 +140,7 @@ changes:
 version: 0.95
 date:    Sat Jun 14 10:32:08 PDT 2014
 changes:
-- Fix dumping blessed globs. #26. mcast++
+- Fix dumping blessed globs. Issue 26. mcast++
 ---
 version: 0.94
 date:    Sat Jun 14 10:32:08 PDT 2014
