@@ -22,14 +22,14 @@ my $testdata = 'El país es medible. La patria es del tamaño del corazón de qu
 my $pipe = new IO::Pipe;
 
 if ( fork() ) { # parent reads from IO::Pipe handle
-	$pipe->reader();
-	my $recv_data = LoadFile($pipe);
-	is length($recv_data), length($testdata), 'LoadFile from IO::Pipe read data';
-	is $recv_data, $testdata, 'LoadFile from IO::Pipe contents is correct';
+    $pipe->reader();
+    my $recv_data = LoadFile($pipe);
+    is length($recv_data), length($testdata), 'LoadFile from IO::Pipe read data';
+    is $recv_data, $testdata, 'LoadFile from IO::Pipe contents is correct';
 } else { # child writes to IO::Pipe handle
-	$pipe->writer();
-	DumpFile($pipe, $testdata);
-	exit 0;
+    $pipe->writer();
+    DumpFile($pipe, $testdata);
+    exit 0;
 }
 
 # IO::File
