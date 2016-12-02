@@ -1,6 +1,6 @@
 ---
-version: 1.19_001
-date:    Sun Nov 27 21:26:44 CET 2016
+version: 1.20
+date:    Fri Dec  2 13:20:33 PST 2016
 changes:
 - Apply and amend PR/146 (quoted map keys) @preaction++
 - B::Deparse is loaded at runtime now
