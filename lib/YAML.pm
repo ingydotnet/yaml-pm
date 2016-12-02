@@ -9,6 +9,7 @@ our @EXPORT = qw{ Dump Load };
 our @EXPORT_OK = qw{ freeze thaw DumpFile LoadFile Bless Blessed };
 
 use YAML::Node; # XXX This is a temp fix for Module::Build
+use Scalar::Util qw/ openhandle /;
 
 # XXX This VALUE nonsense needs to go.
 use constant VALUE => "\x07YAML\x07VALUE\x07";
@@ -44,7 +45,7 @@ sub Load {
 sub DumpFile {
     my $OUT;
     my $filename = shift;
-    if (defined fileno($filename)) {
+    if (openhandle $filename) {
         $OUT = $filename;
     }
     else {
@@ -70,7 +71,7 @@ sub DumpFile {
 sub LoadFile {
     my $IN;
     my $filename = shift;
-    if (defined fileno($filename)) {
+    if (openhandle $filename) {
         $IN = $filename;
     }
     else {
