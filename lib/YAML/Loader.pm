@@ -355,7 +355,7 @@ sub _parse_mapping {
         $self->_parse_next_line(COLLECTION);
         my $value = $self->_parse_node();
         if (exists $mapping->{$key}) {
-            $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY');
+            $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY', $key);
         }
         else {
             $mapping->{$key} = $value;
@@ -486,7 +486,7 @@ sub _parse_inline_mapping {
           unless $self->{inline} =~ s/^\: \s*//;
         my $value = $self->_parse_inline();
         if (exists $node->{$key}) {
-            $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY');
+            $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY', $key);
         }
         else {
             $node->{$key} = $value;
