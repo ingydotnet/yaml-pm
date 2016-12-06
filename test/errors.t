@@ -265,7 +265,7 @@ foo: bar
 bar
 
 === YAML_LOAD_WARN_DUPLICATE_KEY
-+++ error: YAML_LOAD_WARN_DUPLICATE_KEY
++++ error: YAML Warning: Duplicate map key 'foo' found
 +++ yaml
 ---
 foo: bar
