@@ -16,3 +16,9 @@ __DATA__
 +++ yaml
 ---
 foo: bar
+=== empty hashes
++++ perl
++{foo1 => undef, foo2 => undef}
++++ yaml
+foo1:
+foo2:
