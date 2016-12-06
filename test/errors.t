@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 37;
+use TestYAML tests => 38;
 $^W = 1;
 
 use YAML::Error;
@@ -266,6 +266,15 @@ bar
 
 === YAML_LOAD_WARN_DUPLICATE_KEY
 +++ error: YAML_LOAD_WARN_DUPLICATE_KEY
++++ yaml
+---
+foo: bar
+bar: boo
+foo: baz
+boo: bah
+
+=== Test duplicate key message
++++ error: YAML Warning: Duplicate map key 'foo' found. Ignoring.
 +++ yaml
 ---
 foo: bar
