@@ -2,6 +2,10 @@
 version: 1.20_001
 date:    Fri Dec  2 13:59:15 PST 2016
 changes:
+- Apply PR/170 (fixes ,#131) hiratara@cpan.org++
+- Empty mapping value at the end resolves to null (was becoming empty string)
+- Apply PR/169 (PR/119) patrick.allen.higgins@gmail.com++
+- Output key in warning when duplicate key was found
 - Apply PR/157 and PR/168 (@lameventanas++ @perlpunk++)
 - Allow reading and writing to IO::Handle
 ---
