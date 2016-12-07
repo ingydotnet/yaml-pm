@@ -61,17 +61,25 @@ sub _parse {
         $self->offset->[0] = -1;
 
         if ($self->lines->[0] =~ /^---\s*(.*)$/) {
-            my @words = split /\s+/, $1;
+            my @words = split /\s/, $1;
             %directives = ();
-            while (@words && $words[0] =~ /^#(\w+):(\S.*)$/) {
-                my ($key, $value) = ($1, $2);
-                shift(@words);
-                if (defined $directives{$key}) {
-                    $self->warn('YAML_PARSE_WARN_MULTIPLE_DIRECTIVES',
-                      $key, $self->document);
-                    next;
+            while (@words) {
+                if ($words[0] =~ /^#(\w+):(\S.*)$/) {
+                    my ($key, $value) = ($1, $2);
+                    shift(@words);
+                    if (defined $directives{$key}) {
+                        $self->warn('YAML_PARSE_WARN_MULTIPLE_DIRECTIVES',
+                          $key, $self->document);
+                        next;
+                    }
+                    $directives{$key} = $value;
                 }
-                $directives{$key} = $value;
+                elsif ($words[0] eq '') {
+                    shift @words;
+                }
+                else {
+                    last;
+                }
             }
             $self->preface(join ' ', @words);
         }

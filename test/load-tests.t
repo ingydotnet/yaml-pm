@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 30;
+use TestYAML tests => 32;
 use Test::Deep;
 
 run {
@@ -411,3 +411,13 @@ bless(do { my $x = 1; \$x}, "moose")
   "test \\": 23
 +++ perl
 [{ 'test - ' => 23, "test ' " => 23, 'test \\' => 23 }]
+=== Plain string with multiple spaces
++++ yaml
+--- A       B
++++ perl
+'A       B'
+=== Plain string with multiple spaces at the beginning
++++ yaml
+--- "   ABC"
++++ perl
+'   ABC'
