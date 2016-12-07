@@ -7,6 +7,14 @@ use Exporter;
 push @YAML::ISA, 'Exporter';
 our @EXPORT = qw{ Dump Load };
 our @EXPORT_OK = qw{ freeze thaw DumpFile LoadFile Bless Blessed };
+use vars qw{
+    $UseCode $DumpCode $LoadCode
+    $SpecVersion
+    $UseHeader $UseVersion $UseBlock $UseFold $UseAliases
+    $Indent $SortKeys $Preserve
+    $AnchorPrefix $CompressSeries $InlineSeries $Purity $Stringify
+};
+
 
 use YAML::Node; # XXX This is a temp fix for Module::Build
 use Scalar::Util qw/ openhandle /;
