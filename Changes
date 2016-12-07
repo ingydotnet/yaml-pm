@@ -2,9 +2,9 @@
 version: 1.20_002
 date:    Wed Dec  7 22:17:18 CET 2016
 changes:
-- Apply PR/171 (fixes #109) @perlpunk++
+- Apply PR/171 (fixes issue/109) @perlpunk++
 - No more "used only once" warnings for $YAML::Indent etc.
-- Apply PR/170 (fixes ,#131) hiratara@cpan.org++
+- Apply PR/170 (fixes issue/131) hiratara@cpan.org++
 - Empty mapping value at the end resolves to null (was becoming empty string)
 - Apply PR/169 (PR/119) patrick.allen.higgins@gmail.com++
 - Output key in warning when duplicate key was found
