@@ -1,6 +1,6 @@
 ---
-version: 1.20_002
-date:    Wed Dec  7 22:17:18 CET 2016
+version: 1.21
+date:    Fri Dec 23 21:19:15 CET 2016
 changes:
 - Apply PR/171 (fixes issue/109) @perlpunk++
 - No more "used only once" warnings for $YAML::Indent etc.
