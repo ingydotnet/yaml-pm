@@ -12,7 +12,8 @@ our (
     $SpecVersion,
     $UseHeader, $UseVersion, $UseBlock, $UseFold, $UseAliases,
     $Indent, $SortKeys, $Preserve,
-    $AnchorPrefix, $CompressSeries, $InlineSeries, $Purity, $Stringify,
+    $AnchorPrefix, $CompressSeries, $InlineSeries, $Purity,
+    $Stringify, $Numify
 );
 
 

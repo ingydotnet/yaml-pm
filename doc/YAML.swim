@@ -310,6 +310,13 @@ The current options are:
   Objects with string overloading should honor the overloading and dump the
   stringification of themselves, rather than the actual object's guts.
 
+- Numify
+
+  Default is 0. (false)
+
+  Values that look like numbers (integers, floats) will be numified when
+  loaded.
+
 - UseHeader
 
   Default is 1. (true)
