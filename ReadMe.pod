@@ -12,7 +12,7 @@ YAML - YAML Ain't Markup Language™
 
 =head1 Version
 
-This document describes L<YAML> version B<1.21>.
+This document describes L<YAML> version B<1.22>.
 
 =head1 Note
 
@@ -337,6 +337,12 @@ Default is 0. (false)
 
 Objects with string overloading should honor the overloading and dump the
 stringification of themselves, rather than the actual object's guts.
+
+=item Numify
+
+Default is 0. (false)
+
+Values that look like numbers (integers, floats) will be numified when loaded.
 
 =item UseHeader
 
@@ -704,7 +710,7 @@ Ingy döt Net <ingy@cpan.org>
 
 =head1 Copyright and License
 
-Copyright 2001-2016. Ingy döt Net.
+Copyright 2001-2017. Ingy döt Net.
 
 This program is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

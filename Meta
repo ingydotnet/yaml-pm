@@ -1,12 +1,12 @@
 =meta: 0.0.2
 
 name: YAML
-version: 1.21
+version: 1.22
 abstract: YAML Ain't Markup Language™
 homepage: http://yaml.org
 language: perl
 license: perl
-copyright: 2001-2016
+copyright: 2001-2017
 
 author:
   name: Ingy döt Net

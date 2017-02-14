@@ -1,8 +1,8 @@
 ---
-version: tba
-date: tba
+version: 1.22
+date:    Tue Feb 14 23:23:08 CET 2017
 changes:
-- Add $YAML::Numify
+- Add $YAML::Numify @perlpunk++
 ---
 version: 1.21
 date:    Fri Dec 23 21:19:15 CET 2016
