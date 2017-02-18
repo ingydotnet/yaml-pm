@@ -455,7 +455,7 @@ sub _parse_inline {
         }
         $node = $self->_parse_implicit($node) unless $explicit;
 
-        if ($self->numify and defined $node and not ref $node
+        if ($self->numify and defined $node and not ref $node and length $node
             and $node =~ m/\A-?(?:0|[1-9][0-9]*)?(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?\z/) {
             $node += 0;
         }
