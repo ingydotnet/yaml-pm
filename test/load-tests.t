@@ -212,14 +212,14 @@ foo                  :        bar
 - >
  # Not a comment;
 # Is a comment
- #Not a comment
+ #Another comment
 --- 42
           #Final
          #Comment
 +++ perl
 ([2,3,4,5],
  {foo => 'bar', boo => 'far'},
- ["# Not a comment; #Not a comment\n"],
+ ["# Not a comment;\n"],
  42)
 === several docs, some empty
 +++ yaml

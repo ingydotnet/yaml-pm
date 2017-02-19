@@ -702,12 +702,22 @@ sub _parse_next_line {
     }
 
     if ($type == LEAF) {
-        while (@{$self->lines} and
+        if (@{$self->lines} and
                $self->lines->[0] =~ m{^( *)(\#)} and
                length($1) < $offset
               ) {
-            shift @{$self->lines};
-            $self->{line}++;
+            if ( length($1) < $offset) {
+                shift @{$self->lines};
+                $self->{line}++;
+                # every comment after that is also thrown away regardless
+                # of identation
+                while (@{$self->lines} and
+                       $self->lines->[0] =~ m{^( *)(\#)}
+                      ) {
+                    shift @{$self->lines};
+                    $self->{line}++;
+                }
+            }
         }
         $self->eos($self->{done} = not @{$self->lines});
     }
