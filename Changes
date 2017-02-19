@@ -1,6 +1,6 @@
 ---
-version: tba
-date:    tba
+version: 1.23
+date:    Sun Feb 19 22:07:57 CET 2017
 changes:
 - Fix $YAML::Numify (empty values were converted to 0)
 ---
