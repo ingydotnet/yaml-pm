@@ -10,7 +10,7 @@ TestML->new(
     use base 'TestML::Bridge';
     use TestML::Util;
     use Data::Dumper;
-    use XXX -with => 'Data::Dumper';
+    #use XXX -with => 'Data::Dumper';
 
     use YAML;
     sub eval {
