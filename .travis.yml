@@ -12,7 +12,7 @@ perl:
 
 install:
 - cpanm --quiet --notest
-  Test::More TestML
+  Test::More TestML YAML::Old
 
 script:
 - prove -lv t/
