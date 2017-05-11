@@ -16,7 +16,7 @@ sub import {
             die __PACKAGE__.':'.__LINE__.": import @_\n";
         }
     }
-    $package->export_to_level(1, @args);
+    YAML->export_to_level(1, $package, @args);
 }
 
 sub Load {
