@@ -4,14 +4,14 @@ use warnings;
 
 use base 'Exporter';
 our @EXPORT = qw( Load Dump );
-our @EXPORT_OK = qw( LoadFile DumpFile );
+our @EXPORT_OK = qw( LoadFile DumpFile freeze thaw );
 
 our $VERSION = '1.23_001';
 
 sub import {
     my ($package, @args) = @_;
     for my $arg (@args) {
-        if ($arg !~ /^(Load|LoadFile|Dump|DumpFile)$/) {
+        if ($arg !~ /^(Load|LoadFile|Dump|DumpFile|freeze|thaw)$/) {
             # Handle new API; return;
             die __PACKAGE__.':'.__LINE__.": import @_\n";
         }
@@ -37,6 +37,16 @@ sub LoadFile {
 sub DumpFile {
     require YAML::Old;
     goto &YAML::Old::DumpFile;
+}
+
+sub freeze {
+    require YAML::Old;
+    goto &YAML::Old::freeze;
+}
+
+sub thaw {
+    require YAML::Old;
+    goto &YAML::Old::thaw;
 }
 
 1;
