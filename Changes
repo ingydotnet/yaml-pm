@@ -1,0 +1,563 @@
+---
+version: 1.23
+date:    Sun Feb 19 22:07:57 CET 2017
+changes:
+- Fix $YAML::Numify (empty values were converted to 0)
+---
+version: 1.22
+date:    Tue Feb 14 23:23:08 CET 2017
+changes:
+- Add $YAML::Numify @perlpunk++
+---
+version: 1.21
+date:    Fri Dec 23 21:19:15 CET 2016
+changes:
+- Apply PR/171 (fixes issue/109) @perlpunk++
+- No more "used only once" warnings for $YAML::Indent etc.
+- Apply PR/170 (fixes issue/131) hiratara@cpan.org++
+- Empty mapping value at the end resolves to null (was becoming empty string)
+- Apply PR/169 (PR/119) patrick.allen.higgins@gmail.com++
+- Output key in warning when duplicate key was found
+- Apply PR/157 and PR/168 (@lameventanas++ @perlpunk++)
+- Allow reading and writing to IO::Handle
+---
+version: 1.20
+date:    Fri Dec  2 13:20:33 PST 2016
+changes:
+- Apply and amend PR/146 (quoted map keys) @preaction++
+- B::Deparse is loaded at runtime now
+- New Feature $YAML::Preserve (Apply PR/9 @fmenabe++)
+---
+version: 1.19
+date:    Fri Nov 18 19:46:44 CET 2016
+changes:
+- Apply PR/164 pod (link to YAML::Shell)
+- Apply PR/151 Fix infinite loop for aliases without a name @bubaflub++
+- Apply PR/142 Improve error messages @werekraken++
+- Apply PR/162 Improve error messages
+- Apply PR/163 Trailing spaces after inline seq/map work now
+- Apply PR/154 Add test case for trailing comments @Varadinsky++
+---
+version: 1.18
+date:    Fri Jul  8 14:52:26 UTC 2016
+changes:
+- Apply PR/161 @perlpunk++
+---
+version: 1.17
+date:    Tue Jul  5 20:20:55 UTC 2016
+changes:
+- Use Mo 0.40
+---
+version: 1.16
+date:    Sun Jul  3 10:53:06 PDT 2016
+changes:
+- Apply PR/158 by @bgruening++
+- Fix VERSION issue
+---
+version: 1.15
+date:    Sat Apr 18 17:03:09 CEST 2015
+changes:
+- Fix Issue 149.
+- Don't require newlines at end of YAML.
+---
+version: 1.14
+date:    Sat Jan 17 15:32:18 PST 2015
+changes:
+- Apply PR/145 from @kentnl++
+- Support for QuoteNumericStrings Global Setting
+---
+version: 1.13
+date:    Sat Oct 11 18:05:45 CEST 2014
+changes:
+- Apply PR/140 from @nfg++
+- Disable some warnings in YAML::Any
+---
+version: 1.12
+date:    Mon Sep 22 08:24:43 PDT 2014
+changes:
+- Fix https://rt.cpan.org/Ticket/Display.html?id=97870
+---
+version: 1.11
+date:    Fri Aug 29 20:08:20 PDT 2014
+changes:
+- Apply PR/139. @ehuelsmann++
+---
+version: 1.10
+date:    Thu Aug 28 22:53:26 PDT 2014
+changes:
+- Apply PR/138. @ehuelsmann++
+---
+version: 1.09
+date:    Tue Aug 19 16:41:13 PDT 2014
+changes:
+- Replace tabs with spaces
+---
+version: 1.08
+date:    Mon Aug 18 10:21:48 PDT 2014
+changes:
+- Dep on Test::YAML 1.05
+---
+version: 1.07
+date:    Mon Aug 18 08:40:01 PDT 2014
+changes:
+- Apply PR/8 from shlomif++. Add doc examples for YAML::Any.
+---
+version: 1.06
+date:    Sat Aug 16 16:51:08 PDT 2014
+changes:
+- Change testdir to t
+---
+version: 1.05
+date:    Sat Aug 16 13:03:28 PDT 2014
+changes:
+- Meta 0.0.2
+---
+version: 1.04
+date:    Sat Aug 16 04:28:10 PDT 2014
+changes:
+- Eliminate spurious trailing whitespace
+---
+version: 1.03
+date:    Sat Aug 16 03:32:35 PDT 2014
+changes:
+- Eliminate File::Basename from test/
+---
+version: 1.02
+date:    Fri Aug 15 21:09:54 PDT 2014
+changes:
+- Add t/000-compile-modules.t
+---
+version: 1.01
+date:    Thu Aug  7 14:48:24 PDT 2014
+changes:
+- Dep on patched Test::YAML
+---
+version: 1.00
+date:    Thu Aug  7 00:35:21 PDT 2014
+changes:
+- Fix bad encoding in Pod
+---
+version: 0.99
+date:    Wed Aug  6 17:55:42 PDT 2014
+changes:
+- Switch to external Test::Base
+---
+version: 0.98
+date:    Wed Jul 30 12:32:25 PDT 2014
+changes:
+- Fix indexing of YAML::Any
+- Change IRC to irc.perl.org#yaml
+---
+version: 0.97
+date:    Wed Jul 16 23:37:04 PDT 2014
+changes:
+- Move remaining docs to Swim
+---
+version: 0.96
+date:    Sun Jul 13 22:54:08 PDT 2014
+changes:
+- Fix Metadata and add Contributing file
+- Change Kwim to Swim
+---
+version: 0.95
+date:    Sat Jun 14 10:32:08 PDT 2014
+changes:
+- Fix dumping blessed globs. Issue 26. mcast++
+---
+version: 0.94
+date:    Sat Jun 14 10:32:08 PDT 2014
+changes:
+- Skip a failing test on 5.8 introduced in 0.93
+---
+version: 0.93
+date:    Fri Jun 13 22:32:18 PDT 2014
+changes:
+- Switch to Zilla::Dist
+- Add badges to doc
+- '@thorsteneckel++ fixed #18'
+- '@karenetheridge++ fixed #19'
+---
+version: 0.92
+date:    Wed May 28 23:04:26 EDT 2014
+changes:
+- https://github.com/ingydotnet/yaml-pm/pull/23
+---
+version: 0.91
+date:    Tue May 27 17:14:12 EDT 2014
+changes:
+- https://github.com/ingydotnet/yaml-pm/pull/22
+---
+version: 0.90
+date:    Mon Feb 10 08:42:31 PST 2014
+changes:
+- Revert Mo from 0.38 to 0.31 - zefram++ reported it breaking cpan client
+---
+version: 0.89
+date:    Sat Nov  8 12:51:48 PST 2014
+changes:
+- Fixed tests to work under parallel testing -- kentnl
+- Switched to dzil release process
+---
+version: 0.88
+date:    Tue Dec  3 05:29:34 UTC 2013
+changes:
+- Fixed YAML loading on perl 5.8 (broken in YAML 0.85) by removing
+  5.10-specific regex construct. -- hobbs++
+---
+version: 0.87
+date:    Sat Nov 30 21:51:48 PST 2013
+changes:
+- Using latest Test::Builder tp fix https://rt.cpan.org/Public/Bug/Display.html?id=90847
+---
+version: 0.86
+date:    Tue Nov 26 16:43:27 UTC 2013
+changes:
+- Revert YAML::Mo for https://rt.cpan.org/Public/Bug/Display.html?id=90817
+---
+version: 0.85
+date:    Sun Nov 24 07:43:13 PST 2013
+changes:
+- Fix for https://rt.cpan.org/Ticket/Display.html?id=19838 where synopsis in YAML::Dumper doesn't work as exptected.
+- Thorsten++ https://rt.cpan.org/Public/Bug/Display.html?id=90593
+- Upgrade to latest Mo
+---
+version: 0.84
+date:    Fri Jul 13 18:17:27 GMT 2012
+changes:
+- Resolve distribution error that caused .git to be shipped in the .tar.gz
+---
+version: 0.83
+date:    Fri Jul 13 15:44:03 GMT 2012
+changes:
+- Only call stat() and tell() on a filehandle if fileno existed
+- Explicit tied() call on globs to avoid a 5.16 deprecation warning
+---
+version: 0.82
+date:    Thu Jul 12 18:49:45 GMT 2012
+changes:
+- Test scalar @array rather than deprecated defined @array (Sebastian Stumpf)
+---
+version: 0.81
+date:    Thu Apr 19 11:03:38 PDT 2012
+changes:
+- Patch from https://rt.cpan.org/Public/Bug/Display.html?id=74826
+- YAML::Mo uses Safe Mo https://rt.cpan.org/Public/Bug/Display.html?id=76664
+---
+version: 0.80
+date:    Fri Feb 10 12:56:08 PST 2012
+changes:
+- Patch from https://rt.cpan.org/Ticket/Display.html?id=73702
+- Make YAML::Node subclass YAML::Mo::Object as well as Exporter (MSTROUT)
+---
+version: 0.79
+date:    Wed Feb  8 17:25:55 PST 2012
+changes:
+- Peter Scott and others noticed Mo::xxx causing problems on newer perls.
+  Removed xxx for now.
+---
+version: 0.78
+date:    Sun Jan  1 23:53:57 PST 2012
+changes:
+- Apply patch from ANDK++ to deal with B::Deparse changes.
+---
+version: 0.77
+date:    Thu Sep 29 18:28:25 CEST 2011
+changes:
+- Add $VERSION back to all modules.
+- Released from Liz++ and Wendy++ garage attic!
+---
+version: 0.76
+date:    Wed Sep 28 12:05:08 CEST 2011
+changes:
+- Removed YAML::import per mst.
+---
+version: 0.75
+date:    Tue Sep 27 00:46:19 CEST 2011
+changes:
+- Switch to Mo for OO (YAML::Mo)
+- use_test_base in Makefile.PL.
+---
+version: 0.74
+date:    Sun Sep 25 22:05:05 CEST 2011
+changes:
+- Switch to Module::Package
+- Removed extra $VERSION lines from submodules
+- Released from Liz++ and Wendy++'s Tool Basement!
+
+---
+version: 0.73
+date:    Tue Apr 19 20:14:59 EST 2011
+changes:
+- Apply ANDK's patch for 5.14.0
+
+---
+version: 0.72
+date:    Wed Sep 1 11:54:00 AEST 2010
+changes:
+- Upgrade to Module::Install 1.00
+- Upgraded author tests via new ADAMK release automation
+- Normalise Ingy's name to ASCII in Makefile.PL so that we don't have Unicode in our own META.yml
+
+---
+version: 0.71
+date:    Sun Jan 3 12:25:00 AEST 2010
+changes:
+- Set file encoding to UTF-8 in LoadFile/DumpFile (RT#25434) by Olivier Mengue
+- We shouldn't have to care about 5.8.0. Since it's causing CPAN Testers
+  failures, bump the minimum Perl to 5.8.1
+
+---
+version: 0.70
+date:    Tue Aug 11 02:52:10 AEST 2009
+changes:
+- Updated Module::Install dependency to 0.91
+- Bumping dependency to 5.8.0 but I think it's only in the test suite.
+  However, I can't prove it. So if anyone wants 5.6 compatibility back
+  you need to fix or rewrite the test suite.
+
+---
+version: 0.69_02
+date:    Mon Aug 10 22:37:37 AEST 2009
+changes:
+- Developer $VERSION now has eval correction
+
+---
+version: 0.69_01
+date:    Sun Jul  9 02:01:12 AEST 2009
+changes:
+- Added $VERSION to all modules
+- Removed the use of use base
+- Imported into the svn.ali.as repo
+
+---
+version: 0.68
+date:    Thu Dec  4 01:00:44 PST 2008
+changes:
+- Used update Test::Base to ensure Filter::Util::Call
+
+---
+version: 0.67
+date:    Mon Dec  1 02:34:21 PST 2008
+changes:
+- Add YAML::Any
+- Move ysh to YAML::Shell
+- Add doc section explaining YAML::Old
+
+---
+version: 0.66
+date:    Thu Sep 27 01:37:16 PDT 2007
+changes:
+- Blessed code refs with LoadCode=0 still get blessed. rafl++
+
+---
+version: 0.65
+date:    Thu Jun 21 17:37:32 PDT 2007
+changes:
+- \z is really \0
+- Speed up regexp loading. audreyt++
+
+---
+version: 0.64
+date:    Thu Jun 21 14:31:20 PDT 2007
+changes:
+- Better support for loading regexps. audreyt++
+
+---
+version: 0.63
+date:    Wed Jun 20 16:03:22 PDT 2007
+changes:
+- Don't emit nodes blessed into '' in the new tag scheme, and improve semantics
+  of loading such nodes.
+- New support for dumping/loading regexps.
+
+---
+version: 0.62
+date:    Mon Jul  3 15:41:20 PDT 2006
+changes:
+- Patch from rgs for Catalyst users
+
+---
+version: 0.61
+date:    Sun Jul  2 15:25:08 CDT 2006
+changes:
+- New CGI.pm made test fail.
+
+---
+version: 0.60
+date:    Fri Jun 30 21:55:55 CDT 2006
+changes:
+- Changed object tag format in non backwards compatible way
+- Removed support for folded scalar emission
+- Added new tests
+- Sync with YAML::Syck
+
+---
+version: 0.58
+date:    Tue Feb 14 12:42:34 PST 2006
+changes:
+- Fixed bug reported by Slaven Rezic on 5.8.0
+- Fixed a ysh bug reported on rt. 17589
+
+---
+version: 0.57
+date:    Wed Feb  1 23:06:25 PST 2006
+changes:
+- Add obligatory '1;' to end of each module.
+
+---
+version: 0.56
+date:    Mon Jan 30 10:26:33 PST 2006
+changes:
+- Add Module::Install::TestBase support
+
+---
+version: 0.55
+date:    Sun Jan 29 19:03:35 PST 2006
+changes:
+- Load YAML::Node because Module::Build expects it to be loaded.
+  We can undo this when Module::Build starts loading it for itself.
+
+---
+version: 0.54
+date:    Sun Jan 29 17:28:46 PST 2006
+changes:
+- Remove dependency on Class::Spiffy (and/or Spiffy).
+
+---
+version: 0.53
+date:    Thu Jan 19 06:03:17 PST 2006
+changes:
+- Depend on Class::Spiffy instead of Spiffy. No source filtering.
+
+---
+version: 0.52
+date:    Wed Jan 18 14:25:24 PST 2006
+changes:
+- Error in Spiffy-0.26 causing problems. Require 0.27
+
+---
+version: 0.51
+date:    Sat Jan 14 17:09:09 GMT 2006
+changes:
+- Tests pass on win32 and cygwin
+- Don't gpg sign the distribution tarball
+
+---
+version: 0.50
+date:    Sun Dec 25 11:09:18 PST 2005
+changes:
+- Major refactoring of YAML.pm
+- Completely OO with same old functional UI
+- Support the $YAML::Stringify option which most be on for objects to get
+  stringified. Otherwise dump the object.
+- Can dump overloaded objects now.
+- Completely refactor test suite using Test::Base
+- Create Test::YAML
+- Make test framework compatible with YAML::Syck - Test-Base-0.45
+- Reviewed all rt bugs. fixed many
+- Reviewed all emailed bugs. Fixed many.
+- Helped audrey complete YAML::Syck and worked on interoperability issues
+- Test well known yaml docs like svk and META.yml
+- Eliminate unsafe string evals
+- Can use with autouse. Spiffy-0.25
+- Support YAML::Marshall to help classes that want to do their own marshalling
+- Make objects tags configurable
+- -M option for ysh to test other implementations like YAML::Syck
+
+---
+version: 0.39
+date:    Tue Apr 12 15:28:40 PDT 2005
+changes:
+- Need newer Test::More or tests hang.
+
+---
+version: 0.38
+date:    Thu Mar 31 01:43:21 PST 2005
+changes:
+- Deleted Spiffy -XXX artifact :(
+
+---
+version: 0.37
+date:    Thu Mar 31 01:56:24 CST 2005
+changes:
+- All the edge cases with hash key dumping (commas, [], {}, etc)
+  should now be covered
+
+---
+version: 0.36
+date:    Sun Jan 30 21:00:28 PST 2005
+changes:
+- Slight changes to the way things are dumped.
+- Fixed bugs dumping "foo\nbar" for svk acceptance
+
+---
+version: 0.32
+date:    Sat May 11 19:54:52 EDT 2002
+changes:
+- Moved error handling into YAML::Error
+- Enabled UseAliases=0 to mean skip Dump checking of alias nodes.
+- Changed Defaults. Indent=2. CompressSeries=1.
+- Deprecated Store() in favor of Dump()
+- Refactored test suite
+- Added key list to SortKeys
+- Added ForceBlock option
+- CONTROL-D can be used to terminate ysh. Ryan King will be happy.
+- Added the ability to direct STDIN to the ysh.
+
+---
+version: 0.27
+date:    Tue Jan 15 01:46:18 PST 2002
+changes:
+- Make '-' chomp all trailing newlines
+- Change folded indicator from '^' to ']'.
+- YAC-010 Allow a map as a sequence entry to be collapsed to one line.
+- Changed the nextline scalar indicators. '^' means folded, and escaping
+  ('\') can be applied to folded or blocks. Chomping is now '-'.
+- YAC-013. Generic indentation. This change was big, ugly, hard and it really
+  made my brain hurt. But look. It works! :)
+- YAC-012. Added ability to put comments anywhere, at any indentation level.
+- Added $YAML::UseBlock and $YAML::UseFold
+- Changed $YAML::PerlCode to $YAML::UseCode
+- Added $YAML::Indent config option
+- YAC-012. Handled all Throwaway Issues. Blank lines and comments can be used
+  anywhere, and they will work appropriately.
+- Converted Changes file (this file) to use YAML
+- AC-016. Support "assumed header" (--- #YAML:1.0) if no header.
+- Added $YAML::UseBlock option
+- YAC-015. Support Top Level Inline nodes
+- Added testing for Store to test suite. (Now there's no excuse not to
+  create lot's of new tests. :)
+
+---
+version: 0.26
+date:    Wed Jan  9 21:13:45 PST 2002
+changes:
+- Detect implicit scalars more correctly
+- Refactor test suite
+- Proofed documentation
+- Fix ysh doc. Document flags in the pod.
+- Move test code out of YAML.pm and into testlib
+- Change directives to use #
+- Parse regexes
+- YAC-017. Change !perl/ syntax
+- Emit regexes
+- support 'ysh -v' and 'ysh -V' and 'ysh -h'
+- Support blessed globs
+- Make ysh installable
+- Parse CODE leaves
+- Support blessed scalars
+- Test warnings as well as errors
+- Use B::Deparse to serialize code
+- Change 'implicit' to 'simple'
+
+---
+version: 0.25
+date:    Wed Dec 19 02:34:38 PST 2001
+changes:
+- Initial module shipped to CPAN
+
+---
+version: 0.01
+date:    Mon Oct 15 19:18:49 2001
+changes:
+- original version; created by h2xs 1.19
