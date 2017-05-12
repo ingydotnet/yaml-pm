@@ -31,8 +31,9 @@ my %WriteMakefileArgs = (
     %FallbackPrereqs,
   },
   "VERSION_FROM" => "lib/YAML.pm",
+
   "test" => {
-    "TESTS" => "t/*.t",
+    "RECURSIVE_TEST_FILES" => 1,
   },
 );
 
