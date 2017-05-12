@@ -1,7 +1,10 @@
 # This is the developer Makefile for YAML.pm
 
-dist distdir disttest manifest realclean test veryclean: Makefile
+dist distclean distdir disttest manifest realclean test veryclean: Makefile
 	make -f Makefile $@
+
+README: lib/YAML.pm
+	pod2text $< > $@
 
 release: test disttest dist check upload git-steps realclean
 
