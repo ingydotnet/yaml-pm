@@ -11,7 +11,7 @@ our $VERSION = '1.23_001';
 sub import {
     my ($package, @args) = @_;
     for my $arg (@args) {
-        if ($arg !~ /^(Load|LoadFile|Dump|DumpFile|freeze|thaw)$/) {
+        if ($arg !~ /^(Load|LoadFile|Dump|DumpFile|freeze|thaw|Bless|Blessed)$/) {
             # Handle new API; return;
             die __PACKAGE__.':'.__LINE__.": import @_\n";
         }
@@ -39,14 +39,14 @@ sub DumpFile {
     goto &YAML::Old::DumpFile;
 }
 
+sub thaw {
+    require YAML::Old;
+    goto &YAML::Old::thaw;
+}
+
 sub freeze {
     require YAML::Old;
     goto &YAML::Old::freeze;
-}
-
-sub Blessed {
-    require YAML::Old;
-    goto &YAML::Old::Blessed;
 }
 
 sub Bless {
@@ -54,9 +54,9 @@ sub Bless {
     goto &YAML::Old::Bless;
 }
 
-sub thaw {
+sub Blessed {
     require YAML::Old;
-    goto &YAML::Old::thaw;
+    goto &YAML::Old::Blessed;
 }
 
 1;
