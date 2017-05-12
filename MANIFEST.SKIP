@@ -1,0 +1,14 @@
+# Git.
+^\.git/
+^\.travis\.yml$
+# Makemaker generated files and dirs.
+^GNUmakefile$
+^MANIFEST\.
+^Makefile$
+^blib/
+^YAML-
+# Temp, old and emacs backup files.
+~$
+\.old$
+^#.*#$
+^\.#
