@@ -1,20 +1,12 @@
 # This is the developer Makefile for YAML.pm
 
-ifneq ($(wildcard Makefile),)
-$(error Please 'rm Makefile')
-endif
-
-dist distdir disttest manifest readme test: Makefile
-	make -f Makefile $@
-	make -f Makefile realclean
-
-# XXX fix this later:
-realclean:
+dist distdir disttest manifest realclean test veryclean: Makefile
 	make -f Makefile $@
 
-release: test disttest dist check
+release: test disttest dist check upload git-steps realclean
 
 check:
+	@echo Got to the place we do checks (soon)
 	exit 1
 
 Makefile:
