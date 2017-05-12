@@ -1,3 +1,9 @@
+1.23_001 Fri May 12 15:55:33 CEST 2017
+ - THIS IS A MAJOR CHANGE RELEASE!!!
+ - See: https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-transition.md#yaml-to-yamlold-transition
+ - Move all old functionality to YAML-Old dist
+ - Make YAML.pm proxy to YAML::Old (for legacy usage)
+
 1.23 Sun Feb 19 22:07:57 CET 2017
  - Fix $YAML::Numify (empty values were converted to 0)
 
