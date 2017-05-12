@@ -1,19 +1,122 @@
-die "NOTICE: YAML::Any has been moved to YAML::Old::Any.
-Please see https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-transition.md
- ";
+use strict; use warnings;
+package YAML::Any;
+our $VERSION = '1.23';
 
-=pod
+use Exporter ();
 
-=head1 NAME
+@YAML::Any::ISA       = 'Exporter';
+@YAML::Any::EXPORT    = qw(Dump Load);
+@YAML::Any::EXPORT_OK = qw(DumpFile LoadFile);
 
-YAML::Any - Deprecated
+my @dump_options = qw(
+    UseCode
+    DumpCode
+    SpecVersion
+    Indent
+    UseHeader
+    UseVersion
+    SortKeys
+    AnchorPrefix
+    UseBlock
+    UseFold
+    CompressSeries
+    InlineSeries
+    UseAliases
+    Purity
+    Stringify
+);
 
-=head1 DESCRIPTION
+my @load_options = qw(
+    UseCode
+    LoadCode
+    Preserve
+);
 
-The original L<YAML> distribution has been replaced by L<YAML-Old>.
+my @implementations = qw(
+    YAML::XS
+    YAML::Syck
+    YAML::Old
+    YAML::Tiny
+);
 
-C<YAML::Any> has been moved to L<YAML::Old::Any>.
+sub import {
+    __PACKAGE__->implementation;
+    goto &Exporter::import;
+}
 
-Please see L<https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-transition.md>
+sub Dump {
+    no strict 'refs';
+    no warnings 'once';
+    my $implementation = __PACKAGE__->implementation;
+    for my $option (@dump_options) {
+        my $var = "$implementation\::$option";
+        my $value = $$var;
+        local $$var;
+        $$var = defined $value ? $value : ${"YAML::$option"};
+    }
+    return &{"$implementation\::Dump"}(@_);
+}
 
-=cut
+sub DumpFile {
+    no strict 'refs';
+    no warnings 'once';
+    my $implementation = __PACKAGE__->implementation;
+    for my $option (@dump_options) {
+        my $var = "$implementation\::$option";
+        my $value = $$var;
+        local $$var;
+        $$var = defined $value ? $value : ${"YAML::$option"};
+    }
+    return &{"$implementation\::DumpFile"}(@_);
+}
+
+sub Load {
+    no strict 'refs';
+    no warnings 'once';
+    my $implementation = __PACKAGE__->implementation;
+    for my $option (@load_options) {
+        my $var = "$implementation\::$option";
+        my $value = $$var;
+        local $$var;
+        $$var = defined $value ? $value : ${"YAML::$option"};
+    }
+    return &{"$implementation\::Load"}(@_);
+}
+
+sub LoadFile {
+    no strict 'refs';
+    no warnings 'once';
+    my $implementation = __PACKAGE__->implementation;
+    for my $option (@load_options) {
+        my $var = "$implementation\::$option";
+        my $value = $$var;
+        local $$var;
+        $$var = defined $value ? $value : ${"YAML::$option"};
+    }
+    return &{"$implementation\::LoadFile"}(@_);
+}
+
+sub order {
+    return @YAML::Any::_TEST_ORDER
+        if @YAML::Any::_TEST_ORDER;
+    return @implementations;
+}
+
+sub implementation {
+    my @order = __PACKAGE__->order;
+    for my $module (@order) {
+        my $path = $module;
+        $path =~ s/::/\//g;
+        $path .= '.pm';
+        return $module if exists $INC{$path};
+        eval "require $module; 1" and return $module;
+    }
+    croak("YAML::Any couldn't find any of these YAML implementations: @order");
+}
+
+sub croak {
+    require Carp;
+    Carp::croak(@_);
+}
+
+1;
