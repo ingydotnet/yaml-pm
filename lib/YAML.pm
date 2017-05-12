@@ -44,6 +44,16 @@ sub freeze {
     goto &YAML::Old::freeze;
 }
 
+sub Blessed {
+    require YAML::Old;
+    goto &YAML::Old::Blessed;
+}
+
+sub Bless {
+    require YAML::Old;
+    goto &YAML::Old::Bless;
+}
+
 sub thaw {
     require YAML::Old;
     goto &YAML::Old::thaw;
