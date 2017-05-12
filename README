@@ -1,0 +1,41 @@
+NAME
+    YAML - YAML Ain't Markup Language™
+
+STATUS
+    YAML is undergoing changes that will make it the future gateway to
+    almost all (new and old) YAML functionality, while at the same time
+    working almost exactly the same for existing code.
+
+    See
+    <https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-tran
+    sition.md#yaml-to-yamlold-transition> for details.
+
+        use YAML;
+
+        my $yaml = "foo: 42\n";
+        my $hash = Load $yaml;
+        $hash->{bar} = 44;
+        $yaml = Dump $hash;
+
+DESCRIPTION
+    YAML is a human friendly data serialization language with
+    implementations in many programming languages.
+
+    YAML.pm is Perl 5's first YAML module. Written in 2001, that code has
+    been moved to YAML::Old an YAML is now the API frontend to various YAML
+    backends.
+
+    NOTE: This is a current WIP and more doc will follow as things develop.
+
+AUTHORS
+    Ingy döt Net <ingy@cpan.org>
+    Tina Müller <cpan2@tinita.de>
+
+COPYRIGHT AND LICENSE
+    Copyright 2001-2017. Ingy döt Net.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+    See <http://www.perl.com/perl/misc/Artistic.html>
+
