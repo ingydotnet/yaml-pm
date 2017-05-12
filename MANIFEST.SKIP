@@ -6,6 +6,7 @@
 ^MANIFEST\.
 ^Makefile$
 ^blib/
+^pm_to_blib
 ^YAML-
 # Temp, old and emacs backup files.
 ~$
