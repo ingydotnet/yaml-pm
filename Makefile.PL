@@ -14,7 +14,7 @@ my %FallbackPrereqs = (
 my %WriteMakefileArgs = (
   "ABSTRACT_FROM" => "lib/YAML.pm",
   "AUTHOR" => [
-    "Ingy d\x{f6}t Net <ingy\@cpan.org>",
+    "Ingy döt Net <ingy\@cpan.org>",
     "Tina Müller <cpan2\@tinita.de>",
   ],
   "CONFIGURE_REQUIRES" => {
@@ -24,7 +24,9 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "MIN_PERL_VERSION" => "5.008001",
   "NAME" => "YAML",
-  "PREREQ_PM" => {},
+  "PREREQ_PM" => {
+    "YAML::Old" => "1.23",
+  },
   "TEST_REQUIRES" => {
     %FallbackPrereqs,
   },
