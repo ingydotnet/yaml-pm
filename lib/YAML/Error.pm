@@ -1,5 +1,5 @@
 die "NOTICE: YAML::Error has been moved to YAML::Old::Error.
-Please see https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-transition.md
+Please see https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-transition.md#yaml-to-yamlold-transition
  ";
 
 =pod
@@ -14,6 +14,6 @@ The original L<YAML> distribution has been replaced by L<YAML-Old>.
 
 C<YAML::Error> has been moved to L<YAML::Old::Error>.
 
-Please see L<https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-transition.md>
+Please see L<https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-transition.md#yaml-to-yamlold-transition>
 
 =cut
