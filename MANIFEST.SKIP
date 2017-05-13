@@ -13,3 +13,9 @@
 \.old$
 ^#.*#$
 ^\.#
+
+# from cpants.cpanauthors.org:
+# Update MANIFEST.SKIP to exclude MYMETA files. If you are lazy, add
+# "#!install_default" in your MANIFEST.SKIP and update your ExtUtils::Manifest
+# if necessary, then some of the most common files will be excluded.
+#!install_default
