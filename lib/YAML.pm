@@ -2,21 +2,28 @@ package YAML;
 use strict;
 use warnings;
 
+use Carp qw( croak );
 use base 'Exporter';
 our @EXPORT = qw( Load Dump );
-our @EXPORT_OK = qw( LoadFile DumpFile freeze thaw );
+our @EXPORT_OK = qw( LoadFile DumpFile freeze thaw yaml );
 
 our $VERSION = '1.23_001';
 
 sub import {
     my ($package, @args) = @_;
+
     for my $arg (@args) {
-        if ($arg !~ /^(Load|LoadFile|Dump|DumpFile|freeze|thaw|Bless|Blessed)$/) {
+        if ($arg !~ /^(Load|LoadFile|Dump|DumpFile|freeze|thaw|Bless|Blessed|yaml)$/) {
             # Handle new API; return;
-            die __PACKAGE__.':'.__LINE__.": import @_\n";
+            croak "Cannot export '$arg'\n";
         }
     }
     YAML->export_to_level(1, $package, @args);
+}
+
+sub yaml {
+    require YAML::API;
+    return YAML::API->new(@_);
 }
 
 sub Load {
@@ -79,12 +86,28 @@ See
 L<https://github.com/ingydotnet/yaml-old-pm/blob/master/doc/yaml-old-transition.md#yaml-to-yamlold-transition>
 for details.
 
+The "New usage" shown below is B<very> new and subject to change.
+
+=head1 SYNOPSIS
+
+Old usage:
+
     use YAML;
 
     my $yaml = "foo: 42\n";
     my $hash = Load $yaml;
     $hash->{bar} = 44;
     $yaml = Dump $hash;
+
+New usage:
+
+    use YAML 'yaml';
+
+    my $hash = yaml->load($yaml);
+    $hash->{bar} = 44;
+    $yaml = yaml->dump($hash);
+
+...much more coming soon...
 
 =head1 DESCRIPTION
 
