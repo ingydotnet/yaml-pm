@@ -3,7 +3,7 @@ use warnings;
 use Test::More;
 
 use YAML 'yaml';
-use XXX -with => 'Data::Dumper';
+#use XXX -with => 'Data::Dumper';
 
 ok defined &yaml, "&yaml function was exported";
 
