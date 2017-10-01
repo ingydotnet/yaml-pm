@@ -15,7 +15,7 @@ my %WriteMakefileArgs = (
   "ABSTRACT_FROM" => "lib/YAML.pm",
   "AUTHOR" => [
     "Ingy döt Net <ingy\@cpan.org>",
-    "Tina Müller <cpan2\@tinita.de>",
+    "Tina Müller <tinita\@cpan.org>",
   ],
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
