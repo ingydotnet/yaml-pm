@@ -110,7 +110,7 @@ sub _parse_node {
     my $self = shift;
     my $preface = $self->preface;
     $self->preface('');
-    my ($node, $type, $indicator, $chomp) = ('') x 4;
+    my ($node, $type, $indicator, $chomp, $parsed_inline) = ('') x 5;
     my ($anchor, $alias, $explicit, $implicit, $class) = ('') x 5;
     ($anchor, $alias, $explicit, $implicit, $preface) =
       $self->_parse_qualifiers($preface);
@@ -143,6 +143,7 @@ sub _parse_node {
     }
     elsif (length $self->inline) {
         $node = $self->_parse_inline(1, $implicit, $explicit);
+        $parsed_inline = 1;
         if (length $self->inline) {
             $self->die('YAML_PARSE_ERR_SINGLE_LINE');
         }
@@ -193,7 +194,7 @@ sub _parse_node {
             CORE::bless $node, $class;
         }
         else {
-            $node = $self->_parse_explicit($node, $explicit);
+            $node = $self->_parse_explicit($node, $explicit) if !$parsed_inline;
         }
     }
     if ($anchor) {
