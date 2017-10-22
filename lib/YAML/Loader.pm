@@ -110,7 +110,7 @@ sub _parse_node {
     my $self = shift;
     my $preface = $self->preface;
     $self->preface('');
-    my ($node, $type, $indicator, $escape, $chomp) = ('') x 5;
+    my ($node, $type, $indicator, $chomp) = ('') x 4;
     my ($anchor, $alias, $explicit, $implicit, $class) = ('') x 5;
     ($anchor, $alias, $explicit, $implicit, $preface) =
       $self->_parse_qualifiers($preface);
