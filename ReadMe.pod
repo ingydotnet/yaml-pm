@@ -383,21 +383,12 @@ default YAML.pm will dump code references as dummy placeholders (much like
 Data::Dumper). If DumpCode is set to '1' or 'deparse', code references will be
 dumped as actual Perl code.
 
-DumpCode can also be set to a subroutine reference so that you can write your
-own serializing routine. YAML.pm passes you the code ref. You pass back the
-serialization (as a string) and a format indicator. The format indicator is a
-simple string like: 'deparse' or 'bytecode'.
-
 =item LoadCode
 
 LoadCode is the opposite of DumpCode. It tells YAML if and how to
 deserialize code references. When set to '1' or 'deparse' it will use
 C<eval()>. Since this is potentially risky, only use this option if you know
 where your YAML has been.
-
-LoadCode can also be set to a subroutine reference so that you can write your
-own deserializing routine. YAML.pm passes the serialization (as a string) and
-a format indicator. You pass back the code reference.
 
 =item Preserve
 

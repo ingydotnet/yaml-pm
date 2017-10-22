@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 43;
+use TestYAML tests => 42;
 
 run_yaml_tests;
 
@@ -201,23 +201,6 @@ Died at U:\perl-lib\lib/YAML.pm line 1417.
 
 It should at least fail with a message like it does when there's no newline at the
 end:
-+++ perl
-
-
-
-=== Ticket #12955 DumpCode claims to support a code ref to serialize code, but doesn't
-+++ skip_this_for_now
-The DumpCode option says you can set it to a code ref to control the
-serializing yourself, but this doesn't work.
-
-    $ perl -MYAML -we '
-        $YAML::DumpCode = sub { return "dumped code $_[0]", "test" };
-        print Dump(sub { "foo" });'
-    --- !!perl/code "{\n    'foo';\n}\n"
-    $ _
-
-YAML::Transfer::code::yaml_dump() doesn't look to have any code to
-support a DumpCode which is a code ref, it only tests it as a boolean.
 +++ perl
 
 
