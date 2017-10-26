@@ -1,29 +1,18 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 6;
+use TestYAML tests => 4;
 
 run_roundtrip_nyn('dumper');
 
 __DATA__
 
 === Actually test LoadCode functionality, block
-+++ perl: $YAML::UseCode = 1; package main; sub { 42 }
++++ perl: $YAML::UseCode = 1; package main; no strict; sub { "really long test string that's longer than 30" }
 +++ yaml
 --- !!perl/code |
 {
     use warnings;
-    use strict;
-    42;
-}
-
-=== Actually test LoadCode functionality, block
-+++ perl: $YAML::UseCode = 1; package main; no warnings; sub { 42 }
-+++ yaml
---- !!perl/code |
-{
-    no warnings;
-    use strict;
-    42;
+    q[really long test string that's longer than 30];
 }
 
 === Actually test LoadCode functionality, line
