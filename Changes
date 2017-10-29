@@ -1,4 +1,9 @@
 ---
+version: 1.23_003
+date:    Sun Oct 29 23:08:28 CET 2017
+changes:
+- Fix $LoadCode (PR#180, PR#181, PR#182 by @mohawk2++)
+---
 version: 1.23
 date:    Sun Feb 19 22:07:57 CET 2017
 changes:
