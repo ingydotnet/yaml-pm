@@ -516,33 +516,43 @@ sub _parse_inline_seq {
 # Parse the inline double quoted string.
 sub _parse_inline_double_quoted {
     my $self = shift;
-    my $node;
-    # https://rt.cpan.org/Public/Bug/Display.html?id=90593
-    if ($self->inline =~ /^"((?:(?:\\"|[^"]){0,32766}){0,32766})"\s*(.*)$/) {
-        $node = $1;
-        $self->inline($2);
-        $node =~ s/\\"/"/g;
+    my $inline = $self->inline;
+    if ($inline =~ s/^"//) {
+        my $node = '';
+
+        while ($inline =~ s/^(\\.|[^"\\]+)//) {
+            my $capture = $1;
+            $capture =~ s/^\\"/"/;
+            $node .= $capture;
+            last unless length $inline;
+        }
+        if ($inline =~ s/^"\s*//) {
+            $self->inline($inline);
+            return $node;
+        }
     }
-    else {
-        $self->die('YAML_PARSE_ERR_BAD_DOUBLE');
-    }
-    return $node;
+    $self->die('YAML_PARSE_ERR_BAD_DOUBLE');
 }
 
 
 # Parse the inline single quoted string.
 sub _parse_inline_single_quoted {
     my $self = shift;
-    my $node;
-    if ($self->inline =~ /^'((?:(?:''|[^']){0,32766}){0,32766})'\s*(.*)$/) {
-        $node = $1;
-        $self->inline($2);
-        $node =~ s/''/'/g;
+    my $inline = $self->inline;
+    if ($inline =~ s/^'//) {
+        my $node = '';
+        while ($inline =~ s/^(''|[^']+)//) {
+            my $capture = $1;
+            $capture =~ s/^''/'/;
+            $node .= $capture;
+            last unless length $inline;
+        }
+        if ($inline =~ s/^'\s*//) {
+            $self->inline($inline);
+            return $node;
+        }
     }
-    else {
-        $self->die('YAML_PARSE_ERR_BAD_SINGLE');
-    }
-    return $node;
+    $self->die('YAML_PARSE_ERR_BAD_SINGLE');
 }
 
 # Parse the inline unquoted string and do implicit typing.

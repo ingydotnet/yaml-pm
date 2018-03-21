@@ -34,4 +34,27 @@ if ($^V ge v5.9.0) {
     is(Load(Dump($Data)), $Data);
 }
 
+{
+    my $yaml1 = <<'EOM';
+a: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+b: 2
+EOM
+    my $yaml2 = <<'EOM';
+a: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+b: 2
+EOM
+    my $error;
+    eval {
+        my @data = Load($yaml1);
+    };
+    $error = $@;
+    cmp_ok($error, '=~', "Can't parse single", "Single quoted without end");
+
+    eval {
+        my @data = Load($yaml2);
+    };
+    $error = $@;
+    cmp_ok($error, '=~', "Can't parse double", "Double quoted without end");
+}
+
 done_testing;
