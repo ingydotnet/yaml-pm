@@ -338,7 +338,7 @@ sub _parse_mapping {
             $self->inline('');
         }
 
-        unless ($self->{content} =~ s/^:\s*//) {
+        unless ($self->{content} =~ s/^:(?:\s+#.*$|\s*)//) {
             $self->die('YAML_LOAD_ERR_BAD_MAP_ELEMENT');
         }
         $self->preface($self->content);
@@ -572,6 +572,9 @@ sub _parse_inline_simple {
 sub _parse_implicit {
     my $self = shift;
     my ($value) = @_;
+    # remove trailing comments and whitespace
+    $value =~ s/^#.*$//;
+    $value =~ s/\s+#.*$//;
     $value =~ s/\s*$//;
     return $value if $value eq '';
     return undef if $value =~ /^~$/;
