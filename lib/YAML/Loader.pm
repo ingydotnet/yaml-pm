@@ -111,7 +111,7 @@ sub _parse_node {
     my $preface = $self->preface;
     $self->preface('');
     my ($node, $type, $indicator, $chomp, $parsed_inline) = ('') x 5;
-    my ($anchor, $alias, $explicit, $implicit, $class) = ('') x 5;
+    my ($anchor, $alias, $explicit, $implicit) = ('') x 4;
     ($anchor, $alias, $explicit, $implicit, $preface) =
       $self->_parse_qualifiers($preface);
     if ($anchor) {
@@ -185,17 +185,7 @@ sub _parse_node {
     $#{$self->offset} = $self->level;
 
     if ($explicit) {
-        if ($class) {
-            if (not ref $node) {
-                my $copy = $node;
-                undef $node;
-                $node = \$copy;
-            }
-            CORE::bless $node, $class;
-        }
-        else {
-            $node = $self->_parse_explicit($node, $explicit) if !$parsed_inline;
-        }
+        $node = $self->_parse_explicit($node, $explicit) if !$parsed_inline;
     }
     if ($anchor) {
         if (ref($self->anchor2node->{$anchor}) eq 'YAML-anchor2node') {
