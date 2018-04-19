@@ -120,7 +120,7 @@ sub _parse_node {
     $self->inline('');
     while (length $preface) {
         my $line = $self->line - 1;
-        if ($preface =~ s/^($FOLD_CHAR|$LIT_CHAR_RX)(-|\+)?\d*\s*//) {
+        if ($preface =~ s/^($FOLD_CHAR|$LIT_CHAR_RX)(-|\+)?\d*(?:\s+#.*$|\s*)//) {
             $indicator = $1;
             $chomp = $2 if defined($2);
         }
@@ -476,7 +476,7 @@ sub _parse_inline_mapping {
 
     $self->die('YAML_PARSE_ERR_INLINE_MAP')
       unless $self->{inline} =~ s/^\{\s*//;
-    while (not $self->{inline} =~ s/^\s*\}\s*//) {
+    while (not $self->{inline} =~ s/^\s*\}(\s+#.*$|\s*)//) {
         my $key = $self->_parse_inline();
         $self->die('YAML_PARSE_ERR_INLINE_MAP')
           unless $self->{inline} =~ s/^\: \s*//;
@@ -503,7 +503,7 @@ sub _parse_inline_seq {
 
     $self->die('YAML_PARSE_ERR_INLINE_SEQUENCE')
       unless $self->{inline} =~ s/^\[\s*//;
-    while (not $self->{inline} =~ s/^\s*\]\s*//) {
+    while (not $self->{inline} =~ s/^\s*\](\s+#.*$|\s*)//) {
         my $value = $self->_parse_inline();
         push @$node, $value;
         next if $self->inline =~ /^\s*\]/;
@@ -526,7 +526,7 @@ sub _parse_inline_double_quoted {
             $node .= $capture;
             last unless length $inline;
         }
-        if ($inline =~ s/^"\s*//) {
+        if ($inline =~ s/^"(?:\s+#.*|\s*)//) {
             $self->inline($inline);
             return $node;
         }
@@ -547,7 +547,7 @@ sub _parse_inline_single_quoted {
             $node .= $capture;
             last unless length $inline;
         }
-        if ($inline =~ s/^'\s*//) {
+        if ($inline =~ s/^'(?:\s+#.*|\s*)//) {
             $self->inline($inline);
             return $node;
         }
@@ -651,8 +651,9 @@ sub _parse_next_line {
     $self->{line}++;
 
     # Determine the offset for a new leaf node
+    # TODO
     if ($self->preface =~
-        qr/(?:^|\s)(?:$FOLD_CHAR|$LIT_CHAR_RX)(?:-|\+)?(\d*)\s*$/
+        qr/(?:^|\s)(?:$FOLD_CHAR|$LIT_CHAR_RX)(?:-|\+)?(\d*)(?:\s+#.*|\s*)$/
        ) {
         $self->die('YAML_PARSE_ERR_ZERO_INDENT')
           if length($1) and $1 == 0;
