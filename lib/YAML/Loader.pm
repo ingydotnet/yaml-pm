@@ -255,8 +255,6 @@ sub _parse_explicit {
     if ($explicit =~ /^\!?perl\/(hash|array|ref|scalar)(?:\:(\w(\w|\:\:)*)?)?$/) {
         ($type, $class) = (($1 || ''), ($2 || ''));
 
-        # FIXME # die unless uc($type) eq ref($node) ?
-
         if ( $type eq "ref" ) {
             $self->die('YAML_LOAD_ERR_NO_DEFAULT_VALUE', 'XXX', $explicit)
             unless exists $node->{VALUE()} and scalar(keys %$node) == 1;
@@ -268,6 +266,15 @@ sub _parse_explicit {
         if ( $type eq "scalar" and length($class) and !ref($node) ) {
             my $value = $node;
             $node = \$value;
+        }
+
+        unless(
+            $type eq 'ref' and ref($node) eq 'SCALAR'
+            or $type eq 'ref' and ref($node) eq 'GLOB'
+            or $type eq 'scalar' and ref($node) eq ''
+            or uc($type) eq ref($node)
+        ) {
+            die "Expected $type, got $node"
         }
 
         if ( length($class) ) {

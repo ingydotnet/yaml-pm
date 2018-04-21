@@ -361,7 +361,7 @@ foo: bar
 { foo => "bar" }
 === foo
 +++ yaml
---- !!perl/array:moose
+--- !!perl/hash:moose
 foo: bar
 +++ perl
 bless({ foo => "bar" }, "moose")
