@@ -1,6 +1,7 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
 use TestYAML tests => 30;
+use Test::Deep;
 
 run {
     my $block = shift;
@@ -18,7 +19,7 @@ run {
               . $errors);
         next;
     }
-    is_deeply(
+    cmp_deeply(
         \@result,
         \@expect,
         $block->description,
