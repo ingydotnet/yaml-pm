@@ -527,7 +527,7 @@ changes:
 - YAC-012. Handled all Throwaway Issues. Blank lines and comments can be used
   anywhere, and they will work appropriately.
 - Converted Changes file (this file) to use YAML
-- AC-016. Support "assumed header" (--- #YAML:1.0) if no header.
+- 'AC-016. Support "assumed header" (--- #YAML:1.0) if no header.'
 - Added $YAML::UseBlock option
 - YAC-015. Support Top Level Inline nodes
 - Added testing for Store to test suite. (Now there's no excuse not to
@@ -542,7 +542,7 @@ changes:
 - Proofed documentation
 - Fix ysh doc. Document flags in the pod.
 - Move test code out of YAML.pm and into testlib
-- Change directives to use #
+- 'Change directives to use #'
 - Parse regexes
 - YAC-017. Change !perl/ syntax
 - Emit regexes
