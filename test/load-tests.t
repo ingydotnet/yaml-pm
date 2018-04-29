@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 32;
+use TestYAML tests => 33;
 use Test::Deep;
 
 run {
@@ -421,3 +421,12 @@ bless(do { my $x = 1; \$x}, "moose")
 --- "   ABC"
 +++ perl
 '   ABC'
+=== Allowed characters in anchors
++++ yaml
+---
+- &a.1 a
+- &b/2 b
+- &c_3 c
+- &d-4 d
++++ perl
+['a', 'b', 'c', 'd']
