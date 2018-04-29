@@ -322,11 +322,11 @@ sub _parse_mapping {
             $key = "$key";
         }
         # If "default" key (equals sign)
-        elsif ($self->{content} =~ s/^\=\s*//) {
+        elsif ($self->{content} =~ s/^\=\s*(?=:)//) {
             $key = VALUE;
         }
         # If "comment" key (slash slash)
-        elsif ($self->{content} =~ s/^\=\s*//) {
+        elsif ($self->{content} =~ s/^\=\s*(?=:)//) {
             $key = COMMENT;
         }
         # Regular scalar key:
