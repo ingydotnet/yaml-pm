@@ -99,7 +99,9 @@ sub yaml_load {
     }
     no strict 'refs';
     if (exists $node->{SCALAR}) {
-        *{"${package}::$name"} = \$node->{SCALAR};
+        if ($YAML::LoadBlessed) {
+            *{"${package}::$name"} = \$node->{SCALAR};
+        }
         delete $node->{SCALAR};
     }
     for my $elem (qw(ARRAY HASH CODE IO)) {
@@ -109,7 +111,9 @@ sub yaml_load {
                 delete $node->{IO};
                 next;
             }
-            *{"${package}::$name"} = $node->{$elem};
+            if ($YAML::LoadBlessed) {
+                *{"${package}::$name"} = $node->{$elem};
+            }
             delete $node->{$elem};
         }
     }
@@ -166,12 +170,12 @@ sub yaml_load {
             return sub {};
         }
         else {
-            CORE::bless $code, $class if $class;
+            CORE::bless $code, $class if ($class and $YAML::LoadBlessed);
             return $code;
         }
     }
     else {
-        return CORE::bless sub {}, $class if $class;
+        return CORE::bless sub {}, $class if ($class and $YAML::LoadBlessed);
         return sub {};
     }
 }
@@ -228,7 +232,7 @@ sub yaml_load {
     $flags =~ s/^\^//;
     my $sub = _QR_TYPES->{$flags} || sub { qr{$_[0]} };
     my $qr = &$sub($re);
-    bless $qr, $class if length $class;
+    bless $qr, $class if (length $class and $YAML::LoadBlessed);
     return $qr;
 }
 

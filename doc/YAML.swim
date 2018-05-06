@@ -282,6 +282,19 @@ The current options are:
 
   You can override which module/class YAML uses for Dumping data.
 
+- LoadBlessed (since 1.25)
+
+  Default is 1 (true).
+
+  When set to true, YAML nodes with special tags will be automatocally blessed
+  into objects:
+
+    - !perl/hash:Foo::Bar
+        foo: 42
+
+  When loading untrusted YAML, you should disable this option by setting it to
+  `0`. This will also disable setting typeglobs when loading them.
+
 - LoaderClass
 
   You can override which module/class YAML uses for Loading data.

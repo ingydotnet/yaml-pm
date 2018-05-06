@@ -268,7 +268,7 @@ sub _parse_explicit {
             $node = \$value;
         }
 
-        if ( length($class) ) {
+        if ( length($class) and $YAML::LoadBlessed ) {
             CORE::bless($node, $class);
         }
 
@@ -294,13 +294,16 @@ sub _parse_explicit {
             require YAML::Node;
             return $class->yaml_load(YAML::Node->new($node, $explicit));
         }
-        else {
+        elsif ($YAML::LoadBlessed) {
             if (ref $node) {
                 return CORE::bless $node, $class;
             }
             else {
                 return CORE::bless \$node, $class;
             }
+        }
+        else {
+            return $node;
         }
     }
     elsif (ref $node) {
