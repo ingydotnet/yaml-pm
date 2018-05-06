@@ -12,7 +12,7 @@ YAML - YAML Ain't Markup Language™
 
 =head1 Version
 
-This document describes L<YAML> version B<1.24>.
+This document describes L<YAML> version B<1.24_001>.
 
 =head1 Note
 
@@ -38,7 +38,7 @@ over to the new UI-only version.
     # Load a YAML stream of 3 YAML documents into Perl data structures.
     my ($hashref, $arrayref, $string) = Load(<<'...');
     ---
-    name: ingy
+    name: ingy       # A Mapping
     age: old
     weight: heavy
     # I should comment that I also like pink, but don't tell anybody.
@@ -47,10 +47,10 @@ over to the new UI-only version.
       - green
       - blue
     ---
-    - Clark Evans
+    - Clark Evans    # A Sequence
     - Oren Ben-Kiki
     - Ingy döt Net
-    --- >
+    --- >            # A Block Scalar
     You probably think YAML stands for "Yet Another Markup Language". It
     ain't! YAML is really a data serialization language. But if you want
     to think of it as a markup, that's OK with me. A lot of people try
@@ -65,6 +65,8 @@ over to the new UI-only version.
     # YAML::Dump is used the same way you'd use Data::Dumper::Dumper
     use Data::Dumper;
     print Dumper($string, $arrayref, $hashref);
+
+    Since version 1.25 YAML.pm supports trailing comments.
 
 =head1 Description
 
@@ -307,6 +309,19 @@ The current options are:
 =item DumperClass
 
 You can override which module/class YAML uses for Dumping data.
+
+=item LoadBlessed (since 1.25)
+
+Default is 1 (true).
+
+When set to true, YAML nodes with special tags will be automatocally blessed
+into objects:
+
+    - !perl/hash:Foo::Bar
+        foo: 42
+
+When loading untrusted YAML, you should disable this option by setting it to
+C<0>. This will also disable setting typeglobs when loading them.
 
 =item LoaderClass
 

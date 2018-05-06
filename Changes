@@ -1,4 +1,16 @@
 ---
+version: 1.24_001
+date:    Sun May  6 20:58:04 CEST 2018
+changes:
+- Applied several pull requests by tinita
+- Support trailing comments (PR#189, PR#190, PR#191)
+- Remove unused code (PR#192)
+- Use Test::Deep to actually test correctly for class names (PR#193)
+- Fix loading of mapping key which starts with `= ` (PR#194)
+- Fix loading strings with multiple spaces (PR#172)
+- Allow more characters in anchor name (PR#196)
+- Add $YAML::LoadBlessed for disabling loading objects (PR#197)
+---
 version: 1.24
 date:    Mon Oct 30 20:31:53 CET 2017
 changes:
