@@ -1,6 +1,6 @@
 ---
 version: 1.24_001
-date:    Sun May  6 20:58:04 CEST 2018
+date:    Sun May  6 21:09:31 CEST 2018
 changes:
 - Applied several pull requests by tinita
 - Support trailing comments (PR#189, PR#190, PR#191)

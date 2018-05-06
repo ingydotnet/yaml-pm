@@ -6,7 +6,7 @@ abstract: YAML Ain't Markup Language™
 homepage: http://yaml.org
 language: perl
 license: perl
-copyright: 2001-2017
+copyright: 2001-2018
 
 author:
   name: Ingy döt Net
