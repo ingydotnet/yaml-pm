@@ -29,5 +29,6 @@ test:
     Test::YAML: 1.05
     Test::More: 0.88
     Test::Deep: 0
+    Encode: 0
 
 see: YAML::XS
