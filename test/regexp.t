@@ -1,7 +1,8 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 11;
+use TestYAML tests => 12;
 use YAML();
+use Encode;
 no warnings 'once';
 
 my $m_xis = "m-xis";
@@ -68,6 +69,17 @@ $re = $hash->{key};
 is ref($re), 'Regexp', 'The regexp is a Regexp';
 
 like "Barfoo", $re, 'The regexp works';
+
+my $yaml = decode_utf8 q{re : !!perl/regexp OK};
+$re = Load $yaml;
+$yaml = Dump $re;
+my $compare = $yaml;
+for (1 .. 5) {
+    $re = Load $yaml;
+    $yaml = Dump $re;
+}
+
+cmp_ok($yaml, 'eq', $compare, "Regexp multiple roundtrip does not grow");
 
 
 __END__
