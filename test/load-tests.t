@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 35;
+use TestYAML tests => 37;
 use Test::Deep;
 
 run {
@@ -468,3 +468,19 @@ d: >2+
     d => "  1\n2\n",
 }
 
+=== Nested explicit key
++++ yaml
+---
+- ? a
+  : b
++++ perl
+[{ a => 'b' }]
+
+=== Nested mappings with non \w keys
++++ yaml
+---
+- .: a
+  <: b
+  -: c
++++ perl
+[ { '.' => 'a', '<' => 'b', '-' => 'c' } ]
