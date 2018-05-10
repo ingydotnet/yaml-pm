@@ -128,12 +128,21 @@ sub _parse_node {
     $self->inline('');
     while (length $preface) {
         my $line = $self->line - 1;
-        if ($preface =~ s/^($FOLD_CHAR|$LIT_CHAR_RX)(-|\+)?\d*(?:\s+#.*$|\s*)//) {
+        if ($preface =~ s/^($FOLD_CHAR|$LIT_CHAR_RX)//) {
             $indicator = $1;
-            $chomp = $2 if defined($2);
+            if ($preface =~ s/^([+-])[0-9]*//) {
+                $chomp = $1;
+            }
+            elsif ($preface =~ s/^[0-9]+([+-]?)//) {
+                $chomp = $1;
+            }
+            if ($preface =~ s/^(?:\s+#.*$|\s*)$//) {
+            }
+            else {
+                $self->die('YAML_PARSE_ERR_TEXT_AFTER_INDICATOR');
+            }
         }
         else {
-            $self->die('YAML_PARSE_ERR_TEXT_AFTER_INDICATOR') if $indicator;
             $self->inline($preface);
             $preface = '';
         }
@@ -677,13 +686,14 @@ sub _parse_next_line {
     # Determine the offset for a new leaf node
     # TODO
     if ($self->preface =~
-        qr/(?:^|\s)(?:$FOLD_CHAR|$LIT_CHAR_RX)(?:-|\+)?(\d*)(?:\s+#.*|\s*)$/
+        qr/(?:^|\s)(?:$FOLD_CHAR|$LIT_CHAR_RX)(?:[+-]([0-9]*)|([0-9]*)[+-]?)(?:\s+#.*|\s*)$/
        ) {
+        my $explicit_indent = length $1 ? $1 : length $2 ? $2 : '';
         $self->die('YAML_PARSE_ERR_ZERO_INDENT')
-          if length($1) and $1 == 0;
+          if length($explicit_indent) and $explicit_indent == 0;
         $type = LEAF;
-        if (length($1)) {
-            $self->offset->[$level + 1] = $offset + $1;
+        if (length($explicit_indent)) {
+            $self->offset->[$level + 1] = $offset + $explicit_indent;
         }
         else {
             # First get rid of any comments.

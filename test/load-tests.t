@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 34;
+use TestYAML tests => 35;
 use Test::Deep;
 
 run {
@@ -444,3 +444,27 @@ bless(do { my $x = 1; \$x}, "moose")
     ['a', 'b', [1], [2,3] ],
     [ ['c'] ],
 ]
+
+=== Combined block scalar indicators
++++ yaml
+---
+a: |-2
+    1
+  2
+b: |2-
+    1
+  2
+c: >+2
+    1
+  2
+d: >2+
+    1
+  2
++++ perl
+{
+    a => "  1\n2",
+    b => "  1\n2",
+    c => "  1\n2\n",
+    d => "  1\n2\n",
+}
+
