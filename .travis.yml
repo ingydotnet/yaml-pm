@@ -22,6 +22,7 @@ perl:
 install:
 - cpanm --quiet --notest
   Devel::Cover::Report::Coveralls
+  Encode
   Test::Deep
   Test::More
   Test::YAML

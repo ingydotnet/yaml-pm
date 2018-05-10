@@ -1,4 +1,14 @@
 ---
+version: 1.24_002
+date:    Thu May 10 18:21:13 CEST 2018
+changes:
+- Applied several pull requests by tinita
+- Disable test with long string under certain conditions (PR#201)
+- Quote scalar if it equals '=' (PR#202)
+- Multiple regexp roundtrip does not grow (PR#203)
+- Add support for compact nested block sequences (PR#204)
+- Support reverse order of block scalar indicators (PR#205)
+---
 version: 1.24_001
 date:    Sun May  6 21:09:31 CEST 2018
 changes:
