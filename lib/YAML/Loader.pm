@@ -385,7 +385,17 @@ sub _parse_seq {
         # that a key is a quoted string, which itself may contain escaped
         # quotes.
         my $preface = $self->preface;
-        if ( $preface =~ /^ (\s*) ( \w .*?               \: (?:\ |$).*) $/x  or
+        if ($preface =~ m/^ (\s*) ( - (?: \ .* | $ ) ) /x) {
+            $self->indent($self->offset->[$self->level] + 2 + length($1));
+            $self->content($2);
+            $self->level($self->level + 1);
+            $self->offset->[$self->level] = $self->indent;
+            $self->preface('');
+            push @$seq, $self->_parse_seq('');
+            $self->{level}--;
+            $#{$self->offset} = $self->level;
+        }
+        elsif ( $preface =~ /^ (\s*) ( \w .*?               \: (?:\ |$).*) $/x  or
              $preface =~ /^ (\s*) ((') (?:''|[^'])*? ' \s* \: (?:\ |$).*) $/x or
              $preface =~ /^ (\s*) ((") (?:\\\\|[^"])*? " \s* \: (?:\ |$).*) $/x
            ) {

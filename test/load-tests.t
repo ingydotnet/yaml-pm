@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 33;
+use TestYAML tests => 34;
 use Test::Deep;
 
 run {
@@ -430,3 +430,17 @@ bless(do { my $x = 1; \$x}, "moose")
 - &d-4 d
 +++ perl
 ['a', 'b', 'c', 'd']
+
+=== Compact nested block sequences
++++ yaml
+- - a
+  -  b
+  - - 1
+  -  - 2
+     - 3
+- - [c]
++++ perl
+[
+    ['a', 'b', [1], [2,3] ],
+    [ ['c'] ],
+]
