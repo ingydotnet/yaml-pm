@@ -39,36 +39,32 @@ changes:
 version: 1.21
 date:    Fri Dec 23 21:19:15 CET 2016
 changes:
-- Apply PR/171 (fixes issue/109) @perlpunk++
-- No more "used only once" warnings for $YAML::Indent etc.
-- Apply PR/170 (fixes issue/131) hiratara@cpan.org++
-- Empty mapping value at the end resolves to null (was becoming empty string)
-- Apply PR/169 (PR/119) patrick.allen.higgins@gmail.com++
-- Output key in warning when duplicate key was found
-- Apply PR/157 and PR/168 (@lameventanas++ @perlpunk++)
-- Allow reading and writing to IO::Handle
+- No more "used only once" warnings for $YAML::Indent etc. PR#171, Issue#109 @perlpunk++
+- Empty mapping value at the end resolves to null (was becoming empty string) PR#170, Issue#131 hiratara@cpan.org++
+- Output key in warning when duplicate key was found PR#169, PR#119 patrick.allen.higgins@gmail.com++
+- Allow reading and writing to IO::Handle PR#157, PR#168 @lameventanas++ @perlpunk++
 ---
 version: 1.20
 date:    Fri Dec  2 13:20:33 PST 2016
 changes:
-- Apply and amend PR/146 (quoted map keys) @preaction++
+- Apply and amend PR#146 (quoted map keys) @preaction++
 - B::Deparse is loaded at runtime now
-- New Feature $YAML::Preserve (Apply PR/9 @fmenabe++)
+- New Feature $YAML::Preserve (Apply PR#9 @fmenabe++)
 ---
 version: 1.19
 date:    Fri Nov 18 19:46:44 CET 2016
 changes:
-- Apply PR/164 pod (link to YAML::Shell)
-- Apply PR/151 Fix infinite loop for aliases without a name @bubaflub++
-- Apply PR/142 Improve error messages @werekraken++
-- Apply PR/162 Improve error messages
-- Apply PR/163 Trailing spaces after inline seq/map work now
-- Apply PR/154 Add test case for trailing comments @Varadinsky++
+- Apply PR#164 pod (link to YAML::Shell)
+- Apply PR#151 Fix infinite loop for aliases without a name @bubaflub++
+- Apply PR#142 Improve error messages @werekraken++
+- Apply PR#162 Improve error messages
+- Apply PR#163 Trailing spaces after inline seq/map work now
+- Apply PR#154 Add test case for trailing comments @Varadinsky++
 ---
 version: 1.18
 date:    Fri Jul  8 14:52:26 UTC 2016
 changes:
-- Apply PR/161 @perlpunk++
+- List Test::More as a prereq PR#161 @perlpunk++
 ---
 version: 1.17
 date:    Tue Jul  5 20:20:55 UTC 2016
@@ -78,26 +74,22 @@ changes:
 version: 1.16
 date:    Sun Jul  3 10:53:06 PDT 2016
 changes:
-- Apply PR/158 by @bgruening++
-- Fix VERSION issue
+- Fix VERSION issue. PR#158 by @bgruening++
 ---
 version: 1.15
 date:    Sat Apr 18 17:03:09 CEST 2015
 changes:
-- Fix Issue 149.
-- Don't require newlines at end of YAML.
+- Don't require newlines at end of YAML. Issue#149
 ---
 version: 1.14
 date:    Sat Jan 17 15:32:18 PST 2015
 changes:
-- Apply PR/145 from @kentnl++
-- Support for QuoteNumericStrings Global Setting
+- Support for QuoteNumericStrings Global Setting. PR#145 @kentnl++
 ---
 version: 1.13
 date:    Sat Oct 11 18:05:45 CEST 2014
 changes:
-- Apply PR/140 from @nfg++
-- Disable some warnings in YAML::Any
+- Disable some warnings in YAML::Any. PR#140 @nfg++
 ---
 version: 1.12
 date:    Mon Sep 22 08:24:43 PDT 2014
@@ -107,12 +99,12 @@ changes:
 version: 1.11
 date:    Fri Aug 29 20:08:20 PDT 2014
 changes:
-- Apply PR/139. @ehuelsmann++
+- Remove unreachable code. PR#139. @ehuelsmann++
 ---
 version: 1.10
 date:    Thu Aug 28 22:53:26 PDT 2014
 changes:
-- Apply PR/138. @ehuelsmann++
+- Improve error message about indendation. PR#138. @ehuelsmann++
 ---
 version: 1.09
 date:    Tue Aug 19 16:41:13 PDT 2014
@@ -127,7 +119,7 @@ changes:
 version: 1.07
 date:    Mon Aug 18 08:40:01 PDT 2014
 changes:
-- Apply PR/8 from shlomif++. Add doc examples for YAML::Any.
+- Add doc examples for YAML::Any. PR#8 from shlomif++
 ---
 version: 1.06
 date:    Sat Aug 16 16:51:08 PDT 2014
