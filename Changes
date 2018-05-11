@@ -17,6 +17,7 @@ changes:
 - Add support for compact nested block sequences (PR#204)
 - Support reverse order of block scalar indicators (PR#205)
 - Support nested mappings in sequences (PR#206)
+- Fix parsing of quoted strings (PR#188)
 ---
 version: 1.24
 date:    Mon Oct 30 20:31:53 CET 2017
