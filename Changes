@@ -1,4 +1,9 @@
 ---
+version: 1.25_001
+date:    Sat May 12 13:43:01 CEST 2018
+changes:
+- Support zero indented block sequences (PR#207 tinita)
+---
 version: 1.25
 date:    Fri May 11 19:58:58 CEST 2018
 changes:
@@ -10,7 +15,6 @@ changes:
 - Fix loading strings with multiple spaces (PR#172)
 - Allow more characters in anchor name (PR#196)
 - Add $YAML::LoadBlessed for disabling loading objects (PR#197)
-- Applied several pull requests by tinita
 - Disable test with long string under certain conditions (PR#201)
 - Quote scalar if it equals '=' (PR#202)
 - Multiple regexp roundtrip does not grow (PR#203)
