@@ -1,6 +1,6 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 38;
+use TestYAML tests => 39;
 $^W = 1;
 
 use YAML::Error;
@@ -405,4 +405,12 @@ foo: bar
 ---
 some:
   	data-preceded-with-tab: abc
+=== YAML_PARSE_ERR_INCONSISTENT_INDENTATION
++++ error: YAML_PARSE_ERR_INCONSISTENT_INDENTATION
++++ yaml
+---
+a:
+  b:
+ - 1
+ - 2
 
