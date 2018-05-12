@@ -128,7 +128,6 @@ sub _parse_node {
     }
     $self->inline('');
     while (length $preface) {
-        my $line = $self->line - 1;
         if ($preface =~ s/^($FOLD_CHAR|$LIT_CHAR_RX)//) {
             $indicator = $1;
             if ($preface =~ s/^([+-])[0-9]*//) {
@@ -226,7 +225,6 @@ sub _parse_qualifiers {
     my ($anchor, $alias, $explicit, $implicit, $token) = ('') x 5;
     $self->inline('');
     while ($preface =~ /^[&*!]/) {
-        my $line = $self->line - 1;
         if ($preface =~ s/^\!(\S+)\s*//) {
             $self->die('YAML_PARSE_ERR_MANY_EXPLICIT') if $explicit;
             $explicit = $1;
@@ -363,7 +361,6 @@ sub _parse_mapping {
             $self->die('YAML_LOAD_ERR_BAD_MAP_ELEMENT');
         }
         $self->preface($self->content);
-        my $line = $self->line;
         my $level = $self->level;
 
         # we can get a zero indented sequence, possibly
