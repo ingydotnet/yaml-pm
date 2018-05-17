@@ -482,8 +482,10 @@ d: >2+
 - .: a
   <: b
   -: c
+- 'not: a map'
+- "not: a map"
 +++ perl
-[ { '.' => 'a', '<' => 'b', '-' => 'c' } ]
+[ { '.' => 'a', '<' => 'b', '-' => 'c' }, 'not: a map', 'not: a map' ]
 
 === Zero indented block sequence
 +++ yaml

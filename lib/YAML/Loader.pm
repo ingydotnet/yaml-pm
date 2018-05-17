@@ -416,7 +416,7 @@ sub _parse_seq {
              $preface =~ /^ (\s*) ((') (?:''|[^'])*? ' \s* \: (?:\ |$).*) $/x or
              $preface =~ /^ (\s*) ((") (?:\\\\|[^"])*? " \s* \: (?:\ |$).*) $/x or
              $preface =~ /^ (\s*) (\?.*$)/x or
-             $preface =~ /^ (\s*) ([^\s:#&!\[\]\{\},*|>].*\:(\ .*|$))/x
+             $preface =~ /^ (\s*) ([^'"\s:#&!\[\]\{\},*|>].*\:(\ .*|$))/x
            ) {
             $self->indent($self->offset->[$self->level] + 2 + length($1));
             $self->content($2);
