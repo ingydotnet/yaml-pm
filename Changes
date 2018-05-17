@@ -1,4 +1,9 @@
 ---
+version: 1.25_002
+date:    Thu May 17 14:58:52 CEST 2018
+changes:
+- Fix loading of quoted string with colon as sequence element (tinita, fixes issue#208)
+---
 version: 1.25_001
 date:    Sat May 12 13:43:01 CEST 2018
 changes:
