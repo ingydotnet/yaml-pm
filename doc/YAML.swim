@@ -393,7 +393,7 @@ The current options are:
 
   NOTE: YAML's block style is akin to Perl's here-document.
 
-- UseFold
+- UseFold (Not supported anymore since v0.60)
 
   If you want to force YAML to use the 'folded' style for all multiline
   scalars, then set $UseFold to 1.
