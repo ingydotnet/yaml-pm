@@ -698,7 +698,7 @@ sub _parse_next_line {
     if ($self->preface =~
         qr/(?:^|\s)(?:$FOLD_CHAR|$LIT_CHAR_RX)(?:[+-]([0-9]*)|([0-9]*)[+-]?)(?:\s+#.*|\s*)$/
        ) {
-        my $explicit_indent = length $1 ? $1 : length $2 ? $2 : '';
+        my $explicit_indent = defined $1 ? $1 : defined $2 ? $2 : '';
         $self->die('YAML_PARSE_ERR_ZERO_INDENT')
           if length($explicit_indent) and $explicit_indent == 0;
         $type = LEAF;
