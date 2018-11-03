@@ -1,6 +1,6 @@
 ---
-version: 1.26_001
-date:    Thu Oct 18 21:45:20 CEST 2018
+version: 1.27
+date:    Sat Nov  3 14:01:26 CET 2018
 changes:
 - Remove a warning about uninitialized value for perl <= 5.10
 ---
