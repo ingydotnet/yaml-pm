@@ -6,6 +6,12 @@ use YAML;
 
 # use XXX;
 
+sub yaml_dump {
+    my $self = shift;
+
+    return YAML::Dump(@_);
+}
+
 sub yaml_load {
     my ($self, $yaml) = @_;
 
