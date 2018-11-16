@@ -12,8 +12,17 @@ sub yaml_dump {
     return YAML::Dump(@_);
 }
 
+sub yaml_dump_ok {
+    my $self = shift;
+
+    YAML::Dump(@_);
+
+    return 1;
+}
+
 sub yaml_load {
     my ($self, $yaml) = @_;
+    local $YAML::Numify = 1;
 
     return YAML::Load($yaml);
 }

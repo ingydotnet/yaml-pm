@@ -4,8 +4,11 @@
 #run_yaml_tests;
 
 
-*perl.perl-eval.yaml-dump == *yaml :"+ (n->y)"
-*yaml.yaml-load.dumper == *perl.perl-eval.dumper :"+ (y->n)"
+<!*skip-this-for-now> *perl.perl-eval.yaml-dump == *yaml
+  :"+ (n->y)"
+
+*yaml.yaml-load.dumper == *perl.perl-eval.dumper
+  :"+ (y->n)"
 
 === Date: Tue, 03 Jan 2006 18:04:56
 --- perl: { key1 => '>value1' }
@@ -60,7 +63,6 @@
 
 
 === Date: Sat, 26 Mar 2005 22:55:55
---- ONLY
 --- perl: {"a - a" => 1}
 --- yaml(<)
     ---
