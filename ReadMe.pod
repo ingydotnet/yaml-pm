@@ -239,6 +239,15 @@ Writes the YAML stream to a file instead of just returning a string.
 =item LoadFile(filepath)
 
 Reads the YAML stream from a file instead of a string.
+If you are loading an object C<$obj = LoadFile(filepath)> will be enough but if you are reloading an already existing object 
+   
+    use YAML qw'LoadFile';
+     
+    %{$obj} = %{LoadFile(filepath)}
+    
+is the right syntax to use.
+
+=over
 
 =item Bless(perl-node, [yaml-node | class-name])
 
