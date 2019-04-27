@@ -378,6 +378,10 @@ The current options are:
   `eval()`. Since this is potentially risky, only use this option if you know
   where your YAML has been.
 
+  LoadCode must be enabled also to use the feature of evaluating typeglobs
+  (because with the typeglob feature you would be able to set
+  the variable `$YAML::LoadCode` from a YAML file).
+
 - Preserve
 
   When set to true, this option tells the Loader to load hashes into YAML::Node

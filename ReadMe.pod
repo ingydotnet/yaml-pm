@@ -405,6 +405,10 @@ deserialize code references. When set to '1' or 'deparse' it will use
 C<eval()>. Since this is potentially risky, only use this option if you know
 where your YAML has been.
 
+LoadCode must be enabled also to use the feature of evaluating typeglobs
+(because with the typeglob feature you would be able to set the variable
+C<$YAML::LoadCode> from a YAML file).
+
 =item Preserve
 
 When set to true, this option tells the Loader to load hashes into YAML::Node
