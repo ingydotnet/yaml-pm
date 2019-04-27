@@ -99,7 +99,7 @@ sub yaml_load {
     }
     no strict 'refs';
     if (exists $node->{SCALAR}) {
-        if ($YAML::LoadBlessed) {
+        if ($YAML::LoadBlessed and $loader->load_code) {
             *{"${package}::$name"} = \$node->{SCALAR};
         }
         delete $node->{SCALAR};
@@ -111,7 +111,7 @@ sub yaml_load {
                 delete $node->{IO};
                 next;
             }
-            if ($YAML::LoadBlessed) {
+            if ($YAML::LoadBlessed and $loader->load_code) {
                 *{"${package}::$name"} = $node->{$elem};
             }
             delete $node->{$elem};
