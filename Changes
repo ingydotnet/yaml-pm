@@ -1,8 +1,8 @@
 ---
-version: 1.27_001
-date:    Sat 27 Apr 2019 03:41:19 PM CEST
+version: 1.28
+date:    Sun 28 Apr 2019 11:46:21 AM CEST
 changes:
-- Only enable loading globs when $LoadCode is set (PR#213 TINITA)
+- 'Security fix: only enable loading globs when $LoadCode is set (PR#213 TINITA)'
 ---
 version: 1.27
 date:    Sat Nov  3 14:01:26 CET 2018

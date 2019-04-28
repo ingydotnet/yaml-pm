@@ -1,7 +1,7 @@
 =meta: 0.0.2
 
 name: YAML
-version: 1.27_001
+version: 1.28
 abstract: YAML Ain't Markup Language™
 homepage: http://yaml.org
 language: perl
