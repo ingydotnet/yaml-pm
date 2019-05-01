@@ -428,8 +428,12 @@ bless(do { my $x = 1; \$x}, "moose")
 - &b/2 b
 - &c_3 c
 - &d-4 d
+- *a.1
+- *b/2
+- *c_3
+- *d-4
 +++ perl
-['a', 'b', 'c', 'd']
+['a', 'b', 'c', 'd', 'a', 'b', 'c', 'd']
 
 === Compact nested block sequences
 +++ yaml
