@@ -1,4 +1,9 @@
 ---
+version: 1.28_001
+date:    Sun 05 May 2019 01:31:04 PM CEST
+changes:
+- Fix regex for alias to match the one for anchors (PR#214 TINITA)
+---
 version: 1.28
 date:    Sun 28 Apr 2019 11:46:21 AM CEST
 changes:
