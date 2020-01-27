@@ -1,8 +1,14 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
-use TestYAML tests => 10;
+use TestYAML tests => 11;
 use Test::Deep;
 use YAML ();
+
+my $unblessed = YAML::Load(<<"EOM");
+--- !!perl/array:Foo []
+EOM
+is(ref $unblessed, 'ARRAY', "No objects by default");
+
 $YAML::LoadBlessed = 0;
 
 run {

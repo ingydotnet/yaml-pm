@@ -4,6 +4,7 @@ use TestYAML tests => 12;
 use YAML();
 use Encode;
 no warnings 'once';
+local $YAML::LoadBlessed = 1;
 
 my $m_xis = "m-xis";
 my $_xism = "-xism";

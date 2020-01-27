@@ -1,6 +1,8 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
 use TestYAML tests => 57;
+local $YAML::LoadBlessed;
+$YAML::LoadBlessed = 1;
 
 no_diff();
 run_roundtrip_nyn('dumper');

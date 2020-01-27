@@ -17,9 +17,6 @@ our (
     $DumperClass, $LoaderClass
 );
 
-$LoadBlessed = 1;
-
-
 use YAML::Node; # XXX This is a temp fix for Module::Build
 use Scalar::Util qw/ openhandle /;
 

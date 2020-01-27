@@ -1,6 +1,8 @@
 use strict;
 use lib -e 't' ? 't' : 'test';
 use TestYAML tests => 2;
+local $YAML::LoadBlessed;
+$YAML::LoadBlessed = 1;
 
 {
     no warnings 'once';

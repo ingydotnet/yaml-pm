@@ -284,7 +284,9 @@ The current options are:
 
 - LoadBlessed (since 1.25)
 
-  Default is 1 (true).
+  Default is undef (false)
+
+  The default was changed in version 1.30.
 
   When set to true, YAML nodes with special tags will be automatocally blessed
   into objects:
@@ -294,6 +296,11 @@ The current options are:
 
   When loading untrusted YAML, you should disable this option by setting it to
   `0`. This will also disable setting typeglobs when loading them.
+
+  You can create any kind of object with YAML. The creation itself is not the
+  critical part. If the class has a C<DESTROY> method, it will be called once
+  the object is deleted. An example with File::Temp removing files can be found
+  at [https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=862373]
 
 - LoaderClass
 

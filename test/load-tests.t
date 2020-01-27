@@ -2,6 +2,8 @@ use strict;
 use lib -e 't' ? 't' : 'test';
 use TestYAML tests => 38;
 use Test::Deep;
+local $YAML::LoadBlessed;
+$YAML::LoadBlessed = 1;
 
 run {
     my $block = shift;
