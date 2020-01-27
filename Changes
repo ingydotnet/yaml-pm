@@ -1,4 +1,9 @@
 ---
+version: 1.30
+date:    Mon 27 Jan 2020 11:09:46 PM CET
+changes:
+- 'Breaking Change: Set $YAML::LoadBlessed default to false to make it more secure'
+---
 version: 1.29
 date:    Sat 11 May 2019 10:26:54 AM CEST
 changes:
