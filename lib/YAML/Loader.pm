@@ -149,7 +149,7 @@ sub _parse_node {
     }
     if ($alias) {
         $self->die('YAML_PARSE_ERR_NO_ANCHOR', $alias)
-          unless defined $self->anchor2node->{$alias};
+          unless exists $self->anchor2node->{$alias};
         if (ref($self->anchor2node->{$alias}) ne 'YAML-anchor2node') {
             $node = $self->anchor2node->{$alias};
         }
