@@ -1,0 +1,74 @@
+name: linux
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+    branches: [ '*' ]
+
+jobs:
+
+  perl:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        perl-version:
+        # - '5.10' Test::Deep wants 5.12
+        - '5.12'
+        - '5.14'
+        - '5.16'
+        - '5.18'
+        - '5.20'
+        - '5.22'
+        - '5.24'
+        - '5.26'
+        - '5.28'
+        - '5.30'
+        - '5.32'
+        - '5.34'
+        - '5.36'
+        - '5.38'
+
+    container:
+      image: perl:${{ matrix.perl-version }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - run: env | sort
+    - run: perl -V
+    - name: Install deps
+      run: >
+        cpanm --quiet --notest
+        Encode
+        Test::Deep
+        Test::More
+        Test::YAML
+    - name: Run Tests
+      run: prove -lv test/
+
+
+  cover:
+    runs-on: ubuntu-latest
+    container:
+      image: perl:5.38
+
+    steps:
+    - uses: actions/checkout@v3
+    - run: env | sort
+    - run: perl -V
+
+    - name: Install deps
+      run: >
+        cpanm --quiet --notest --skip-satisfied
+        Devel::Cover::Report::Coveralls
+        Encode
+        Test::Deep
+        Test::More
+        Test::YAML
+
+    - name: Run Tests
+      run: |
+        PERL5OPT=-MDevel::Cover=-coverage,statement,branch,condition,path,subroutine prove -l test/
+        # cover -report coveralls
