@@ -388,7 +388,7 @@ sub _parse_seq {
     $self->anchor2node->{$anchor} = $seq;
     while (not $self->done and $self->indent == $self->offset->[$self->level]) {
         if ($self->content =~ /^-(?: (.*))?$/) {
-            $self->preface(defined($1) ? $1 : '');
+            $self->preface(defined($1) ? "$1" : '');
         }
         else {
             if ($self->zero_indent->[ $self->level ]) {
@@ -404,7 +404,7 @@ sub _parse_seq {
         my $preface = $self->preface;
         if ($preface =~ m/^ (\s*) ( - (?: \ .* | $ ) ) /x) {
             $self->indent($self->offset->[$self->level] + 2 + length($1));
-            $self->content($2);
+            $self->content("$2");
             $self->level($self->level + 1);
             $self->offset->[$self->level] = $self->indent;
             $self->preface('');
@@ -419,7 +419,7 @@ sub _parse_seq {
              $preface =~ /^ (\s*) ([^'"\s:#&!\[\]\{\},*|>].*\:(\ .*|$))/x
            ) {
             $self->indent($self->offset->[$self->level] + 2 + length($1));
-            $self->content($2);
+            $self->content("$2");
             $self->level($self->level + 1);
             $self->offset->[$self->level] = $self->indent;
             $self->preface('');
@@ -790,7 +790,7 @@ sub _parse_next_line {
         $self->lines->[0] =~ /^ {$offset}(.*)$/
        ) {
         $self->indent($offset);
-        $self->content($1);
+        $self->content("$1");
     }
     elsif ($self->lines->[0] =~ /^\s*$/) {
         $self->indent($offset);
@@ -804,7 +804,7 @@ sub _parse_next_line {
         $self->die('YAML_PARSE_ERR_INCONSISTENT_INDENTATION')
           if $self->offset->[$level] != length($1);
         $self->indent(length($1));
-        $self->content($2);
+        $self->content("$2");
     }
     $self->die('YAML_PARSE_ERR_INDENTATION')
       if $self->indent - $offset > 1;
