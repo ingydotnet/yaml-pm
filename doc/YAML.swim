@@ -1,21 +1,30 @@
 <<<cpan-head>>>
 
-= Note
 
-This module has been released to CPAN as [YAML::Old], and soon YAML.pm will be
-changed to just be a frontend interface module for all the various Perl YAML
-implementation modules, including YAML::Old.
+= IMPORTANT - Please Read This First
 
-If you want robust and fast YAML processing using the normal Dump/Load API,
-please consider switching to [YAML::XS]. It is by far the best Perl module for
-YAML at this time. It requires that you have a C compiler, since it is written
-in C.
+If you need to use YAML with Perl, it is likely that you will have a look at
+this module (`YAML.pm`) first.
+There are several "YAML modules"[https://metacpan.org/search?q=yaml] in Perl
+and they all support the simple `Load()` and `Dump()` API.
+Since this one has the obvious name "YAML", it may seem obvious to pick this
+one.
 
-If you really need to use this version of YAML.pm it will always be available
-as YAML::Old.
+As the author of this module, I humbly ask you to choose another.
+YAML.pm was the very first YAML implementation in the world, released in 2001.
+It was originally made as a prototype, over 2 years before the YAML 1.0 spec
+was published.
+Although it may work for your needs, it has numerous bugs and is barely
+maintained.
 
-The rest of this documentation is left unchanged, until YAML.pm is switched
-over to the new UI-only version.
+Please consider using these first:
+
+* [YAML::PP] - Pure Perl, Full Featured, Well Maintained
+* [YAML::PP::LibYAML] - A `libyaml` Perl binding like [YAML::XS] but with the
+  YAML::PP API.
+
+The rest of this documentation is left unchanged...
+
 
 = Synopsis
 
