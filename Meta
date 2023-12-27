@@ -30,5 +30,3 @@ test:
     Test::More: 0.88
     Test::Deep: 0
     Encode: 0
-
-see: YAML::XS
