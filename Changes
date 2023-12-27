@@ -1,4 +1,9 @@
 ---
+version: 1.31
+date:    Wed Dec 27 07:10:56 AM PST 2023
+changes:
+- Update docs to recommend YAML::PP
+---
 version: 1.30
 date:    Mon 27 Jan 2020 11:09:46 PM CET
 changes:
