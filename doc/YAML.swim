@@ -682,13 +682,17 @@ YAML.pm is still fairly useful. Things will get much better in the future.
 
 = Resources
 
-[http://lists.sourceforge.net/lists/listinfo/yaml-core] is the mailing list.
-This is where the language is discussed and designed.
-
 [http://www.yaml.org] is the official YAML website.
 
 [http://www.yaml.org/spec/] is the YAML 1.2 specification.
 
-[http://yaml.kwiki.org] is the official YAML wiki.
+
+= See Also
+
+* [YAML::PP] - This is almost certainly the YAML module you are looking for.
+  It is full-featured and well maintained.
+
+* [YAML::PP::LibYAML] - Same overall API as YAML::PP but uses the libyaml
+  shared library for speed.
 
 <<<cpan-tail +see>>>
