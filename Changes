@@ -1,4 +1,10 @@
 ---
+version: '1.321'
+date:    2026-07-22 23:11:40+02:00
+changes:
+- Going back to decimal version numbering to make existing comparisons like
+  'if $YAML::VERSION >= 1.15' work. issue#233
+---
 version: 'v1.320.0'
 date:    2026-07-20 13:38:21+02:00
 changes:
